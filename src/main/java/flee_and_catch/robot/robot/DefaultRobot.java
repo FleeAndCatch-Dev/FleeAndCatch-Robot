@@ -17,8 +17,8 @@ public class DefaultRobot {
 
 //### CONSTANTS ############################################################################################################################
 	
-	//Distance that a wheel move by a rotation of one degree:
-	private static final float DISTANCE_DEGREE =   0.476389f;		//In millimeter!
+	//Distance that a wheel move by a rotation of one degree (original: 0.476389f):
+	private static final float DISTANCE_DEGREE =   0.462389f;		//In millimeter!
 	//Distance between the both (midpoints of the) wheels (original: 123.000000f):
 	private static final float DIAMETER_WHEELS = 120.000000f;		//In millimeter!
 	
@@ -98,6 +98,15 @@ public class DefaultRobot {
 	 */
 	private void determinePosition() {
 		
+		float longitudinalDistance = this.getLongitudinalDistance();
+		
+		float x = (float) Math.cos(this.pos.getOrientation()) * longitudinalDistance;
+		float y = (float) Math.sin(this.pos.getOrientation()) * longitudinalDistance;
+		
+		this.pos.setX(x);
+		this.pos.setY(y);
+		
+		this.resetLongitudinalDistance();
 	}
 	
 	/* stopWithoutDeterminePosition [Method]: Method that stop the robot moving without determine the new position *//**
@@ -177,6 +186,20 @@ public class DefaultRobot {
 	
 	}
 	
+	
+ 	public void move(float distance) throws InterruptedException {
+		
+		//Calculate the time in seconds that the motors must move:
+		float sec = distance / this.getSpeed();
+		//Let robot move forward:
+		this.move();
+		//Wait time to move the distance:
+		Thread.sleep((long) (sec * 1000));
+		//Stop motors:
+		this.stop();
+		
+	}
+	
 	/* rotate [Method]: Method to rotate the robot around this vertical axis *//**
 	 * 
 	 * @param direct
@@ -198,10 +221,16 @@ public class DefaultRobot {
 		//Start motors:
 		switch(direct) {
 			case LEFT:
+				//Set new robot orientation:
+				this.pos.calculateNewOrientation(angle);
+				//Activate motors:
 				this.motorRight.forward();
 				this.motorLeft.backward();
 				break;
 			case RIGHT:
+				//Set new robot orientation:
+				this.pos.calculateNewOrientation(-angle);
+				//Activate motors:
 				this.motorRight.backward();
 				this.motorLeft.forward();
 				break;
@@ -213,7 +242,7 @@ public class DefaultRobot {
 		Thread.sleep((long) (sec * 1000));
 		
 		//Stop motors:
-		this.stop();
+		this.stopWithoutDeterminePosition();
 	}
 	
 //##########################################################################################################################################
