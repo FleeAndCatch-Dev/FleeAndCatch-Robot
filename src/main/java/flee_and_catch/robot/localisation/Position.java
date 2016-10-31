@@ -10,17 +10,19 @@ public class Position {
 
 //### ATTRIBUTES ###########################################################################################################################
 	
-	double x;				//X-Coordinate of the Position!
-	double y;				//Y-Coordinate of the Position!
-	double orientation;		//Angle that represents the orientation!
+	private double x;				//X-Coordinate of the Position!
+	private double y;				//Y-Coordinate of the Position!
+	private double orientation;		//Angle that represents the orientation!
 	
-//### COMPONENTS ###########################################################################################################################
-
 //### CONSTRUCTORS #########################################################################################################################
 
+	public Position() {
+		this.x = 0.0;
+		this.y = 0.0;
+		this.orientation = 0.0;
+	}
+	
 //### INITIAL METHODS ######################################################################################################################
-
-//### INNER CLASSES ########################################################################################################################
 
 //### GETTER/SETTER ########################################################################################################################
 
