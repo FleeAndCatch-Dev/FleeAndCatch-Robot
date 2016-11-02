@@ -12,15 +12,24 @@ import flee_and_catch.robot.localisation.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 
-/* */
+/* DefaultRobot [Class]: Class that represents the default LEGO Mindstorms EV3 robot *//**
+ * 
+ * @author Manuel Bothner
+ *
+ */
 public class DefaultRobot {
 
 //### CONSTANTS ############################################################################################################################
 	
 	//Distance that a wheel move by a rotation of one degree (original: 0.476389f):
-	private static final float DISTANCE_DEGREE =   0.462389f;		//In millimeter!
+	private static final float DISTANCE_DEGREE =   0.476389f;		//In millimeter!
 	//Distance between the both (midpoints of the) wheels (original: 123.000000f):
 	private static final float DIAMETER_WHEELS = 120.000000f;		//In millimeter!
+	
+	//Adjustment parameter of the motor runtime for moving forward: 
+	private static final float ADJUST_SEC_MOVE =   1.00000f;	
+	//Adjustment parameter of the motor runtime for rotation on spot:
+	private static final float ADJUST_SEC_ROTATE = 1.00000f;
 	
 //### ATTRIBUTES ###########################################################################################################################
 	
@@ -28,6 +37,8 @@ public class DefaultRobot {
 	private Position pos;
 	//Represents the Speed of the speed of the robot:
 	private float speed;
+	//Represents the total distance that the robot covered:
+	private float totalDistance;
 	
 //### COMPONENTS ###########################################################################################################################
 	
@@ -39,20 +50,43 @@ public class DefaultRobot {
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
-	/* DefaultRobot [Constructor]: *//**
+	/* DefaultRobot [Constructor]: Initialize the position x=0, y=0, orientation=0 and the speed 50mm/s *//**
 	 * 
 	 */
 	public DefaultRobot() {
 		
 		//Initialize the attributes:
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
+		this.speed = 50.0f;					//Set speed to 50mm/s!
+		this.totalDistance = 0.0f;
+		
+		//Initialize the robot components:
+		this.initComponents();
+		
+	}
+	
+	/* DefaultRobot [Constructor]: Constructor to initialize the robot with a position and speed *//**
+	 * 
+	 * @param pos
+	 * @param speed
+	 */
+	public DefaultRobot(Position pos, float speed) {
+		
+		//Initialize the attributes:
+		this.pos = pos;						//x=0, y=0, orientation=0°!
+		this.speed = speed;					//Set speed to 50mm/s!
+		this.totalDistance = 0.0f;
+		
 		//Initialize the robot components:
 		this.initComponents();
 		
 	}
 	
 //### INITIAL METHODS ######################################################################################################################
-
+	
+	/* initComponents [Method]: Method that initialize the components (motors, sensors, etc.) of the robot *//**
+	 * 
+	 */
 	private void initComponents() {
 		
 		//Initial motors with standard ports:
@@ -60,8 +94,8 @@ public class DefaultRobot {
 		this.motorLeft  = new EV3MediumRegulatedMotor(MotorPort.B);
 		
 		//Set default values for speed (degrees/sec):
-		this.motorRight.setSpeed(180);
-		this.motorLeft.setSpeed(180);
+		this.motorRight.setSpeed(this.speed / DefaultRobot.DISTANCE_DEGREE);
+		this.motorLeft.setSpeed(this.speed / DefaultRobot.DISTANCE_DEGREE);
 		
 		//Reset the turn counter of the motors:
 		this.motorRight.resetTachoCount();
@@ -79,7 +113,9 @@ public class DefaultRobot {
 		
 		//Calculate the average of both rotation counters:
 		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
+		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
 		return degrees * DefaultRobot.DISTANCE_DEGREE;
+		
 	}
 	
 	/* resetLongitudinalDistance [Method]: Method that resets the rotation counters of the motors *//**
@@ -98,14 +134,13 @@ public class DefaultRobot {
 	 */
 	private void determinePosition() {
 		
-		float longitudinalDistance = this.getLongitudinalDistance();
+		//Add current longitudinal distance to the total distance:
+		this.totalDistance += this.getLongitudinalDistance();
 		
-		float x = (float) Math.cos(this.pos.getOrientation()) * longitudinalDistance;
-		float y = (float) Math.sin(this.pos.getOrientation()) * longitudinalDistance;
+		//Calculate the new position of the robot:
+		this.pos.calculateNewPosition(this.getLongitudinalDistance());
 		
-		this.pos.setX(x);
-		this.pos.setY(y);
-		
+		//Reset the rotation counters:
 		this.resetLongitudinalDistance();
 	}
 	
@@ -114,8 +149,12 @@ public class DefaultRobot {
 	 * necessary when robot rotates on the spot!
 	 */
 	private void stopWithoutDeterminePosition() {
+		
+		//Stop motors:
 		this.motorRight.stop();
 		this.motorLeft.stop();
+		//Reset the detected rotation of the rotation counter:
+		this.resetLongitudinalDistance();
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
@@ -152,6 +191,14 @@ public class DefaultRobot {
 		
 	}
 	
+	/* getTotalDistance [Method]: Returns the total distance that the robot moved *//**
+	 * 
+	 * @return
+	 */
+	public float getTotalDistance() {
+		return this.totalDistance;
+	}
+	
 //### PUBLIC METHODS #######################################################################################################################
 	
 	/* isMoving [Method]: Method that tells whether the robot is moving *//**
@@ -170,7 +217,8 @@ public class DefaultRobot {
 	public void stop() {
 		
 		//Stop the robot:
-		this.stopWithoutDeterminePosition();
+		this.motorRight.stop();
+		this.motorLeft.stop();
 		//Determine the (new) current position:
 		this.determinePosition();
 		
@@ -186,15 +234,22 @@ public class DefaultRobot {
 	
 	}
 	
-	
+	/* move [Method]: Method to let the robot move a distance forward *//**
+	 * 
+	 * @param distance
+	 * @throws InterruptedException
+	 */
  	public void move(float distance) throws InterruptedException {
 		
 		//Calculate the time in seconds that the motors must move:
 		float sec = distance / this.getSpeed();
+		
 		//Let robot move forward:
 		this.move();
+		
 		//Wait time to move the distance:
-		Thread.sleep((long) (sec * 1000));
+		Thread.sleep((long) (sec * DefaultRobot.ADJUST_SEC_MOVE * 1000));
+		
 		//Stop motors:
 		this.stop();
 		
@@ -239,7 +294,7 @@ public class DefaultRobot {
 				break;
 		}
 		
-		Thread.sleep((long) (sec * 1000));
+		Thread.sleep((long) (sec * DefaultRobot.ADJUST_SEC_ROTATE * 1000));
 		
 		//Stop motors:
 		this.stopWithoutDeterminePosition();
