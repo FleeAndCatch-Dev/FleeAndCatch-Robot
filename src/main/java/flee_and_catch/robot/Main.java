@@ -2,7 +2,15 @@
 
 package flee_and_catch.robot;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
+
 import flee_and_catch.robot.client.Client;
+import flee_and_catch.robot.client.json.JSONObject;
+import lejos.hardware.Button;
+import lejos.hardware.ev3.EV3;
+import lejos.internal.ev3.EV3Key;
+import lejos.internal.ev3.EV3Keys;
 //### IMPORTS ##############################################################################################################################
 //import flee_and_catch.robot.controller.RobotController;
 
@@ -29,7 +37,24 @@ public class Main {
 		*/
 		
 		Client client = new Client();
-		client.connect();
+		try {
+			client.connect();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Button.ESCAPE.waitForPressAndRelease();
+		
+		try {
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//try {		
 		//JSONObject jsonObject = new JSONObject();
