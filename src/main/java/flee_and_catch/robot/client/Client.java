@@ -134,9 +134,7 @@ public class Client {
 					id = jsonObject.getInt("id");
 				}
 				else if(Objects.equals(jsonObject.getString("type"), "GetType")) {
-					String jsonString = "{\"id\":\"Connect\",\"type\":\"SetType\",\"apiid\":\"@@fleeandcatch@@\",\"errorhandling\":\"ignoreerrors\",\"client\":{\"id\":" + id + ",\"type\":" + 1 + "}}";
-					JSONObject jsonObject2 = new JSONObject(jsonString);
-					sendCommand(jsonString);
+					String jsonString = "{\"id\":\"Connection\",\"type\":\"SetType\",\"apiid\":\"@@fleeandcatch@@\",\"errorhandling\":\"ignoreerrors\",\"client\":{\"id\":" + id + ",\"type\":" + 1 + "}}";
 					sendCommand(jsonString);
 				}
 			}
@@ -157,7 +155,18 @@ public class Client {
 	 * @author ThunderSL94
 	 */
 	public void sendCommand(String pCommand) throws IOException {
-		outputStream.writeInt(pCommand.length());
+		/*byte[] value = new byte[4];
+		int rest = 0;
+		int quotient = pCommand.length();
+		
+		for(int i=0; i<value.length; i++) {
+			rest = (int) (quotient % (Math.pow(256, value.length - (i + 1))));
+			quotient = (int) (quotient / (Math.pow(256, value.length - (i + 1))));		
+			
+			value[value.length - (i + 1)] = (byte) rest;
+		}*/
+		
+		outputStream.write(pCommand.length());
 		outputStream.flush();
 		
 		outputStream.writeBytes(pCommand);
