@@ -4,7 +4,8 @@
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.lejos.ev3.ldt.LEJOS_EV3_LIBRARY_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/[2] study/[2] DHBW/[5] 5. Semester [WS1617]/[7] Studienarbeit/Tools/libs/EV3JLibA/lib/EV3JLibA.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="res/main/lib/EV3JLibA.jar"/>
+	<classpathentry kind="lib" path="res/main/lib/json-simple-1.1.jar"/>
 	<classpathentry kind="output" path="target/"/>
 </classpath>

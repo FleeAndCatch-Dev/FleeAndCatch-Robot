@@ -22,9 +22,11 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		
 		//Create a controller for a (default robot):
-		RobotController rc = new RobotController();
+		RobotController rc = new RobotController(null, null);
+		
 		//Run a test:
-		rc.testRun();
+		//rc.testRun1();
+		//rc.runRandom();
 		
 	}
 

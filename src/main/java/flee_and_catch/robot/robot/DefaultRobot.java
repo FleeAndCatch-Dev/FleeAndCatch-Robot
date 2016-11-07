@@ -17,7 +17,7 @@ import lejos.hardware.port.MotorPort;
  * @author Manuel Bothner
  *
  */
-public class DefaultRobot {
+public class DefaultRobot implements Robot {
 
 //### CONSTANTS ############################################################################################################################
 	
@@ -46,7 +46,6 @@ public class DefaultRobot {
 	private EV3MediumRegulatedMotor motorRight;
 	//Motor that driving the left wheel:
 	private EV3MediumRegulatedMotor motorLeft;
-	
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
@@ -164,7 +163,17 @@ public class DefaultRobot {
 	 * @return
 	 */
 	public Position getPosition() {
-		return this.pos;
+		
+		//Duplicate the saved (old) position of the robot:
+		Position curPos = new Position();
+		curPos.setX(this.pos.getX());
+		curPos.setY(this.pos.getY());
+		curPos.setOrientation(this.pos.getOrientation());
+		//Calculate the current position of the robot:
+		curPos.calculateNewPosition(this.getLongitudinalDistance());
+		//Return the current position of the robot:
+		return curPos;
+		
 	}
 	
 	/* getSpeed [Method]: Returns the current speed of the robot in millimeter per second *//**
@@ -196,7 +205,8 @@ public class DefaultRobot {
 	 * @return
 	 */
 	public float getTotalDistance() {
-		return this.totalDistance;
+		//Current total distance = (old) saved total distance + current longitudinal distance:
+		return this.totalDistance + this.getLongitudinalDistance();
 	}
 	
 //### PUBLIC METHODS #######################################################################################################################
@@ -298,6 +308,23 @@ public class DefaultRobot {
 		
 		//Stop motors:
 		this.stopWithoutDeterminePosition();
+	}
+	
+	/* rotate [Method]: Method to rotate the robot around this vertical axis *//**
+	 * 
+	 * @param angle
+	 * @throws InterruptedException 
+	 */
+	public void rotate(float angle) throws InterruptedException {
+		
+		if(angle < 0) {
+			angle *= -1;
+			this.rotate(Direction.RIGHT, angle);
+		}
+		else {
+			this.rotate(Direction.LEFT, angle);
+		}
+		
 	}
 	
 //##########################################################################################################################################

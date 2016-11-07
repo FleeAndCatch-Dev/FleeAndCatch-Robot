@@ -3,8 +3,12 @@
 package flee_and_catch.robot.controller;
 
 //### IMPORTS ##############################################################################################################################
+import org.json.simple.JSONObject;
 import flee_and_catch.robot.localisation.Direction;
+import flee_and_catch.robot.localisation.PlayingField;
+import flee_and_catch.robot.localisation.Position;
 import flee_and_catch.robot.robot.DefaultRobot;
+import flee_and_catch.robot.robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 
@@ -12,30 +16,157 @@ import lejos.hardware.lcd.LCD;
 public class RobotController {
 	
 //### ATTRIBUTES ###########################################################################################################################
-
+	
+	//Represents the robot that is controlled:
+	private Robot robot;
+	//Represents the playing field in that the robot moves:
+	private PlayingField field;
+	
 //### CONSTRUCTORS #########################################################################################################################
 	
-	/* RobotController [Constructor]: *//**
+	/* RobotController [Constructor]: Initialize the controller with a robot and a playing field *//**
 	 * 
 	 */
-	public RobotController() {
+	public RobotController(Robot robot, PlayingField field) {
+		
+		//this.robot = robot;
+		//this.field = field;
 		
 	}
 	
 //### METHODS ##############################################################################################################################
-	
-	/* runRandom [Method]: Method that let the robot move randomly *//**
+
+	/* getRobotData [Method]: Returns different parameters of the robot in a JSON-object *//**
 	 * 
+	 * @return
 	 */
- 	public void runRandom() {
+	public JSONObject getRobotData() {
+
+		JSONObject robotData = new JSONObject();
+		
+		//robotData.put("posX", this.robot.)
+		
+		return robotData;
 		
 	}
+
+	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
+	 * 
+	 */
+	public void runRandomEasy() {
+		
+		LCD.drawString("runRandomEasy() - Start", 0, 0);
 	
-	/* testRun [Method]: Method to test some stuff *//**
+	}
+	
+	/* runRandom [Method]: Method that let the robot move randomly *//**
+	 * @throws InterruptedException 
+	 * 
+	 */
+ 	public void runRandom() throws InterruptedException {
+		
+ 		LCD.drawString("runRandom() - Start", 0, 0);
+ 		
+ 		Position posStart = new Position(575, 550, 0);
+ 		
+ 		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
+		DefaultRobot robot = new DefaultRobot(posStart, 150.0f);		//Initialize a new Robot!
+		
+		//Size: width=2000mm, height=2000mm
+		PlayingField field = new PlayingField(1150, 1100);				//Initialize a new PlayingField!
+ 		
+		//Minimal distance that the robot must move before turn:
+		float minDistance = 100.0f;		//10cm
+		//Maximal distance that the robot can move before turn:
+		float maxDistance = 400.0f;		//40cm
+		//Probability for turn:
+		float probability = 15.0f;		//25%
+		//Minimal time between two shifts in direction:
+		float time        = 500.0f;	 	//500ms
+		//Start angle:
+		float startAngle  = -150.0f;	//-150°
+		//End angle:
+		float endAngle    = 150.0f;		//150°
+		
+		//Helping variables:
+		int counter = 0;
+		//Save the last totalDistance value:
+		float savedDistance = 0.0f;
+		
+		//Start robot to move:
+		robot.move();
+		
+		//Run robot until it has a covered a specific distance:
+ 		while(robot.getTotalDistance() < 3500) {
+ 			
+ 			Position pos = robot.getPosition();
+ 			
+ 			//Check if robot currently out of the playing field:
+ 			if(!field.isIn(pos)) {
+ 				
+ 				//Make a turn:
+ 				robot.rotate(Direction.LEFT, 180);		//180° turn!
+ 				//Buffer so that the robot get back in the field until the next check:
+ 				robot.move(50);							//Move 50mm forward!
+ 				//Let the robot still move:
+ 				robot.move();
+ 				
+ 			}
+ 			//Is the robot in the field and check time is reached:
+ 			else if(counter >= time / 25) {
+ 				
+ 				float distance = robot.getTotalDistance() - savedDistance;
+ 				
+ 				//If a turn is possible:
+ 				if(distance >= minDistance && distance <= maxDistance) {
+ 					
+ 					int rand = (int)(Math.random() * 100) + 1;
+ 					
+ 					if(rand <= probability) {
+ 						
+ 						int angle = (int) ((int)(Math.random() * (endAngle - startAngle)) + startAngle);	//Angle between 30° and 150°
+ 						robot.rotate(angle);
+ 						savedDistance = robot.getTotalDistance();
+ 						robot.move();
+ 					}
+ 				}
+ 				//If a turn is required:
+ 				else if(distance > maxDistance) {
+ 					
+ 					int angle = (int) ((int)(Math.random() * (endAngle - startAngle)) + startAngle);	//Angle between 30° and 150°
+					robot.rotate(angle);
+					robot.move();
+					savedDistance = robot.getTotalDistance();
+ 				}
+ 				//If no turn is allowed:
+ 				//... do nothing!
+ 				counter = 0;
+ 			}
+ 			
+ 			counter++;
+ 			
+ 			//Print information:
+ 			LCD.drawString("x: " + pos.getX(), 0, 1);
+ 			LCD.drawString("y: " + pos.getY(), 0, 2);
+ 			LCD.drawString("o: " + pos.getOrientation(), 0, 3);
+ 			LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
+ 			
+ 			//Wait 25ms:
+ 			Thread.sleep(25);
+ 		}
+ 		
+ 		robot.stop();
+ 		
+		/*Wait for any key to be pressed*/ 
+		LCD.drawString("Press btn to exit!", 0, 7); 
+		Button.waitForAnyPress(); 
+	}
+
+	/* testRun1 [Method]: Temporary method to test some stuff *//**
 	 * 
 	 * @throws InterruptedException
 	 */
-	public void testRun() throws InterruptedException {
+	public void testRun1() throws InterruptedException {
 		
 		LCD.drawString("testRun() - Start", 0, 0);
 		
@@ -132,6 +263,49 @@ public class RobotController {
 		Button.waitForAnyPress(); 
 	}
 
+	/* testRun2 [Method]: Temporary method to test some stuff *//**
+	 * 
+	 * @throws InterruptedException
+	 */
+	public void testRun2() throws InterruptedException {
+		
+ 		LCD.drawString("testRun2() - Start", 0, 0);
+ 		
+ 		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
+		DefaultRobot robot = new DefaultRobot(new Position(), 80.0f);		//Initialize a new Robot!
+		
+		//Size: width=2000mm, height=2000mm
+		//PlayingField field = new PlayingField(2000, 2000);					//Initialize a new PlayingField!
+		
+		robot.move();
+		
+		//Run robot until it has a covered a specific distance:
+ 		while(robot.getTotalDistance() < 2000) {
+ 			
+ 			Position pos = robot.getPosition();
+ 			
+			//Print information:
+			LCD.drawString("x: " + pos.getX(), 0, 1);
+			LCD.drawString("y: " + pos.getY(), 0, 2);
+			LCD.drawString("o: " + pos.getOrientation(), 0, 3);
+			LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
+			
+			//Wait 25ms:
+			Thread.sleep(25);
+		
+ 		}
+		
+ 		robot.stop();
+ 		
+		LCD.drawString("testRun2() - Finished", 0, 0);
+		
+		/*Wait for any key to be pressed*/ 
+		LCD.drawString("Press btn to exit!", 0, 7); 
+		Button.waitForAnyPress(); 
+		
+		
+	}
+	
 //##########################################################################################################################################
 }
 //### EOF ##################################################################################################################################
