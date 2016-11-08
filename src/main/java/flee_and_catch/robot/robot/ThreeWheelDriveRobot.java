@@ -17,7 +17,7 @@ import lejos.hardware.port.MotorPort;
  * @author Manuel Bothner
  *
  */
-public class DefaultRobot implements Robot {
+public class ThreeWheelDriveRobot implements Robot {
 
 //### CONSTANTS ############################################################################################################################
 	
@@ -52,7 +52,7 @@ public class DefaultRobot implements Robot {
 	/* DefaultRobot [Constructor]: Initialize the position x=0, y=0, orientation=0 and the speed 50mm/s *//**
 	 * 
 	 */
-	public DefaultRobot() {
+	public ThreeWheelDriveRobot() {
 		
 		//Initialize the attributes:
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
@@ -69,7 +69,7 @@ public class DefaultRobot implements Robot {
 	 * @param pos
 	 * @param speed
 	 */
-	public DefaultRobot(Position pos, float speed) {
+	public ThreeWheelDriveRobot(Position pos, float speed) {
 		
 		//Initialize the attributes:
 		this.pos = pos;						//x=0, y=0, orientation=0°!
@@ -93,8 +93,8 @@ public class DefaultRobot implements Robot {
 		this.motorLeft  = new EV3MediumRegulatedMotor(MotorPort.B);
 		
 		//Set default values for speed (degrees/sec):
-		this.motorRight.setSpeed(this.speed / DefaultRobot.DISTANCE_DEGREE);
-		this.motorLeft.setSpeed(this.speed / DefaultRobot.DISTANCE_DEGREE);
+		this.motorRight.setSpeed(this.speed / ThreeWheelDriveRobot.DISTANCE_DEGREE);
+		this.motorLeft.setSpeed(this.speed / ThreeWheelDriveRobot.DISTANCE_DEGREE);
 		
 		//Reset the turn counter of the motors:
 		this.motorRight.resetTachoCount();
@@ -113,7 +113,7 @@ public class DefaultRobot implements Robot {
 		//Calculate the average of both rotation counters:
 		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
 		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
-		return degrees * DefaultRobot.DISTANCE_DEGREE;
+		return degrees * ThreeWheelDriveRobot.DISTANCE_DEGREE;
 		
 	}
 	
@@ -193,7 +193,7 @@ public class DefaultRobot implements Robot {
 		this.speed = speed;
 		
 		//Convert speed in milli/sec to degrees/sec:
-		float degrees = speed / DefaultRobot.DISTANCE_DEGREE;
+		float degrees = speed / ThreeWheelDriveRobot.DISTANCE_DEGREE;
 		//Set the rotation speed (degrees/sec) of the both motors:
 		this.motorRight.setSpeed(degrees);
 		this.motorLeft.setSpeed(degrees);
@@ -258,7 +258,7 @@ public class DefaultRobot implements Robot {
 		this.move();
 		
 		//Wait time to move the distance:
-		Thread.sleep((long) (sec * DefaultRobot.ADJUST_SEC_MOVE * 1000));
+		Thread.sleep((long) (sec * ThreeWheelDriveRobot.ADJUST_SEC_MOVE * 1000));
 		
 		//Stop motors:
 		this.stop();
@@ -279,7 +279,7 @@ public class DefaultRobot implements Robot {
 		if(this.isMoving()) { this.stop(); }
 		
 		//Calculate the length of the circular sector:
-		float circular_sektor = (float) (DefaultRobot.DIAMETER_WHEELS * Math.PI * (angle / 360));
+		float circular_sektor = (float) (ThreeWheelDriveRobot.DIAMETER_WHEELS * Math.PI * (angle / 360));
 		//Calculate the time in seconds that the motors must move:
 		float sec = circular_sektor / this.getSpeed();
 		
@@ -304,7 +304,7 @@ public class DefaultRobot implements Robot {
 				break;
 		}
 		
-		Thread.sleep((long) (sec * DefaultRobot.ADJUST_SEC_ROTATE * 1000));
+		Thread.sleep((long) (sec * ThreeWheelDriveRobot.ADJUST_SEC_ROTATE * 1000));
 		
 		//Stop motors:
 		this.stopWithoutDeterminePosition();

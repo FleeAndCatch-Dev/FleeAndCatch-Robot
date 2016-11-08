@@ -1,4 +1,4 @@
-package flee_and_catch.robot.client.json.util;
+package flee_and_catch.robot.communication.json.util;
 
 import java.util.Enumeration;
 import java.util.List;

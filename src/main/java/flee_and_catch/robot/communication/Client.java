@@ -1,4 +1,4 @@
-package flee_and_catch.robot.client;
+package flee_and_catch.robot.communication;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -7,12 +7,10 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import org.freedesktop.dbus.test.test;
-
 import com.sun.org.apache.bcel.internal.util.Objects;
 
-import flee_and_catch.robot.client.json.JSONException;
-import flee_and_catch.robot.client.json.JSONObject;
+import flee_and_catch.robot.communication.json.JSONException;
+import flee_and_catch.robot.communication.json.JSONObject;
 
 public class Client {
 

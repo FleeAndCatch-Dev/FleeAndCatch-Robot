@@ -1,4 +1,4 @@
-package flee_and_catch.robot.client.json;
+package flee_and_catch.robot.communication.json;
 
 /**
  * The <code>JSONString</code> interface allows a <code>toJSONString()</code> 

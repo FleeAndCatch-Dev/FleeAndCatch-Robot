@@ -1,4 +1,4 @@
-package flee_and_catch.robot.client.json;
+package flee_and_catch.robot.communication.json;
 
 /**
  * The JSONException is thrown by the JSON.org classes then things are amiss.

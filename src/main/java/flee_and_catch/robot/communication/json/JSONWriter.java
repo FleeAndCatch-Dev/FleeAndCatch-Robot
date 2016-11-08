@@ -1,4 +1,4 @@
-package flee_and_catch.robot.client.json;
+package flee_and_catch.robot.communication.json;
 
 import java.io.IOException;
 import java.io.Writer;
