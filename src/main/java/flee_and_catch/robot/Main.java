@@ -2,17 +2,7 @@
 
 package flee_and_catch.robot;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import flee_and_catch.robot.client.Client;
-import flee_and_catch.robot.client.json.JSONObject;
-import lejos.hardware.Button;
-import lejos.hardware.ev3.EV3;
-import lejos.internal.ev3.EV3Key;
-import lejos.internal.ev3.EV3Keys;
 //### IMPORTS ##############################################################################################################################
-//import flee_and_catch.robot.controller.RobotController;
 
 /* Main [Class]: Main class of the application *//**
  * 
@@ -36,6 +26,7 @@ public class Main {
 		//Run a test:
 		//rc.testRun1();
 		//rc.runRandom();
+		 */
 	}
 
 //##########################################################################################################################################	
