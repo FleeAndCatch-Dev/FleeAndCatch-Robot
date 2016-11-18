@@ -1,4 +1,4 @@
-package flee_and_catch.robot.communication.json.util;
+package json.util;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

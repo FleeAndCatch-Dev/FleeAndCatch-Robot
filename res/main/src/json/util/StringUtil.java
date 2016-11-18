@@ -1,4 +1,4 @@
-package flee_and_catch.robot.communication.json.util;
+package json.util;
 
 public class StringUtil {
 	public static boolean endsWith(String str, String trailingStr) {

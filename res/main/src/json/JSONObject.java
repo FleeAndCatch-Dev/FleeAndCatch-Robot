@@ -1,4 +1,4 @@
-package flee_and_catch.robot.communication.json;
+package json;
 
 /*
 Copyright (c) 2002 JSON.org
@@ -29,7 +29,9 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import flee_and_catch.robot.communication.json.util.*;
+import json.util.SimpleListsMap;
+import json.util.Map;
+import json.util.StringUtil;
 
 /**
  * A JSONObject is an unordered collection of name/value pairs. Its

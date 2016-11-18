@@ -1,4 +1,4 @@
-package flee_and_catch.robot.communication.json;
+package json;
 
 /*
 Copyright (c) 2006 JSON.org

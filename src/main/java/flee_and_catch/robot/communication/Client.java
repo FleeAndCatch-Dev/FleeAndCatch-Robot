@@ -9,8 +9,8 @@ import java.net.UnknownHostException;
 
 import com.sun.org.apache.bcel.internal.util.Objects;
 
-import flee_and_catch.robot.communication.json.JSONException;
-import flee_and_catch.robot.communication.json.JSONObject;
+import json.JSONException;
+import json.JSONObject;
 
 public class Client {
 

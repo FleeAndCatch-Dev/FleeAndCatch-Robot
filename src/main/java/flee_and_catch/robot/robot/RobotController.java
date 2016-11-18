@@ -1,9 +1,9 @@
 //### RobotController.java #################################################################################################################
 
-package flee_and_catch.robot.controller;
+package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
-import org.json.simple.JSONObject;
+import json.JSONObject;
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.localisation.Position;

@@ -184,6 +184,15 @@ public class ThreeWheelDriveRobot implements Robot {
 		return this.speed;
 	}
 	
+	/* getTotalDistance [Method]: Returns the total distance that the robot moved *//**
+	 * 
+	 * @return
+	 */
+	public float getTotalDistance() {
+		//Current total distance = (old) saved total distance + current longitudinal distance:
+		return this.totalDistance + this.getLongitudinalDistance();
+	}
+	
 	/* setSpeed [Method]: Method to set the speed of the robot in millimeter per second *//**
 	 * 
 	 */
@@ -198,15 +207,6 @@ public class ThreeWheelDriveRobot implements Robot {
 		this.motorRight.setSpeed(degrees);
 		this.motorLeft.setSpeed(degrees);
 		
-	}
-	
-	/* getTotalDistance [Method]: Returns the total distance that the robot moved *//**
-	 * 
-	 * @return
-	 */
-	public float getTotalDistance() {
-		//Current total distance = (old) saved total distance + current longitudinal distance:
-		return this.totalDistance + this.getLongitudinalDistance();
 	}
 	
 //### PUBLIC METHODS #######################################################################################################################
