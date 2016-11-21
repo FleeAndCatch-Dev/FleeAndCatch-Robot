@@ -6,21 +6,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-
-import com.sun.xml.internal.ws.util.StringUtils;
 
 import flee_and_catch.robot.communication.exceptions.ConnectServer;
 import flee_and_catch.robot.communication.exceptions.ParseCommand;
 import flee_and_catch.robot.communication.json.JSONException;
 import flee_and_catch.robot.communication.json.JSONObject;
-import sun.awt.CharsetString;
-import sun.nio.cs.StandardCharsets;
-import sun.security.util.UntrustedCertificates;
 
 public class Client {
 	
 	private Socket socket;
+	private BufferedReader reader;
+	private DataOutputStream outputStream;
 	private boolean opened;
 	private int id;
 	
@@ -48,6 +44,9 @@ public class Client {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (ConnectServer e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -80,6 +79,9 @@ public class Client {
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (ConnectServer e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			});
@@ -110,6 +112,9 @@ public class Client {
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (ConnectServer e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
 			});
@@ -119,21 +124,21 @@ public class Client {
 		throw new ConnectServer();
 	}
 	
-	private void listen() throws IOException, NumberFormatException, ParseCommand, JSONException{
-		BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+	private void listen() throws IOException, NumberFormatException, ParseCommand, JSONException, ConnectServer{
+		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+		outputStream = new DataOutputStream(socket.getOutputStream());
 		
 		Interpreter interpreter = new Interpreter(this);
-		this.id = Integer.valueOf(interpreter.interpret(receiveCmd(reader), outputStream));
+		this.id = Integer.valueOf(interpreter.interpret(receiveCmd(reader)));
 		this.opened = true;
 		
 		while(opened){
 			String command = receiveCmd(reader);
-			interpreter.interpret(command, outputStream);
+			interpreter.interpret(command);
 		}
 	}
 	
-	private String receiveCmd(BufferedReader pBufferedReader) throws IOException{
+	private String receiveCmd(BufferedReader pBufferedReader) throws IOException, JSONException, ConnectServer{
 		char[] value = new char[4];
 		int result = pBufferedReader.read(value);	
 		
@@ -158,30 +163,45 @@ public class Client {
 		}
 	}
 	
-	public void sendCmd(DataOutputStream pOutputStream, String pCommand) throws IOException, JSONException{
-		checkCmd(pCommand);
-		
-		byte[] size = new byte[4];
-		int rest = pCommand.length();
-		for(int i=0; i<size.length; i++){
-			size[size.length - (i + 1)] = (byte) (rest / Math.pow(128, size.length - (i + 1)));
-			rest = (int) (rest % Math.pow(128, size.length - (i + 1)));
-		}
+	public void sendCmd(String pCommand) throws IOException, JSONException, ConnectServer{
+		if(opened){
+			checkCmd(pCommand);
+			
+			byte[] size = new byte[4];
+			int rest = pCommand.length();
+			for(int i=0; i<size.length; i++){
+				size[size.length - (i + 1)] = (byte) (rest / Math.pow(128, size.length - (i + 1)));
+				rest = (int) (rest % Math.pow(128, size.length - (i + 1)));
+			}
 
-		pOutputStream.write(size);
-		pOutputStream.flush();
-		
-		pOutputStream.write(pCommand.getBytes());
-		pOutputStream.flush();
+			outputStream.write(size);
+			outputStream.flush();
+			
+			outputStream.write(pCommand.getBytes());
+			outputStream.flush();
+			return;
+		}
+		throw new ConnectServer();
 	}
 	
-	public void close() throws IOException{
+	public void disconnect() throws IOException{
+		this.reader.close();
+		this.outputStream.close();
 		this.opened = false;
-		socket.close();
+		this.socket.close();
 	}
 	
-	private void checkCmd(String pCommand) throws JSONException{
+	public void close() throws IOException, JSONException, ConnectServer{
+		if(this.opened){
+			sendCmd("{\"id\":\"Client\",\"type\":\"Disconnect\",\"apiid\":\"@@fleeandcatch@@\",\"errorhandling\":\"ignoreerrors\",\"client\":{\"id\":" + id + ",\"type\":\"" + "ThreeWheelRobot" + "\"}}");
+			return;
+		}
+		throw new ConnectServer();
+	}
+	
+	private JSONObject checkCmd(String pCommand) throws JSONException{
 		JSONObject jsonObject = new JSONObject(pCommand);
+		return jsonObject;
 	}
 	
 	public boolean isOpened() {
