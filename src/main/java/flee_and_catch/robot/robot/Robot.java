@@ -11,18 +11,22 @@ import flee_and_catch.robot.localisation.Position;
  *
  */
 public interface Robot {
-
-	int x = 0;
+	
 //### GETTER/SETTER ########################################################################################################################
-		
+	
+	
 	Position getPosition();
+	
 	
 	float getSpeed();
 	
+	
 	boolean isMoving();
+	
 	
 	void setSpeed(float speed);
 
+	
 //### PUBLIC METHODS #######################################################################################################################
 		
 	void rotate(float angle) throws InterruptedException;
