@@ -3,7 +3,7 @@
 package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
-import json.JSONObject;
+import org.json.JSONObject;
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.localisation.Position;

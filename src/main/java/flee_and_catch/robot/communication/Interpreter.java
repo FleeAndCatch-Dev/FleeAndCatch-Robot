@@ -1,54 +1,50 @@
 package flee_and_catch.robot.communication;
 
-import java.io.IOException;
-import com.sun.org.apache.bcel.internal.util.Objects;
+import java.util.Objects;
+import org.json.JSONObject;
+import com.google.gson.Gson;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.connection.Client;
+import flee_and_catch.robot.communication.command.connection.Connection;
+import flee_and_catch.robot.communication.command.connection.ConnectionType;
 
-import flee_and_catch.robot.communication.exceptions.ConnectServer;
-import flee_and_catch.robot.communication.exceptions.ParseCommand;
-import flee_and_catch.robot.communication.json.JSONException;
-import flee_and_catch.robot.communication.json.JSONObject;
+public final class Interpreter {
 
-public class Interpreter {
-
-	private Client client;
+	private static Gson gson = new Gson();
 	
-	public Interpreter(Client pClient){
-		this.client = pClient;
+	public static void parse(String pCommand) throws Exception {
+		JSONObject jsonCommand = new JSONObject(pCommand);
+		if(!Objects.equals((String) jsonCommand.get("apiid"), "@@fleeandcatch@@"))
+			throw new Exception("Wrong apiid of json command");		
+		CommandType.Type id = CommandType.Type.valueOf((String) jsonCommand.get("id"));
+		
+		switch(id){
+			case Connection:
+				connection(jsonCommand);
+				return;
+			default:
+				throw new Exception("Argument out of range");
+		}			
 	}
-	
-	public String interpret(String pCommand) throws ParseCommand, JSONException, IOException, ConnectServer{
-		JSONObject jsonObject = new JSONObject(pCommand);
-		if(Objects.equals((String) jsonObject.get("apiid"), "@@fleeandcatch@@")){
-			char[] typeArray = ((String) jsonObject.get("type")).toCharArray();
-			String typeCmd = String.valueOf(typeArray, 0, 3);
-			if(Objects.equals("Get", typeCmd)){
-				String id = Character.toLowerCase(((String) jsonObject.get("id")).toCharArray()[0]) + ((String) jsonObject.get("id")).substring(1);
-				if(Objects.equals("client", id)){				
-					String type = Character.toLowerCase(String.valueOf(typeArray, 3, typeArray.length - 3).toCharArray()[0]) + String.valueOf(typeArray, 3, typeArray.length - 3).substring(1);
-					if(Objects.equals("type", type)){
-						client.sendCmd("{\"id\":\"Client\",\"type\":\"SetType\",\"apiid\":\"@@fleeandcatch@@\",\"errorhandling\":\"ignoreerrors\",\"client\":{\"id\":" + String.valueOf(client.getId()) + ",\"type\":\"ThreeWheelDriveRobot\"}}");
-						return null;
-					}
-				}
-			}
-			else if(Objects.equals("Set", typeCmd)){
-				String id = Character.toLowerCase(((String) jsonObject.get("id")).toCharArray()[0]) + ((String) jsonObject.get("id")).substring(1);
-				if(Objects.equals("client", id)){
-					jsonObject = (JSONObject) jsonObject.get(id);					
-					String type = Character.toLowerCase(String.valueOf(typeArray, 3, typeArray.length - 3).toCharArray()[0]) + String.valueOf(typeArray, 3, typeArray.length - 3).substring(1);
-					if(Objects.equals("id", type)){
-						return String.valueOf(jsonObject.get(type));
-					}
-				}	
-			}
-			else if(Objects.equals("Disconnect", new String(typeArray))){
-				String id = Character.toLowerCase(((String) jsonObject.get("id")).toCharArray()[0]) + ((String) jsonObject.get("id")).substring(1);
-				if(Objects.equals("client", id)){
-					client.disconnect();
-					return null;
-				}
-			}
-		}		
-		throw new ParseCommand();
+
+	private static void connection(JSONObject pCommand) throws Exception {
+		if(pCommand == null) throw new NullPointerException();
+		ConnectionType.Type type = ConnectionType.Type.valueOf((String) pCommand.get("type"));
+		Connection command = gson.fromJson(pCommand.toString(), Connection.class);
+		
+		switch(type){
+			case SetId:
+				flee_and_catch.robot.communication.Client.setId(command.getClient().getId());
+				return;
+			case GetType:
+				Connection cmd = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.SetType.toString(), new Client(flee_and_catch.robot.communication.Client.getId(), flee_and_catch.robot.communication.Client.getType(), flee_and_catch.robot.communication.Client.getSubtype()));
+				flee_and_catch.robot.communication.Client.sendCmd(cmd.GetCommand());
+				return;
+			case Disconnect:
+				flee_and_catch.robot.communication.Client.disconnect();
+				return;
+			default:
+				throw new Exception("Argument out of range");
+		}
 	}
 }
