@@ -26,6 +26,14 @@ public final class Client {
 	private static String type = Type.Robot.toString();
 	private static String subtype = "ThreeWheelDrive";
 	
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void connect() throws Exception{
 		if(!connected){
 			address = Default.address;
@@ -36,6 +44,15 @@ public final class Client {
 		throw new Exception("Connection to server exist");
 	}
 	
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @param pAddress Ip address for communication.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void connect(String pAddress) throws Exception{
 		if(!connected){
 			address = pAddress;
@@ -46,6 +63,16 @@ public final class Client {
 		throw new Exception("Connection to server exist");
 	}
 	
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @param pAddress Ip address for communication.
+	 * @param pPort port for communication.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void connect(String pAddress, int pPort) throws Exception{
 		if(!connected){
 			address = pAddress;
@@ -56,6 +83,15 @@ public final class Client {
 		throw new Exception("Connection to server exist");
 	}
 	
+	/**
+	 * <h1>Start connection</h1>
+	 * Start connection to the server an opens it in a new thread.
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 * 
+	 * @author ThunderSL94
+	 */
 	private static void startConnection() throws UnknownHostException, IOException{
 		socket = new Socket(address, port);
 		Thread listenerThread = new Thread(new Runnable() {
@@ -72,6 +108,14 @@ public final class Client {
 		listenerThread.start();
 	}
 
+	/**
+	 * <h1>Listen</h1>
+	 * Listen to the socket for new commands.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	private static void listen() throws Exception {
 		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outputStream = new DataOutputStream(socket.getOutputStream());
@@ -82,6 +126,15 @@ public final class Client {
 		}
 	}
 	
+	/**
+	 * <h1>Receive command</h1>
+	 * Receive json command as string from the server.
+	 * 
+	 * @return Command as string.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	private static String receiveCmd() throws Exception{
 		char[] value = new char[4];
 		int result = bufferedReader.read(value);	
@@ -107,6 +160,15 @@ public final class Client {
 		}
 	}
 
+	/**
+	 * <h1>Send command</h1>
+	 * Send json command to server.
+	 * 
+	 * @param pCommand Command as json string.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void sendCmd(String pCommand) throws Exception{
 		if(connected){
 			checkCmd(pCommand);
@@ -128,6 +190,14 @@ public final class Client {
 		throw new Exception("Send of new command failed");
 	}
 	
+	/**
+	 * <h1>Disconnect</h1>
+	 * Disconnect the client from server and close all resources.
+	 * 
+	 * @throws IOException
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void disconnect() throws IOException{
 		bufferedReader.close();
 		outputStream.close();
@@ -135,6 +205,14 @@ public final class Client {
 		socket.close();
 	}
 	
+	/**
+	 * <h1>Close</h1>
+	 * Send a close command to the server for closing the session.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void close() throws Exception {
 		if(connected){
 			Connection command = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.Disconnect.toString(), new flee_and_catch.robot.communication.command.connection.Client(id, type, subtype));
@@ -144,6 +222,16 @@ public final class Client {
 		throw new Exception("There is no connection to the server");
 	}
 	
+	/**
+	 * <h1>Check command</h1>
+	 * Check string of json syntax.
+	 * 
+	 * @param pCommand
+	 * @return
+	 * @throws JSONException
+	 * 
+	 * @author ThunderSL94
+	 */
 	private static JSONObject checkCmd(String pCommand) throws JSONException {
 		return new JSONObject(pCommand);
 	}

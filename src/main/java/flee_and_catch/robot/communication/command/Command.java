@@ -6,6 +6,15 @@ public abstract class Command {
 	protected String apiid;
 	protected String errorhandling;
 	
+	/**
+	 * <h1>Constructor</h1>
+	 * Create new command object.
+	 * 
+	 * @param pId Id as command type.
+	 * @param pType Type as command sub type.
+	 * 
+	 * @author ThunderSL94
+	 */
 	protected Command(String pId, String pType){
 		this.id = pId;
 		this.type = pType;
@@ -13,6 +22,14 @@ public abstract class Command {
 		this.apiid = "@@fleeandcatch@@";
 	}
 	
+	/**
+	 * <h1>Get command</h1>
+	 * Get command as json string.
+	 * 
+	 * @return Json string.
+	 * 
+	 * @author ThunderSL94
+	 */
 	public abstract String GetCommand();
 
 	public String getId() {

@@ -12,6 +12,15 @@ public final class Interpreter {
 
 	private static Gson gson = new Gson();
 	
+	/**
+	 * <h1>Parse command</h1>
+	 * Parse json command and run it, when the parsing is correct. Sort it in different id.
+	 * 
+	 * @param pCommand Command as json command.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
 	public static void parse(String pCommand) throws Exception {
 		JSONObject jsonCommand = new JSONObject(pCommand);
 		if(!Objects.equals((String) jsonCommand.get("apiid"), "@@fleeandcatch@@"))
@@ -27,6 +36,15 @@ public final class Interpreter {
 		}			
 	}
 
+	/**
+	 * <h1>Connection</h1>
+	 * Parse connection command.
+	 * 
+	 * @param pCommand Command as json object.
+	 * @throws Exception
+	 * 
+	 * ThunderSL94
+	 */
 	private static void connection(JSONObject pCommand) throws Exception {
 		if(pCommand == null) throw new NullPointerException();
 		ConnectionType.Type type = ConnectionType.Type.valueOf((String) pCommand.get("type"));
