@@ -12,4 +12,12 @@ public class CommandType {
 		this.name = pType.toString();
 		this.type = pType;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Type getType() {
+		return type;
+	}
 }

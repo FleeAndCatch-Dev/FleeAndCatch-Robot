@@ -1,12 +1,10 @@
-package flee_and_catch.robot.communication.command.connection;
+package flee_and_catch.robot.communication.command;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.command.Command;
-
 public class Connection extends Command {
-private Client client;
+private Identification identification;
 	
 	/**
 	 * <h1>Constructor</h1>
@@ -18,9 +16,9 @@ private Client client;
 	 * 
 	 * @author ThunderSL94
 	 */
-	public Connection(String pId, String pType, Client pClient){
+	public Connection(String pId, String pType, Identification pIdentification){
 		super(pId, pType);
-		this.client = pClient;
+		this.identification = pIdentification;
 	}
 	
 	/**
@@ -29,18 +27,18 @@ private Client client;
 	 * 
 	 * @author ThunderSL94
 	 */
-	public String GetCommand() throws JSONException{
+	public String getCommand() throws JSONException{
 		JSONObject command = new JSONObject();
 		command.put("id", id);
 		command.put("type", type);
 		command.put("apiid", apiid);
 		command.put("errorhandling", errorhandling);
-		command.put("client", client.GetClient());
+		command.put("identification", identification.getJSONObject());
 		
 		return command.toString();
 	}
 
-	public Client getClient() {
-		return client;
+	public Identification getIdentification() {
+		return identification;
 	}
 }

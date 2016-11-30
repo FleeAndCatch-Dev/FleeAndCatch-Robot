@@ -30,7 +30,7 @@ public abstract class Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public abstract String GetCommand();
+	public abstract String getCommand();
 
 	public String getId() {
 		return id;

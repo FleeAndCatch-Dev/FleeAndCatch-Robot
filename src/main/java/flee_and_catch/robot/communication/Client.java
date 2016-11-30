@@ -11,20 +11,23 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.connection.Connection;
-import flee_and_catch.robot.communication.command.connection.ConnectionType;
+import flee_and_catch.robot.communication.command.Connection;
+import flee_and_catch.robot.communication.command.ConnectionType;
+import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.component.IdentificationType;
+import flee_and_catch.robot.component.RobotType;
 
 public final class Client {
 	
+	private static boolean connected;
+	private static int id;
+	private static String address;
+	private static int port;
+	private static String type;
+	private static String subtype;
 	private static Socket socket;
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
-	private static String address;
-	private static int port;
-	private static boolean connected;
-	private static int id;
-	private static String type = Type.Robot.toString();
-	private static String subtype = "ThreeWheelDrive";
 	
 	/**
 	 * <h1>Connect</h1>
@@ -215,8 +218,8 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.Disconnect.toString(), new flee_and_catch.robot.communication.command.connection.Client(id, type, subtype));
-			sendCmd(command.GetCommand());
+			Connection command = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.Disconnect.toString(), new Identification(id, address, port, type, subtype));
+			sendCmd(command.getCommand());
 			return;
 		}
 		throw new Exception("There is no connection to the server");
@@ -245,6 +248,14 @@ public final class Client {
 	}
 	public static void setId(int id) {
 		Client.id = id;
+	}
+
+	public static String getAddress() {
+		return address;
+	}
+
+	public static int getPort() {
+		return port;
 	}
 
 	public static String getType() {

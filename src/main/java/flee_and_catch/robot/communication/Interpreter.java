@@ -3,10 +3,11 @@ package flee_and_catch.robot.communication;
 import java.util.Objects;
 import org.json.JSONObject;
 import com.google.gson.Gson;
+
+import flee_and_catch.robot.communication.command.Identification;
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.connection.Client;
-import flee_and_catch.robot.communication.command.connection.Connection;
-import flee_and_catch.robot.communication.command.connection.ConnectionType;
+import flee_and_catch.robot.communication.command.Connection;
+import flee_and_catch.robot.communication.command.ConnectionType;
 
 public final class Interpreter {
 
@@ -52,14 +53,14 @@ public final class Interpreter {
 		
 		switch(type){
 			case SetId:
-				flee_and_catch.robot.communication.Client.setId(command.getClient().getId());
+				Client.setId(command.getIdentification().getId());
 				return;
 			case GetType:
-				Connection cmd = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.SetType.toString(), new Client(flee_and_catch.robot.communication.Client.getId(), flee_and_catch.robot.communication.Client.getType(), flee_and_catch.robot.communication.Client.getSubtype()));
-				flee_and_catch.robot.communication.Client.sendCmd(cmd.GetCommand());
+				Connection cmd = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.SetType.toString(), new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype()));
+				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:
-				flee_and_catch.robot.communication.Client.disconnect();
+				Client.disconnect();
 				return;
 			default:
 				throw new Exception("Argument out of range");
