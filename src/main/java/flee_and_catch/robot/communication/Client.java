@@ -7,140 +7,140 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import flee_and_catch.robot.communication.exceptions.ConnectServer;
-import flee_and_catch.robot.communication.exceptions.ParseCommand;
-import flee_and_catch.robot.communication.json.JSONException;
-import flee_and_catch.robot.communication.json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class Client {
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.Connection;
+import flee_and_catch.robot.communication.command.ConnectionType;
+import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.component.IdentificationType;
+import flee_and_catch.robot.component.RobotType;
+
+public final class Client {
 	
-	private Socket socket;
-	private BufferedReader reader;
-	private DataOutputStream outputStream;
-	private boolean opened;
-	private int id;
+	private static boolean connected;
+	private static int id;
+	private static String address;
+	private static int port;
+	private static String type;
+	private static String subtype;
+	private static Socket socket;
+	private static BufferedReader bufferedReader;
+	private static DataOutputStream outputStream;
 	
-	public Client(){
-		this.opened = false;
-	}
-	
-	public void connect() throws UnknownHostException, IOException, ConnectServer{
-		if(!opened){
-			this.socket = new Socket(Default.address, Default.port);
-			Thread listenerThread = new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						listen();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseCommand e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ConnectServer e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-			listenerThread.start();
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void connect() throws Exception{
+		if(!connected){
+			address = Default.address;
+			port = Default.port;
+			startConnection();
 			return;
 		}
-		throw new ConnectServer();
-	}	
-	public void connect(String pAddress) throws UnknownHostException, IOException, ConnectServer{
-		if(!opened){
-			this.socket = new Socket(pAddress, Default.port);
-			Thread listenerThread = new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						listen();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseCommand e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ConnectServer e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-			listenerThread.start();
-			return;
-		}
-		throw new ConnectServer();
-	}
-	public void connect(String pAddress, int pPort) throws UnknownHostException, IOException, ConnectServer{
-		if(!opened){
-			this.socket = new Socket(pAddress, pPort);
-			Thread listenerThread = new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					try {
-						listen();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NumberFormatException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParseCommand e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ConnectServer e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			});
-			listenerThread.start();
-			return;
-		}
-		throw new ConnectServer();
+		throw new Exception("Connection to server exist");
 	}
 	
-	private void listen() throws IOException, NumberFormatException, ParseCommand, JSONException, ConnectServer{
-		reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @param pAddress Ip address for communication.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void connect(String pAddress) throws Exception{
+		if(!connected){
+			address = pAddress;
+			port = Default.port;
+			startConnection();
+			return;
+		}
+		throw new Exception("Connection to server exist");
+	}
+	
+	/**
+	 * <h1>Connect</h1>
+	 * Open a connection to the server. 
+	 * 
+	 * @param pAddress Ip address for communication.
+	 * @param pPort port for communication.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void connect(String pAddress, int pPort) throws Exception{
+		if(!connected){
+			address = pAddress;
+			port = pPort;
+			startConnection();
+			return;
+		}
+		throw new Exception("Connection to server exist");
+	}
+	
+	/**
+	 * <h1>Start connection</h1>
+	 * Start connection to the server an opens it in a new thread.
+	 * 
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 * 
+	 * @author ThunderSL94
+	 */
+	private static void startConnection() throws UnknownHostException, IOException{
+		socket = new Socket(address, port);
+		Thread listenerThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					listen();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		listenerThread.start();
+	}
+
+	/**
+	 * <h1>Listen</h1>
+	 * Listen to the socket for new commands.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	private static void listen() throws Exception {
+		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outputStream = new DataOutputStream(socket.getOutputStream());
 		
-		Interpreter interpreter = new Interpreter(this);
-		this.id = Integer.valueOf(interpreter.interpret(receiveCmd(reader)));
-		this.opened = true;
-		
-		while(opened){
-			String command = receiveCmd(reader);
-			interpreter.interpret(command);
+		connected = true;
+		while(connected){
+			Interpreter.parse(receiveCmd());
 		}
 	}
 	
-	private String receiveCmd(BufferedReader pBufferedReader) throws IOException, JSONException, ConnectServer{
+	/**
+	 * <h1>Receive command</h1>
+	 * Receive json command as string from the server.
+	 * 
+	 * @return Command as string.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	private static String receiveCmd() throws Exception{
 		char[] value = new char[4];
-		int result = pBufferedReader.read(value);	
+		int result = bufferedReader.read(value);	
 		
 		if(result >= 0) {
 			int length = 0;
@@ -151,7 +151,7 @@ public class Client {
 			value = new char[length];
 			for( int i=0; i<value.length; i++) {
 				char[] tmp = new char[1];
-				pBufferedReader.read(tmp, 0, 1);
+				bufferedReader.read(tmp, 0, 1);
 				value[i] = tmp[0];
 			}
 			
@@ -162,9 +162,18 @@ public class Client {
 			return null;
 		}
 	}
-	
-	public void sendCmd(String pCommand) throws IOException, JSONException, ConnectServer{
-		if(opened){
+
+	/**
+	 * <h1>Send command</h1>
+	 * Send json command to server.
+	 * 
+	 * @param pCommand Command as json string.
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void sendCmd(String pCommand) throws Exception{
+		if(connected){
 			checkCmd(pCommand);
 			
 			byte[] size = new byte[4];
@@ -181,34 +190,79 @@ public class Client {
 			outputStream.flush();
 			return;
 		}
-		throw new ConnectServer();
+		throw new Exception("Send of new command failed");
 	}
 	
-	public void disconnect() throws IOException{
-		this.reader.close();
-		this.outputStream.close();
-		this.opened = false;
-		this.socket.close();
+	/**
+	 * <h1>Disconnect</h1>
+	 * Disconnect the client from server and close all resources.
+	 * 
+	 * @throws IOException
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void disconnect() throws IOException{
+		bufferedReader.close();
+		outputStream.close();
+		connected = false;
+		socket.close();
 	}
 	
-	public void close() throws IOException, JSONException, ConnectServer{
-		if(this.opened){
-			sendCmd("{\"id\":\"Client\",\"type\":\"Disconnect\",\"apiid\":\"@@fleeandcatch@@\",\"errorhandling\":\"ignoreerrors\",\"client\":{\"id\":" + id + ",\"type\":\"" + "ThreeWheelRobot" + "\"}}");
+	/**
+	 * <h1>Close</h1>
+	 * Send a close command to the server for closing the session.
+	 * 
+	 * @throws Exception
+	 * 
+	 * @author ThunderSL94
+	 */
+	public static void close() throws Exception {
+		if(connected){
+			Connection command = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.Disconnect.toString(), new Identification(id, address, port, type, subtype));
+			sendCmd(command.getCommand());
 			return;
 		}
-		throw new ConnectServer();
+		throw new Exception("There is no connection to the server");
 	}
 	
-	private JSONObject checkCmd(String pCommand) throws JSONException{
-		JSONObject jsonObject = new JSONObject(pCommand);
-		return jsonObject;
+	/**
+	 * <h1>Check command</h1>
+	 * Check string of json syntax.
+	 * 
+	 * @param pCommand
+	 * @return
+	 * @throws JSONException
+	 * 
+	 * @author ThunderSL94
+	 */
+	private static JSONObject checkCmd(String pCommand) throws JSONException {
+		return new JSONObject(pCommand);
 	}
-	
-	public boolean isOpened() {
-		return opened;
+
+	public static boolean isConnected() {
+		return connected;
 	}
-	
-	public int getId() {
+
+	public static int getId() {
 		return id;
+	}
+	public static void setId(int id) {
+		Client.id = id;
+	}
+
+	public static String getAddress() {
+		return address;
+	}
+
+	public static int getPort() {
+		return port;
+	}
+
+	public static String getType() {
+		return type;
+	}
+
+	public static String getSubtype() {
+		return subtype;
 	}
 }
