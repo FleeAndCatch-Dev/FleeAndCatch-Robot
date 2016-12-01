@@ -28,6 +28,11 @@ public class Program {
 		//Get selected robot from the user:
 		Robot robot = viewController.getSelectedRobot();
 		
+		//Connection Init!
+		//Create Client!
+		//Set type!
+		//Connect-Command!
+		
 		//Get information about the field from the user over the app: (NOT IMPLEMENTED)
 		PlayingField field = new PlayingField(1000, 1000);
 		

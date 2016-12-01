@@ -5,8 +5,8 @@ import com.sun.org.apache.bcel.internal.util.Objects;
 
 import flee_and_catch.robot.communication.exceptions.ConnectServer;
 import flee_and_catch.robot.communication.exceptions.ParseCommand;
-import flee_and_catch.robot.communication.json.JSONException;
-import flee_and_catch.robot.communication.json.JSONObject;
+import json.JSONException;
+import json.JSONObject;
 
 public class Interpreter {
 

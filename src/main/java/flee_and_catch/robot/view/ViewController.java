@@ -110,7 +110,7 @@ public class ViewController {
 		//Keep in the loop until the enter or escape button is pressed:	
 		} while(!(pressedBtn == Button.ID_ENTER || pressedBtn == Button.ID_ESCAPE));
 		
-		return selectedRobot.getRobot();
+		return null; //selectedRobot.getRobot();
 	}
 	
 //##########################################################################################################################################
