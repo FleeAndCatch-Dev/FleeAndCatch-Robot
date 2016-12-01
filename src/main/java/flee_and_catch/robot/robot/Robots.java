@@ -9,9 +9,9 @@ public enum Robots {
 //### ENUM ELEMENTS ########################################################################################################################
 	
 	//Here are all available robots are defined with their name and class:
-	THREEWHEEL 	("3-Wheel", new ThreeWheelDriveRobot()),
-	FOURWHEEL  	("4-Wheel", new ThreeWheelDriveRobot()),
-	CHAINDRIVE 	("Chain-Drive", new ThreeWheelDriveRobot()),
+	THREEWHEEL 	("ThreeWheel", new ThreeWheelDriveRobot()),
+	FOURWHEEL  	("FourWheel", new ThreeWheelDriveRobot()),
+	CHAINDRIVE 	("ChainDrive", new ThreeWheelDriveRobot()),
 	TEST 		("TEST", new ThreeWheelDriveRobot()),
 	LALA 		("LALA", new ThreeWheelDriveRobot()),
 	TINKIWIKI 	("TINKIWINKI", new ThreeWheelDriveRobot()),

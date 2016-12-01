@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
