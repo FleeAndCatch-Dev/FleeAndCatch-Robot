@@ -2,9 +2,9 @@
 
 package flee_and_catch.robot.view;
 
+import flee_and_catch.robot.component.RobotType;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.robot.Robot;
-import flee_and_catch.robot.robot.Robots;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
@@ -49,14 +49,14 @@ public class ViewController {
 	public Robot getSelectedRobot() {
 		
 		//Represents the selected robot:
-		Robots selectedRobot = null;
+		RobotType selectedRobot = null;
 		
 		//Saves the pressed button:
 		int pressedBtn  = -1;
 		//Pointer to the current robot:
 		int pointer = 0;
 		//Max number of robots:
-		int numberOfRobots = Robots.values().length;
+		int numberOfRobots = RobotType.values().length;
 		
 		//Show a start/info screen for robot selection:
 		this.showSelectRobotStartScreen();
@@ -95,7 +95,7 @@ public class ViewController {
 				//Confirm selection:
 				case Button.ID_ENTER:
 					//Set the selected robot:
-					selectedRobot = Robots.values()[pointer];
+					selectedRobot = RobotType.values()[pointer];
 					break;
 					
 				//If any other button was pressed:

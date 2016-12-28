@@ -26,7 +26,7 @@ public final class Interpreter {
 		JSONObject jsonCommand = new JSONObject(pCommand);
 		if(!Objects.equals((String) jsonCommand.get("apiid"), "@@fleeandcatch@@"))
 			throw new Exception("Wrong apiid of json command");		
-		CommandType.Type id = CommandType.Type.valueOf((String) jsonCommand.get("id"));
+		CommandType id = CommandType.valueOf((String) jsonCommand.get("id"));
 		
 		switch(id){
 			case Connection:
@@ -48,7 +48,7 @@ public final class Interpreter {
 	 */
 	private static void connection(JSONObject pCommand) throws Exception {
 		if(pCommand == null) throw new NullPointerException();
-		ConnectionType.Type type = ConnectionType.Type.valueOf((String) pCommand.get("type"));
+		ConnectionType type = ConnectionType.valueOf((String) pCommand.get("type"));
 		Connection command = gson.fromJson(pCommand.toString(), Connection.class);
 		
 		switch(type){
@@ -56,7 +56,7 @@ public final class Interpreter {
 				Client.setId(command.getIdentification().getId());
 				return;
 			case GetType:
-				Connection cmd = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.SetType.toString(), new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype()));
+				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype()));
 				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:

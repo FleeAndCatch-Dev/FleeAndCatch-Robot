@@ -2,6 +2,8 @@
 
 package flee_and_catch.robot.localisation;
 
+import org.json.JSONObject;
+
 //### IMPORTS ##############################################################################################################################
 
 /* Position [Class]: Represents a Position and the orientation of a robot *//**
@@ -123,6 +125,15 @@ public class Position {
 		
 		return this.x + ", " + this.y + ", " + this.orientation;
 		
+	}
+	
+	public JSONObject getJSONObject(){
+		JSONObject jsonPosition = new JSONObject();
+		jsonPosition.put("x", x);
+		jsonPosition.put("y", y);
+		jsonPosition.put("orientation", orientation);
+		
+		return jsonPosition;
 	}
 	
 //##########################################################################################################################################	

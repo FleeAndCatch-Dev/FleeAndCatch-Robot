@@ -21,6 +21,8 @@ public class ThreeWheelDriveRobot implements Robot {
 
 //### CONSTANTS ############################################################################################################################
 	
+	private static final String TYPE = "ThreeWheelDrive";
+	
 	//Distance that a wheel move by a rotation of one degree (original: 0.476389f):
 	private static final float DISTANCE_DEGREE =   0.476389f;		//In millimeter!
 	//Distance between the both (midpoints of the) wheels (original: 123.000000f):
@@ -71,6 +73,7 @@ public class ThreeWheelDriveRobot implements Robot {
 	 */
 	public ThreeWheelDriveRobot(Position pos, float speed) {
 		
+	
 		//Initialize the attributes:
 		this.pos = pos;						//x=0, y=0, orientation=0°!
 		this.speed = speed;					//Set speed to 50mm/s!
@@ -157,6 +160,10 @@ public class ThreeWheelDriveRobot implements Robot {
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
+	
+	public String getType() {
+		return ThreeWheelDriveRobot.TYPE;
+	}	
 	
 	/* getPosition [Method]: Returns the current position and orientation of the robot as a Position object *//**
 	 * 
