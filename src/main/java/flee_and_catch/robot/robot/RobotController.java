@@ -4,11 +4,17 @@ package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
 import org.json.JSONObject;
+
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.localisation.Position;
 import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
 import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.command.Synchronization;
+import flee_and_catch.robot.communication.command.SynchronizationType;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 
@@ -31,24 +37,16 @@ public class RobotController {
 		
 		//this.robot = robot;
 		//this.field = field;
-		
+		Identification ident = new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype());
+		flee_and_catch.robot.communication.command.Position p = flee_and_catch.robot.communication.command.Position(1.0,1.0,1.0);
+		flee_and_catch.robot.communication.command.Robot r = flee_and_catch.robot.communication.command.Robot(ident, p, 1.0);
+		Synchronization sync = new Synchronization(CommandType.Type.Synchronization.toString(),SynchronizationType.Type.SetData.toString(),ident,r);
+		Client.sendCmd(sync.getCommand());
 	}
 	
 //### METHODS ##############################################################################################################################
 
-	/* getRobotData [Method]: Returns different parameters of the robot in a JSON-object *//**
-	 * 
-	 * @return
-	 */
-	public JSONObject getRobotData() {
 
-		JSONObject robotData = new JSONObject();
-		
-		//robotData.put("posX", this.robot.)
-		
-		return robotData;
-		
-	}
 
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 

@@ -14,6 +14,7 @@ public interface Robot {
 	
 //### GETTER/SETTER ########################################################################################################################
 	
+	String getType();
 	
 	Position getPosition();
 	

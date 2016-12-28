@@ -2,8 +2,7 @@
 
 package flee_and_catch.robot.view;
 
-//### IMPORTS ##############################################################################################################################
-import flee_and_catch.robot.robot.Robots;
+import flee_and_catch.robot.component.RobotType;
 import lejos.hardware.lcd.LCD;
 
 /* View [Class]: Class that represents the graphical interface via LCD of the robot *//**
@@ -41,7 +40,7 @@ class View {
 	void showRobotSelectionScreen(int pointer) {
 		
 		//Read out all elements of the enum:
-		Robots[] possibleRobots = Robots.values();
+		RobotType[] possibleRobots = RobotType.values();
 		
 		//Determine the current page on that the element on this the pointer points is:
 		int curPage = pointer / 4;

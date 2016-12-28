@@ -36,8 +36,10 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect() throws Exception{
+	public static void connect(String pType, String pSubtype) throws Exception{
 		if(!connected){
+			type = pType;
+			subtype = pSubtype;
 			address = Default.address;
 			port = Default.port;
 			startConnection();
@@ -55,8 +57,10 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pAddress) throws Exception{
+	public static void connect(String pType, String pSubtype, String pAddress) throws Exception{
 		if(!connected){
+			type = pType;
+			subtype = pSubtype;
 			address = pAddress;
 			port = Default.port;
 			startConnection();
@@ -75,8 +79,10 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pAddress, int pPort) throws Exception{
+	public static void connect(String pType, String pSubtype, String pAddress, int pPort) throws Exception{
 		if(!connected){
+			type = pType;
+			subtype = pSubtype;
 			address = pAddress;
 			port = pPort;
 			startConnection();
