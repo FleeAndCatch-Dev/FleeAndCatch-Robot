@@ -13,8 +13,6 @@ import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
 import flee_and_catch.robot.communication.command.Identification;
-import flee_and_catch.robot.component.IdentificationType;
-import flee_and_catch.robot.component.RobotType;
 
 public final class Client {
 	
@@ -223,7 +221,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Type.Connection.toString(), ConnectionType.Type.Disconnect.toString(), new Identification(id, address, port, type, subtype));
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), new Identification(id, address, port, type, subtype));
 			sendCmd(command.getCommand());
 			return;
 		}
