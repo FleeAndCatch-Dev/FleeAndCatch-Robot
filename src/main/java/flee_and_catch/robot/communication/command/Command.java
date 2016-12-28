@@ -5,7 +5,9 @@ public abstract class Command {
 	protected String type;
 	protected String apiid;
 	protected String errorhandling;
-	
+	protected Identification identification;
+
+
 	/**
 	 * <h1>Constructor</h1>
 	 * Create new command object.
@@ -15,11 +17,12 @@ public abstract class Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	protected Command(String pId, String pType){
+	protected Command(String pId, String pType, Identification pIdentification){
 		this.id = pId;
 		this.type = pType;
 		this.errorhandling = "ignoreerrors";
 		this.apiid = "@@fleeandcatch@@";
+		this.identification = pIdentification;
 	}
 	
 	/**
@@ -46,5 +49,9 @@ public abstract class Command {
 
 	public String getErrorhandling() {
 		return errorhandling;
+	}
+	
+	public Identification getIdentification() {
+		return identification;
 	}
 }
