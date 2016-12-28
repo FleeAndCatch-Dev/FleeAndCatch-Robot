@@ -38,10 +38,15 @@ public class RobotController {
 		//this.robot = robot;
 		//this.field = field;
 		Identification ident = new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype());
-		flee_and_catch.robot.communication.command.Position p = flee_and_catch.robot.communication.command.Position(1.0,1.0,1.0);
-		flee_and_catch.robot.communication.command.Robot r = flee_and_catch.robot.communication.command.Robot(ident, p, 1.0);
+		flee_and_catch.robot.localisation.Position p = new flee_and_catch.robot.localisation.Position(1.0,1.0,1.0);
+		flee_and_catch.robot.communication.command.Robot r = new flee_and_catch.robot.communication.command.Robot(ident, p, 1.0);
 		Synchronization sync = new Synchronization(CommandType.Type.Synchronization.toString(),SynchronizationType.Type.SetData.toString(),ident,r);
-		Client.sendCmd(sync.getCommand());
+		try {
+			Client.sendCmd(sync.getCommand());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 //### METHODS ##############################################################################################################################

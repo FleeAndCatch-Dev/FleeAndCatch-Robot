@@ -35,7 +35,7 @@ public class Program {
 		
 		//Connection Init!
 		try {
-			Client.connect(IdentificationType.Typ.Robot.toString(), RobotType.Type.valueOf(robot.getType()).toString());
+			Client.connect(IdentificationType.Typ.Robot.toString(), RobotType.valueOf(robot.getType()).toString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
