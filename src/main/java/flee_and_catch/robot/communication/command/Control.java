@@ -4,8 +4,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.robot.Robot;
 
 public class Control extends Command {
+	private Robot robot;
 	private Steering steering;
 	/**
 	 * <h1>Constructor</h1>
@@ -17,8 +19,10 @@ public class Control extends Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	protected Control(String pId, String pType, Identification pIdentification) {
+	protected Control(String pId, String pType, Identification pIdentification, Steering pSteering, Robot pRobot) {
 		super(pId, pType, pIdentification);
+		this.steering = pSteering;
+		this.robot = pRobot;
 	}
 	
 	/**
@@ -41,4 +45,11 @@ public class Control extends Command {
 		return command.toString();
 	}
 
+	public Robot getRobot() {
+		return robot;
+	}
+
+	public Steering getSteering() {
+		return steering;
+	}
 }

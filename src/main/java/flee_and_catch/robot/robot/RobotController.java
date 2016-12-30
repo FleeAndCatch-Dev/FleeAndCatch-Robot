@@ -2,6 +2,7 @@
 
 package flee_and_catch.robot.robot;
 
+import flee_and_catch.robot.component.RobotType;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
@@ -162,7 +163,7 @@ public class RobotController {
 		
 		LCD.drawString("testRun() - Start", 0, 0);
 		
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot();		//Initialize a new Robot!
+		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(RobotType.ThreeWheelDrive.toString());		//Initialize a new Robot!
 		robot.setSpeed(80.0f);							//Set speed to 20 mm/sec!
 		
 		//Print information:

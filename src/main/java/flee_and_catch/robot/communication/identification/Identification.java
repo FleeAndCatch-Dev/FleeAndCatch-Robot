@@ -3,8 +3,6 @@ package flee_and_catch.robot.communication.identification;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.component.IdentificationType;
-
 public final class Identification {
 	
 	private ClientIdentification clientId;

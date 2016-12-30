@@ -1,7 +1,5 @@
 package flee_and_catch.robot.component;
 
-import sun.security.action.GetBooleanAction;
-
 public enum Speed {
 	
 	Slower (-1),

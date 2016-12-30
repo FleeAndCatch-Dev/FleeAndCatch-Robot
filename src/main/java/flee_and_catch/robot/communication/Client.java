@@ -9,7 +9,6 @@ import java.net.UnknownHostException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.experimental.theories.Theories;
 
 import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.command.CommandType;
@@ -215,7 +214,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), new Identification(Client.identification, Client.robot.getIdentification()));
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), Client.getCompleteIdentification());
 			sendCmd(command.getCommand());
 			return;
 		}

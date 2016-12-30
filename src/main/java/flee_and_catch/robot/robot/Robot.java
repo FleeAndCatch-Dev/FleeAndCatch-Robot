@@ -4,7 +4,6 @@ package flee_and_catch.robot.robot;
 
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.communication.identification.RobotIdentification;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Position;
@@ -19,6 +18,8 @@ public interface Robot {
 //### GETTER/SETTER ########################################################################################################################
 	
 	RobotIdentification getIdentification();
+	
+	boolean isActive();
 	
 	Position getPosition();
 	
@@ -88,6 +89,12 @@ public interface Robot {
 		public void rotate(float angle) throws InterruptedException {
 		// TODO Auto-generated method stub
 		
+		}
+
+		@Override
+		public boolean isActive() {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 

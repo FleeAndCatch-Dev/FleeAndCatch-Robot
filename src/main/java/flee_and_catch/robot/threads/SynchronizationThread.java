@@ -4,7 +4,6 @@ import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Synchronization;
 import flee_and_catch.robot.communication.command.SynchronizationType;
-import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.robot.Robot;
 
 //### IMPORTS ##############################################################################################################################

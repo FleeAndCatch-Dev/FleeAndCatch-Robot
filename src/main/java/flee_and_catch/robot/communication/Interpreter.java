@@ -7,7 +7,6 @@ import com.google.gson.Gson;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.identification.Identification;
 
 public final class Interpreter {
 

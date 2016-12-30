@@ -8,10 +8,7 @@ package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Position;
-import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.communication.identification.RobotIdentification;
-import flee_and_catch.robot.component.IdentificationType;
-import flee_and_catch.robot.component.RobotType;
 import flee_and_catch.robot.component.RoleType;
 import flee_and_catch.robot.localisation.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
@@ -40,6 +37,7 @@ public class ThreeWheelDriveRobot implements Robot {
 	
 	//???
 	private RobotIdentification identification;
+	private boolean active;
 	//Represents the position and the orientation of the robot:
 	private Position pos;
 	//Represents the Speed of the speed of the robot:
@@ -59,13 +57,14 @@ public class ThreeWheelDriveRobot implements Robot {
 	/* DefaultRobot [Constructor]: Initialize the position x=0, y=0, orientation=0 and the speed 50mm/s *//**
 	 * 
 	 */
-	public ThreeWheelDriveRobot() {
+	public ThreeWheelDriveRobot(String pSubtype) {
 		
 		//Initialize the attributes:
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
 		this.speed = 50.0f;					//Set speed to 50mm/s!
 		this.totalDistance = 0.0f;
-		this.identification = new RobotIdentification(RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
+		this.identification = new RobotIdentification(pSubtype, RoleType.Undefined.toString());
+		this.active = false;
 		
 		//Initialize the robot components:
 		this.initComponents();
@@ -172,6 +171,10 @@ public class ThreeWheelDriveRobot implements Robot {
 		return this.identification;
 	}
 
+	@Override
+	public boolean isActive(){
+		return active;
+	}
 	
 	/* getPosition [Method]: Returns the current position and orientation of the robot as a Position object *//**
 	 * 

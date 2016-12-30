@@ -3,9 +3,6 @@ package flee_and_catch.robot.communication.identification;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.component.RobotType;
-import flee_and_catch.robot.component.RoleType;
-
 public class RobotIdentification {
 	private String subtype;
 	private String roletype;
