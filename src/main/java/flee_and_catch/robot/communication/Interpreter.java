@@ -52,10 +52,10 @@ public final class Interpreter {
 		
 		switch(type){
 			case SetId:
-				Client.getCompleteIdentification().getClientIdentification().setId(command.getIdentification().getClientIdentification().getId());
+				Client.getClientIdentification().setId(command.getIdentification().getId());
 				return;
 			case GetType:
-				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getCompleteIdentification());
+				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getClientIdentification());
 				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:

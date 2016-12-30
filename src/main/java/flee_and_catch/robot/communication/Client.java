@@ -15,7 +15,6 @@ import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
 import flee_and_catch.robot.communication.identification.ClientIdentification;
-import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.component.IdentificationType;
 import flee_and_catch.robot.component.RobotType;
 import flee_and_catch.robot.robot.Robot;
@@ -214,7 +213,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), Client.getCompleteIdentification());
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification);
 			sendCmd(command.getCommand());
 			return;
 		}
@@ -239,11 +238,15 @@ public final class Client {
 		return connected;
 	}
 
+	public static Robot getRobot() {
+		return robot;
+	}
+
 	public static void setRobot(Robot robot) {
 		Client.robot = robot;
 	}
 
-	public static Identification getCompleteIdentification() {
-		return new Identification(Client.identification, Client.robot.getIdentification());
+	public static ClientIdentification getClientIdentification() {
+		return identification;
 	}
 }

@@ -24,7 +24,6 @@ public enum Speed {
 			default:
 				return null;
 		}
-		
 	}
 
 	public int getValue() {

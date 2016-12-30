@@ -1,13 +1,13 @@
 package flee_and_catch.robot.communication.command;
 
-import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.communication.identification.ClientIdentification;
 
 public abstract class Command {
 	protected String id;
 	protected String type;
 	protected String apiid;
 	protected String errorhandling;
-	protected Identification identification;
+	protected ClientIdentification identification;
 
 
 	/**
@@ -19,7 +19,7 @@ public abstract class Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	protected Command(String pId, String pType, Identification pIdentification){
+	protected Command(String pId, String pType, ClientIdentification pIdentification){
 		this.id = pId;
 		this.type = pType;
 		this.errorhandling = "ignoreerrors";
@@ -53,7 +53,7 @@ public abstract class Command {
 		return errorhandling;
 	}
 	
-	public Identification getIdentification() {
+	public ClientIdentification getIdentification() {
 		return identification;
 	}
 }

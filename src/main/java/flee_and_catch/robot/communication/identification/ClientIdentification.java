@@ -26,7 +26,7 @@ public class ClientIdentification {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public JSONObject getJSONObject(){
+	public JSONObject getJSONObject() throws JSONException{
 		JSONObject jsonIdentification = new JSONObject();
 		jsonIdentification.put("id", id);
 		jsonIdentification.put("type", type);

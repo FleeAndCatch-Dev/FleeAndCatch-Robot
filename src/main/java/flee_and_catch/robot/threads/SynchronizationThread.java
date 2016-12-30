@@ -25,7 +25,7 @@ public class SynchronizationThread implements Runnable {
 	public void run() {
 		
 		//Create synchronization object:
-		Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.SetData.toString(), Client.getCompleteIdentification(), robot);
+		Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.SetData.toString(), Client.getClientIdentification(), robot);
 		
 		try {
 			Client.sendCmd(sync.getCommand());

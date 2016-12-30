@@ -7,8 +7,7 @@ package flee_and_catch.robot.localisation;
  * @author Manuel Bothner
  *
  */
-public enum Direction {
-	
+public enum Direction {	
 	RIGHT, LEFT;
 }
 //### EOF ##################################################################################################################################

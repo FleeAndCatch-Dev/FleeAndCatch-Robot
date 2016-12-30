@@ -21,7 +21,7 @@ public class RobotIdentification {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public JSONObject getJSONObject(){
+	public JSONObject getJSONObject() throws JSONException{
 		JSONObject jsonIdentification = new JSONObject();
 		jsonIdentification.put("subtype", subtype);
 		jsonIdentification.put("role", roletype);

@@ -3,7 +3,7 @@ package flee_and_catch.robot.communication.command;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.communication.identification.ClientIdentification;
 
 public class Connection extends Command {
 
@@ -18,7 +18,7 @@ public class Connection extends Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public Connection(String pId, String pType, Identification pIdentification){
+	public Connection(String pId, String pType, ClientIdentification pIdentification){
 		super(pId, pType, pIdentification);
 	}
 	
