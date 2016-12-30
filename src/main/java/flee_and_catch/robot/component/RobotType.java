@@ -13,8 +13,9 @@ public enum RobotType {
 	
 	//Here are all available robots are defined with their name and class:
 	ThreeWheelDrive 	("ThreeWheelDrive", new ThreeWheelDriveRobot()),
-	FourWheelDrive  	("FourWheelDrive", new ThreeWheelDriveRobot()),
-	ChainDrive 			("ChainDrive", new ThreeWheelDriveRobot());
+	FourWheelDrive  	("FourWheelDrive", null),
+	ChainDrive 			("ChainDrive", null),
+	Test				("Test", null);
 	
 //### ATTRIBUTES ###########################################################################################################################
 

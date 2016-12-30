@@ -249,6 +249,7 @@ public final class Client {
 	public static int getId() {
 		return id;
 	}
+	
 	public static void setId(int id) {
 		Client.id = id;
 	}

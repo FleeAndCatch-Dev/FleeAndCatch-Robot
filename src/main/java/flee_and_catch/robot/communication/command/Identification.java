@@ -4,6 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Identification {
+	
 	private int id;
 	private String address;
 	private int port;

@@ -8,6 +8,7 @@ package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Position;
+import flee_and_catch.robot.communication.command.Identification;
 import flee_and_catch.robot.localisation.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
@@ -35,6 +36,8 @@ public class ThreeWheelDriveRobot implements Robot {
 	
 //### ATTRIBUTES ###########################################################################################################################
 	
+	//???
+	private Identification identification;
 	//Represents the position and the orientation of the robot:
 	private Position pos;
 	//Represents the Speed of the speed of the robot:
@@ -160,6 +163,11 @@ public class ThreeWheelDriveRobot implements Robot {
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
+	
+	@Override
+	public Identification getIdentification() {
+		return this.identification;
+	}
 	
 	public String getType() {
 		return ThreeWheelDriveRobot.TYPE;
@@ -333,7 +341,8 @@ public class ThreeWheelDriveRobot implements Robot {
 		}
 		
 	}
-	
+
+
 //##########################################################################################################################################
 }
 //### EOF ##################################################################################################################################

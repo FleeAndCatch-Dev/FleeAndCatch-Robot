@@ -2,6 +2,8 @@ package flee_and_catch.robot.communication.command;
 
 import org.json.JSONObject;
 
+import flee_and_catch.robot.robot.Robot;
+
 public class Synchronization extends Command {
 
 	private Robot robot;
@@ -19,7 +21,7 @@ public class Synchronization extends Command {
 		command.put("apiid", apiid);
 		command.put("errorhandling", errorhandling);
 		command.put("identification", identification.getJSONObject());
-		command.put("robot", robot.getJSONObject());
+		command.put("robot", Robot.Static.getJSONObject(robot));
 		
 		return command.toString();
 	}

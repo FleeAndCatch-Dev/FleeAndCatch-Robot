@@ -9,6 +9,7 @@ import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.localisation.Position;
 import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
+import flee_and_catch.robot.threads.SynchronizationThread;
 import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
@@ -27,6 +28,8 @@ public class RobotController {
 	private Robot robot;
 	//Represents the playing field in that the robot moves:
 	private PlayingField field;
+	//Thread that sends the robot data to the backend:
+	Thread syncThread;
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
@@ -35,23 +38,16 @@ public class RobotController {
 	 */
 	public RobotController(Robot robot, PlayingField field) {
 		
-		//this.robot = robot;
-		//this.field = field;
-		Identification ident = new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype());
-		flee_and_catch.robot.localisation.Position p = new flee_and_catch.robot.localisation.Position(1.0,1.0,1.0);
-		flee_and_catch.robot.communication.command.Robot r = new flee_and_catch.robot.communication.command.Robot(ident, p, 1.0);
-		Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.SetData.toString(),ident,r);
-		try {
-			Client.sendCmd(sync.getCommand());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.robot = robot;
+		this.field = field;
+		this.syncThread = new Thread(new SynchronizationThread(this.robot));
+		
+		//Start thread for data sending to backend:
+		syncThread.start();
+
 	}
 	
 //### METHODS ##############################################################################################################################
-
-
 
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 
