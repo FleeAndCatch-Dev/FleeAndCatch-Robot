@@ -4,7 +4,8 @@ package flee_and_catch.robot.robot;
 
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.communication.identification.RobotIdentification;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Position;
 
@@ -17,9 +18,7 @@ public interface Robot {
 	
 //### GETTER/SETTER ########################################################################################################################
 	
-	Identification getIdentification();
-	
-	String getType();
+	RobotIdentification getIdentification();
 	
 	Position getPosition();
 	
@@ -56,16 +55,10 @@ public interface Robot {
 		//###  
 		
 		@Override
-		public Identification getIdentification() {
+		public RobotIdentification getIdentification() {
 		// TODO Auto-generated method stub
 		return null;
 		}
-
-	@Override
-		public String getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 		public Position getPosition() {

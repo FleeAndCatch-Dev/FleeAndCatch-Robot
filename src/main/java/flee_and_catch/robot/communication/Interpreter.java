@@ -4,10 +4,10 @@ import java.util.Objects;
 import org.json.JSONObject;
 import com.google.gson.Gson;
 
-import flee_and_catch.robot.communication.command.Identification;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
+import flee_and_catch.robot.communication.identification.Identification;
 
 public final class Interpreter {
 
@@ -53,10 +53,10 @@ public final class Interpreter {
 		
 		switch(type){
 			case SetId:
-				Client.setId(command.getIdentification().getId());
+				Client.getCompleteIdentification().getClientIdentification().setId(command.getIdentification().getClientIdentification().getId());
 				return;
 			case GetType:
-				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype()));
+				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getCompleteIdentification());
 				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:

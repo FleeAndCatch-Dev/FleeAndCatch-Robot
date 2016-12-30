@@ -9,19 +9,23 @@ import java.net.UnknownHostException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.experimental.theories.Theories;
+
+import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.identification.ClientIdentification;
+import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.component.IdentificationType;
+import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.robot.Robot;
 
 public final class Client {
 	
 	private static boolean connected;
-	private static int id;
-	private static String address;
-	private static int port;
-	private static String type;
-	private static String subtype;
+	private static ClientIdentification identification;
+	private static Robot robot;
 	private static Socket socket;
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
@@ -31,15 +35,11 @@ public final class Client {
 	 * Open a connection to the server. 
 	 * 
 	 * @throws Exception
-	 * 
-	 * @author ThunderSL94
+	 *  * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = Default.address;
-			port = Default.port;
+			identification = new ClientIdentification(0, Configuration.address, Configuration.port, pType.toString());
 			startConnection();
 			return;
 		}
@@ -55,12 +55,9 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype, String pAddress) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = pAddress;
-			port = Default.port;
+			identification = new ClientIdentification(0, pAddress, Configuration.port, pType.toString());
 			startConnection();
 			return;
 		}
@@ -77,12 +74,9 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype, String pAddress, int pPort) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress, int pPort) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = pAddress;
-			port = pPort;
+			identification = new ClientIdentification(0, pAddress, pPort, pType.toString());
 			startConnection();
 			return;
 		}
@@ -99,7 +93,7 @@ public final class Client {
 	 * @author ThunderSL94
 	 */
 	private static void startConnection() throws UnknownHostException, IOException{
-		socket = new Socket(address, port);
+		socket = new Socket(identification.getAddress(), identification.getPort());
 		Thread listenerThread = new Thread(new Runnable() {
 			
 			@Override
@@ -221,7 +215,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), new Identification(id, address, port, type, subtype));
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), new Identification(Client.identification, Client.robot.getIdentification()));
 			sendCmd(command.getCommand());
 			return;
 		}
@@ -246,27 +240,11 @@ public final class Client {
 		return connected;
 	}
 
-	public static int getId() {
-		return id;
-	}
-	
-	public static void setId(int id) {
-		Client.id = id;
+	public static void setRobot(Robot robot) {
+		Client.robot = robot;
 	}
 
-	public static String getAddress() {
-		return address;
-	}
-
-	public static int getPort() {
-		return port;
-	}
-
-	public static String getType() {
-		return type;
-	}
-
-	public static String getSubtype() {
-		return subtype;
+	public static Identification getCompleteIdentification() {
+		return new Identification(Client.identification, Client.robot.getIdentification());
 	}
 }

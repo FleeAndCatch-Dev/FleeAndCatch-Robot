@@ -3,6 +3,8 @@ package flee_and_catch.robot.communication.command;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import flee_and_catch.robot.communication.identification.Identification;
+
 public class Connection extends Command {
 
 	

@@ -3,11 +3,13 @@ package flee_and_catch.robot;
 //### IMPORTS ##############################################################################################################################
 import lejos.hardware.Sound;
 
-class Configuration {
+public class Configuration {
 
 	
 //### CONSTANTS ############################################################################################################################
 	
+	public static final String address = "192.168.100.100";
+	public static final int port = 5000;
 	private static final boolean SOUND  = true;
 	private static final byte 	 VOLUME = 20;			//Range 0 to 100 (0 = no sound)
 	

@@ -3,9 +3,9 @@
 package flee_and_catch.robot;
 
 import flee_and_catch.robot.communication.Client;
-import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.component.IdentificationType;
-
+import flee_and_catch.robot.component.RobotType;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.robot.Robot;
@@ -34,6 +34,9 @@ public class Program {
 		//Get selected robot from the user:
 		Robot robot = viewController.getSelectedRobot();
 		
+		//Tell client the robot:
+		Client.setRobot(robot);
+		
 		//Backend connection:
 		try {
 			
@@ -41,16 +44,12 @@ public class Program {
 			
 			//Client.connect(IdentificationType.Typ.Robot.toString(), RobotType.valueOf(robot.getType()).toString());
 			//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
-			Client.connect(IdentificationType.Robot.toString(), robot.getType());
+			Client.connect(IdentificationType.Robot, RobotType.valueOf(robot.getIdentification().getSubtype())); //set identification
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		//Get robot identification from client-module:
-		Identification id = new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype());
-		//Save identification in the client class!!!???
-		
+	
 		
 		//TODO: Get position of the robot!!!
 		//TODO: Get dimensions of the playing field!!!

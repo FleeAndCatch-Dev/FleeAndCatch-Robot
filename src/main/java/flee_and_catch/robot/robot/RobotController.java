@@ -3,19 +3,12 @@
 package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
-import org.json.JSONObject;
-
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.localisation.Position;
 import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
 import flee_and_catch.robot.threads.SynchronizationThread;
 import flee_and_catch.robot.robot.Robot;
-import flee_and_catch.robot.communication.Client;
-import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Identification;
-import flee_and_catch.robot.communication.command.Synchronization;
-import flee_and_catch.robot.communication.command.SynchronizationType;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 

@@ -8,7 +8,11 @@ package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Position;
-import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.identification.Identification;
+import flee_and_catch.robot.communication.identification.RobotIdentification;
+import flee_and_catch.robot.component.IdentificationType;
+import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.component.RoleType;
 import flee_and_catch.robot.localisation.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
@@ -21,8 +25,6 @@ import lejos.hardware.port.MotorPort;
 public class ThreeWheelDriveRobot implements Robot {
 
 //### CONSTANTS ############################################################################################################################
-	
-	private static final String TYPE = "ThreeWheelDrive";
 	
 	//Distance that a wheel move by a rotation of one degree (original: 0.476389f):
 	private static final float DISTANCE_DEGREE =   0.476389f;		//In millimeter!
@@ -37,7 +39,7 @@ public class ThreeWheelDriveRobot implements Robot {
 //### ATTRIBUTES ###########################################################################################################################
 	
 	//???
-	private Identification identification;
+	private RobotIdentification identification;
 	//Represents the position and the orientation of the robot:
 	private Position pos;
 	//Represents the Speed of the speed of the robot:
@@ -63,6 +65,7 @@ public class ThreeWheelDriveRobot implements Robot {
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
 		this.speed = 50.0f;					//Set speed to 50mm/s!
 		this.totalDistance = 0.0f;
+		this.identification = new RobotIdentification(RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
 		
 		//Initialize the robot components:
 		this.initComponents();
@@ -165,13 +168,10 @@ public class ThreeWheelDriveRobot implements Robot {
 //### GETTER/SETTER ########################################################################################################################
 	
 	@Override
-	public Identification getIdentification() {
+	public RobotIdentification getIdentification() {
 		return this.identification;
 	}
-	
-	public String getType() {
-		return ThreeWheelDriveRobot.TYPE;
-	}	
+
 	
 	/* getPosition [Method]: Returns the current position and orientation of the robot as a Position object *//**
 	 * 
@@ -341,7 +341,6 @@ public class ThreeWheelDriveRobot implements Robot {
 		}
 		
 	}
-
 
 //##########################################################################################################################################
 }

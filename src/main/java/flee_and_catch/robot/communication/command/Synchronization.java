@@ -2,6 +2,7 @@ package flee_and_catch.robot.communication.command;
 
 import org.json.JSONObject;
 
+import flee_and_catch.robot.communication.identification.Identification;
 import flee_and_catch.robot.robot.Robot;
 
 public class Synchronization extends Command {
