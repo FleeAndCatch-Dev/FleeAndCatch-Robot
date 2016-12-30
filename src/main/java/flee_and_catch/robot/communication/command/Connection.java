@@ -4,9 +4,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import flee_and_catch.robot.communication.identification.ClientIdentification;
+import flee_and_catch.robot.robot.Robot;
 
 public class Connection extends Command {
-
+	private Robot robot;
 	
 	/**
 	 * <h1>Constructor</h1>
@@ -18,8 +19,9 @@ public class Connection extends Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public Connection(String pId, String pType, ClientIdentification pIdentification){
+	public Connection(String pId, String pType, ClientIdentification pIdentification, Robot pRobot){
 		super(pId, pType, pIdentification);
+		this.robot = pRobot;
 	}
 	
 	/**
@@ -35,9 +37,12 @@ public class Connection extends Command {
 		command.put("apiid", apiid);
 		command.put("errorhandling", errorhandling);
 		command.put("identification", identification.getJSONObject());
+		command.put("robot", Robot.Static.getJSONObject(robot));
 		
 		return command.toString();
 	}
 
-
+	public Robot getRobot() {
+		return robot;
+	}
 }

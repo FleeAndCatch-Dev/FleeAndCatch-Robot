@@ -55,7 +55,7 @@ public final class Interpreter {
 				Client.getClientIdentification().setId(command.getIdentification().getId());
 				return;
 			case GetType:
-				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getClientIdentification());
+				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getClientIdentification(), Client.getRobot());
 				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:

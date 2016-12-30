@@ -213,7 +213,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification);
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification, robot);
 			sendCmd(command.getCommand());
 			return;
 		}
