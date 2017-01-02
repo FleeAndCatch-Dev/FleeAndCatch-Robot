@@ -113,6 +113,22 @@ public class ViewController {
 		return selectedRobot.getRobot();
 	}
 	
+	
+	public void showExit() {
+		
+		//              12345678901234567
+		LCD.drawString("#F&C#########0.9#", 0, 0);
+		LCD.drawString("#               #", 0, 1);
+		LCD.drawString("#    Press a    #", 0, 2);
+		LCD.drawString("#   button to   #", 0, 3);
+		LCD.drawString("#     exit!     #", 0, 4);
+		LCD.drawString("#               #", 0, 5);
+		LCD.drawString("#               #", 0, 6);
+		LCD.drawString("#################", 0, 7);
+		
+		Button.waitForAnyPress();
+	}
+	
 //##########################################################################################################################################
 }
 //### EOF ##################################################################################################################################

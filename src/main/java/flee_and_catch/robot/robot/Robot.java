@@ -28,6 +28,8 @@ public interface Robot {
 	
 	void setSpeed(float speed);
 	
+	void setActive(boolean active);
+	
 	flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 
 //### PUBLIC METHODS #######################################################################################################################
@@ -102,6 +104,12 @@ public interface Robot {
 		public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public void setActive(boolean active) {
+			// TODO Auto-generated method stub
+			
 		}
 
 

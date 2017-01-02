@@ -32,7 +32,7 @@ public class RobotIdentification extends Identification {
 		jsonIdentification.put("id", id);
 		jsonIdentification.put("type", type);
 		jsonIdentification.put("subtype", subtype);
-		jsonIdentification.put("role", roletype);
+		jsonIdentification.put("roletype", roletype);
 		
 		return jsonIdentification;
 	}

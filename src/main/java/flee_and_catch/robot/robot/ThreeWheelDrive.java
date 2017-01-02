@@ -352,6 +352,12 @@ public class ThreeWheelDrive implements Robot {
 		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), this.speed);
 	}
 
+	@Override
+	public void setActive(boolean active) {
+		this.active = active;
+		
+	}
+
 //##########################################################################################################################################
 }
 //### EOF ##################################################################################################################################

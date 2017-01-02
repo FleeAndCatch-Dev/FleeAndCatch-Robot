@@ -3,6 +3,7 @@
 package flee_and_catch.robot;
 
 import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.Interpreter;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
@@ -36,6 +37,7 @@ public class Program {
 		
 		//Tell client the robot:
 		Client.setDevice((Device)robot.getJSONRobot());
+		Interpreter.setRobot(robot);
 		
 		//Backend connection:
 		try {
@@ -61,6 +63,15 @@ public class Program {
 		new RobotController(robot, field);
 		
 		//Controller drives robot ...*/
+		
+		viewController.showExit();
+		
+		try {
+			Client.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

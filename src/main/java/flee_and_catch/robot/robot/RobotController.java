@@ -3,6 +3,7 @@
 package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Direction;
@@ -37,12 +38,16 @@ public class RobotController {
 		this.syncThread = new Thread(new SynchronizationThread(this.robot));
 		
 		//Start thread for data sending to backend:
-		syncThread.start();
+		//syncThread.start();
 
 	}
 	
 //### METHODS ##############################################################################################################################
-
+	
+	public void controlRobot(Direction direction, Speed speed) {
+		
+	}
+	
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 
 	 */
