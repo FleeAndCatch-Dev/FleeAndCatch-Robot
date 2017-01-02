@@ -51,12 +51,8 @@ public final class Interpreter {
 		Connection command = gson.fromJson(pCommand.toString(), Connection.class);
 		
 		switch(type){
-			case SetId:
+			case Connect:
 				Client.getClientIdentification().setId(command.getIdentification().getId());
-				return;
-			case GetType:
-				Connection cmd = new Connection(CommandType.Connection.toString(), ConnectionType.SetType.toString(), Client.getClientIdentification(), Client.getRobot());
-				Client.sendCmd(cmd.getCommand());
 				return;
 			case Disconnect:
 				Client.disconnect();

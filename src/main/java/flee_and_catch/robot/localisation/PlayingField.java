@@ -2,6 +2,8 @@
 
 package flee_and_catch.robot.localisation;
 
+import flee_and_catch.robot.communication.command.device.robot.Position;
+
 //### IMPORTS ##############################################################################################################################
 
 public class PlayingField {

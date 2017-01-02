@@ -1,6 +1,6 @@
 package flee_and_catch.robot.communication.command;
 
-import flee_and_catch.robot.communication.identification.ClientIdentification;
+import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 
 public abstract class Command {
 	protected String id;

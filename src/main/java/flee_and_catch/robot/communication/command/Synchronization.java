@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.identification.ClientIdentification;
-import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.communication.command.device.robot.Robot;
+import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 
 public class Synchronization extends Command {
 
@@ -22,7 +22,7 @@ public class Synchronization extends Command {
 	public String getCommand() {
 		JSONArray robotarray = new JSONArray();
 		for(int i=0; i<robots.size(); i++){
-			robotarray.put(Robot.Static.getJSONObject(robots.get(0)));
+			robotarray.put(robots.get(0));
 		}
 		
 		JSONObject command = new JSONObject();

@@ -6,10 +6,11 @@
 
 package flee_and_catch.robot.robot;
 
-//### IMPORTS ##############################################################################################################################
-import flee_and_catch.robot.localisation.Position;
-import flee_and_catch.robot.communication.identification.RobotIdentification;
-import flee_and_catch.robot.component.RoleType;
+import flee_and_catch.robot.communication.command.component.IdentificationType;
+import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.component.RoleType;
+import flee_and_catch.robot.communication.command.device.robot.Position;
+import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 import flee_and_catch.robot.localisation.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
@@ -19,7 +20,7 @@ import lejos.hardware.port.MotorPort;
  * @author Manuel Bothner
  *
  */
-public class ThreeWheelDriveRobot implements Robot {
+public class ThreeWheelDrive implements Robot {
 
 //### CONSTANTS ############################################################################################################################
 	
@@ -57,13 +58,13 @@ public class ThreeWheelDriveRobot implements Robot {
 	/* DefaultRobot [Constructor]: Initialize the position x=0, y=0, orientation=0 and the speed 50mm/s *//**
 	 * 
 	 */
-	public ThreeWheelDriveRobot(String pSubtype) {
+	public ThreeWheelDrive(String pSubtype) {
 		
 		//Initialize the attributes:
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
 		this.speed = 50.0f;					//Set speed to 50mm/s!
 		this.totalDistance = 0.0f;
-		this.identification = new RobotIdentification(pSubtype, RoleType.Undefined.toString());
+		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), pSubtype, RoleType.Undefined.toString());
 		this.active = false;
 		
 		//Initialize the robot components:
@@ -76,7 +77,7 @@ public class ThreeWheelDriveRobot implements Robot {
 	 * @param pos
 	 * @param speed
 	 */
-	public ThreeWheelDriveRobot(Position pos, float speed) {
+	public ThreeWheelDrive(Position pos, float speed) {
 		
 	
 		//Initialize the attributes:
@@ -101,8 +102,8 @@ public class ThreeWheelDriveRobot implements Robot {
 		this.motorLeft  = new EV3MediumRegulatedMotor(MotorPort.B);
 		
 		//Set default values for speed (degrees/sec):
-		this.motorRight.setSpeed(this.speed / ThreeWheelDriveRobot.DISTANCE_DEGREE);
-		this.motorLeft.setSpeed(this.speed / ThreeWheelDriveRobot.DISTANCE_DEGREE);
+		this.motorRight.setSpeed(this.speed / ThreeWheelDrive.DISTANCE_DEGREE);
+		this.motorLeft.setSpeed(this.speed / ThreeWheelDrive.DISTANCE_DEGREE);
 		
 		//Reset the turn counter of the motors:
 		this.motorRight.resetTachoCount();
@@ -121,7 +122,7 @@ public class ThreeWheelDriveRobot implements Robot {
 		//Calculate the average of both rotation counters:
 		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
 		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
-		return degrees * ThreeWheelDriveRobot.DISTANCE_DEGREE;
+		return degrees * ThreeWheelDrive.DISTANCE_DEGREE;
 		
 	}
 	
@@ -220,7 +221,7 @@ public class ThreeWheelDriveRobot implements Robot {
 		this.speed = speed;
 		
 		//Convert speed in milli/sec to degrees/sec:
-		float degrees = speed / ThreeWheelDriveRobot.DISTANCE_DEGREE;
+		float degrees = speed / ThreeWheelDrive.DISTANCE_DEGREE;
 		//Set the rotation speed (degrees/sec) of the both motors:
 		this.motorRight.setSpeed(degrees);
 		this.motorLeft.setSpeed(degrees);
@@ -276,7 +277,7 @@ public class ThreeWheelDriveRobot implements Robot {
 		this.move();
 		
 		//Wait time to move the distance:
-		Thread.sleep((long) (sec * ThreeWheelDriveRobot.ADJUST_SEC_MOVE * 1000));
+		Thread.sleep((long) (sec * ThreeWheelDrive.ADJUST_SEC_MOVE * 1000));
 		
 		//Stop motors:
 		this.stop();
@@ -297,7 +298,7 @@ public class ThreeWheelDriveRobot implements Robot {
 		if(this.isMoving()) { this.stop(); }
 		
 		//Calculate the length of the circular sector:
-		float circular_sektor = (float) (ThreeWheelDriveRobot.DIAMETER_WHEELS * Math.PI * (angle / 360));
+		float circular_sektor = (float) (ThreeWheelDrive.DIAMETER_WHEELS * Math.PI * (angle / 360));
 		//Calculate the time in seconds that the motors must move:
 		float sec = circular_sektor / this.getSpeed();
 		
@@ -322,7 +323,7 @@ public class ThreeWheelDriveRobot implements Robot {
 				break;
 		}
 		
-		Thread.sleep((long) (sec * ThreeWheelDriveRobot.ADJUST_SEC_ROTATE * 1000));
+		Thread.sleep((long) (sec * ThreeWheelDrive.ADJUST_SEC_ROTATE * 1000));
 		
 		//Stop motors:
 		this.stopWithoutDeterminePosition();
@@ -343,6 +344,12 @@ public class ThreeWheelDriveRobot implements Robot {
 			this.rotate(Direction.LEFT, angle);
 		}
 		
+	}
+
+	@Override
+	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
+		// TODO Auto-generated method stub
+		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), this.speed);
 	}
 
 //##########################################################################################################################################

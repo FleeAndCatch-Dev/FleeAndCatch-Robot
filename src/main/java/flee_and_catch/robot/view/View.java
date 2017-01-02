@@ -2,7 +2,7 @@
 
 package flee_and_catch.robot.view;
 
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.RobotType;
 import lejos.hardware.lcd.LCD;
 
 /* View [Class]: Class that represents the graphical interface via LCD of the robot *//**

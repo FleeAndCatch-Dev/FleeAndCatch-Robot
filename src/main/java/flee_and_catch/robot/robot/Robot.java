@@ -4,9 +4,8 @@ package flee_and_catch.robot.robot;
 
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.identification.RobotIdentification;
-//### IMPORTS ##############################################################################################################################
-import flee_and_catch.robot.localisation.Position;
+import flee_and_catch.robot.communication.command.device.robot.Position;
+import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 
 /* Robot [Interface]: Interface that defines all necessary functions that a robot must implement *//**
  * 
@@ -28,6 +27,8 @@ public interface Robot {
 	boolean isMoving();
 	
 	void setSpeed(float speed);
+	
+	flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 
 //### PUBLIC METHODS #######################################################################################################################
 		
@@ -95,6 +96,12 @@ public interface Robot {
 		public boolean isActive() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+
+		@Override
+		public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 

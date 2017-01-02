@@ -14,16 +14,17 @@ import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.identification.ClientIdentification;
-import flee_and_catch.robot.component.IdentificationType;
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.IdentificationType;
+import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 import flee_and_catch.robot.robot.Robot;
 
 public final class Client {
 	
 	private static boolean connected;
 	private static ClientIdentification identification;
-	private static Robot robot;
+	private static Device device;
 	private static Socket socket;
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
@@ -37,7 +38,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, Configuration.address, Configuration.port, pType.toString());
+			identification = new ClientIdentification(0, pType.toString(), Configuration.address, Configuration.port);
 			startConnection();
 			return;
 		}
@@ -55,7 +56,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pAddress, Configuration.port, pType.toString());
+			identification = new ClientIdentification(0, pType.toString(), pAddress, Configuration.port);
 			startConnection();
 			return;
 		}
@@ -74,7 +75,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress, int pPort) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pAddress, pPort, pType.toString());
+			identification = new ClientIdentification(0, pType.toString(), pAddress, pPort);
 			startConnection();
 			return;
 		}
@@ -116,9 +117,12 @@ public final class Client {
 	 */
 	private static void listen() throws Exception {
 		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		outputStream = new DataOutputStream(socket.getOutputStream());
-		
+		outputStream = new DataOutputStream(socket.getOutputStream());		
 		connected = true;
+		
+		Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Connect.toString(), identification, device);
+        sendCmd(command.getCommand());
+		
 		while(connected){
 			Interpreter.parse(receiveCmd());
 		}
@@ -213,7 +217,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification, robot);
+			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification, device);
 			sendCmd(command.getCommand());
 			return;
 		}
@@ -238,12 +242,12 @@ public final class Client {
 		return connected;
 	}
 
-	public static Robot getRobot() {
-		return robot;
+	public static Device getDevice() {
+		return device;
 	}
 
-	public static void setRobot(Robot robot) {
-		Client.robot = robot;
+	public static void setDevice(Device pDevice) {
+		device = pDevice;
 	}
 
 	public static ClientIdentification getClientIdentification() {

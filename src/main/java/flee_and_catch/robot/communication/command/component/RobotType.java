@@ -1,9 +1,9 @@
 //### Robots.java ##########################################################################################################################
 
-package flee_and_catch.robot.component;
+package flee_and_catch.robot.communication.command.component;
 
 import flee_and_catch.robot.robot.Robot;
-import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
+import flee_and_catch.robot.robot.ThreeWheelDrive;
 
 //### IMPORTS ##############################################################################################################################
 
@@ -12,7 +12,7 @@ public enum RobotType {
 //### ENUM ELEMENTS ########################################################################################################################
 	
 	//Here are all available robots are defined with their name and class:
-	ThreeWheelDrive 	("ThreeWheelDrive", new ThreeWheelDriveRobot("ThreeWheelDrive")),
+	ThreeWheelDrive 	("ThreeWheelDrive", new ThreeWheelDrive("ThreeWheelDrive")),
 	FourWheelDrive  	("FourWheelDrive", null),
 	ChainDrive 			("ChainDrive", null),
 	Test				("Test", null);

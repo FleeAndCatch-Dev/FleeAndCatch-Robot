@@ -2,7 +2,7 @@
 
 package flee_and_catch.robot.view;
 
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.RobotType;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.robot.Robot;
 import lejos.hardware.Button;

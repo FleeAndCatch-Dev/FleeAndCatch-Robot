@@ -2,12 +2,12 @@
 
 package flee_and_catch.robot.robot;
 
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.device.robot.Position;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
-import flee_and_catch.robot.localisation.Position;
-import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
+import flee_and_catch.robot.robot.ThreeWheelDrive;
 import flee_and_catch.robot.threads.SynchronizationThread;
 import flee_and_catch.robot.robot.Robot;
 import lejos.hardware.Button;
@@ -63,7 +63,7 @@ public class RobotController {
  		Position posStart = new Position(575, 550, 0);
  		
  		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(posStart, 150.0f);		//Initialize a new Robot!
+		ThreeWheelDrive robot = new ThreeWheelDrive(posStart, 150.0f);		//Initialize a new Robot!
 		
 		//Size: width=2000mm, height=2000mm
 		PlayingField field = new PlayingField(1150, 1100);				//Initialize a new PlayingField!
@@ -163,7 +163,7 @@ public class RobotController {
 		
 		LCD.drawString("testRun() - Start", 0, 0);
 		
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(RobotType.ThreeWheelDrive.toString());		//Initialize a new Robot!
+		ThreeWheelDrive robot = new ThreeWheelDrive(RobotType.ThreeWheelDrive.toString());		//Initialize a new Robot!
 		robot.setSpeed(80.0f);							//Set speed to 20 mm/sec!
 		
 		//Print information:
@@ -265,7 +265,7 @@ public class RobotController {
  		LCD.drawString("testRun2() - Start", 0, 0);
  		
  		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(new Position(), 80.0f);		//Initialize a new Robot!
+		ThreeWheelDrive robot = new ThreeWheelDrive(new Position(), 80.0f);		//Initialize a new Robot!
 		
 		//Size: width=2000mm, height=2000mm
 		//PlayingField field = new PlayingField(2000, 2000);					//Initialize a new PlayingField!

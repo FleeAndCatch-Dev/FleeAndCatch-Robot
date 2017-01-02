@@ -1,20 +1,20 @@
-package flee_and_catch.robot.communication.identification;
+package flee_and_catch.robot.communication.command.identification;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ClientIdentification {
+import flee_and_catch.robot.communication.command.component.IdentificationType;
 
-	private int id;
-	private String type;
+public class ClientIdentification extends Identification {
+
 	private String address;
 	private int port;
 	
-	public ClientIdentification(int pId, String pAddress, int pPort, String pType){
+	public ClientIdentification(int pId, String pType, String pAddress, int pPort){
 		this.id = pId;
+		this.type = IdentificationType.valueOf(pType).toString();
 		this.address = pAddress;
 		this.port = pPort;
-		this.type = pType;
 	}
 
 	/**
@@ -34,18 +34,6 @@ public class ClientIdentification {
 		jsonIdentification.put("port", port);
 		
 		return jsonIdentification;
-	}
-	
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getType() {
-		return type;
 	}
 
 	public String getAddress() {

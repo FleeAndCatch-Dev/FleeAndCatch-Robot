@@ -3,11 +3,11 @@ package flee_and_catch.robot.communication.command;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.communication.identification.ClientIdentification;
-import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 
 public class Connection extends Command {
-	private Robot robot;
+	private Device device;
 	
 	/**
 	 * <h1>Constructor</h1>
@@ -19,9 +19,9 @@ public class Connection extends Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public Connection(String pId, String pType, ClientIdentification pIdentification, Robot pRobot){
+	public Connection(String pId, String pType, ClientIdentification pIdentification, Device pDevice){
 		super(pId, pType, pIdentification);
-		this.robot = pRobot;
+		this.device = pDevice;
 	}
 	
 	/**
@@ -37,12 +37,12 @@ public class Connection extends Command {
 		command.put("apiid", apiid);
 		command.put("errorhandling", errorhandling);
 		command.put("identification", identification.getJSONObject());
-		command.put("robot", Robot.Static.getJSONObject(robot));
+		command.put("device", device.getJSONObject());
 		
 		return command.toString();
 	}
 
-	public Robot getRobot() {
-		return robot;
+	public Device getDevice() {
+		return device;
 	}
 }

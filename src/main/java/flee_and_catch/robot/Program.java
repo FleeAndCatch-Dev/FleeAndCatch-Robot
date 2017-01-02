@@ -3,8 +3,9 @@
 package flee_and_catch.robot;
 
 import flee_and_catch.robot.communication.Client;
-import flee_and_catch.robot.component.IdentificationType;
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.IdentificationType;
+import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.device.Device;
 //### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.robot.Robot;
@@ -34,7 +35,7 @@ public class Program {
 		Robot robot = viewController.getSelectedRobot();
 		
 		//Tell client the robot:
-		Client.setRobot(robot);
+		Client.setDevice((Device)robot.getJSONRobot());
 		
 		//Backend connection:
 		try {
