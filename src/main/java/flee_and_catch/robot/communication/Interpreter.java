@@ -4,18 +4,24 @@ import java.util.Objects;
 
 import org.json.JSONObject;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
 import flee_and_catch.robot.communication.command.Control;
 import flee_and_catch.robot.communication.command.ControlType;
+import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.robot.RobotController;
+import flee_and_catch.robot.view.ViewController;
 
 public final class Interpreter {
 
 	private static Gson gson = new Gson();
-	private static Robot robot;
+	private static RobotController robotController;
+	private static ViewController viewController;
 	
 	/**
 	 * <h1>Parse command</h1>
@@ -54,8 +60,10 @@ public final class Interpreter {
 		
 		switch(type){
 			case Begin:
+				Interpreter.robotController.setRobotActive(command.getRobot().isActive());
+				return;
 			case End:
-				Interpreter.robot.setActive(command.getRobot().isActive());
+				Interpreter.robotController.setRobotActive(command.getRobot().isActive());
 				return;
 			case Start:
 				//TODO: Add functionality!
@@ -64,17 +72,21 @@ public final class Interpreter {
 				//TODO: Add functionality!
 				return;
 			case Control:
-				//TODO: Add functionality!
+				Interpreter.robotController.controlRobot(command.getSteering());
+				Interpreter.viewController.showStatus("Control");
 				return;
 			default:
 				throw new Exception("Argument out of range");
 		}
 	}
 	
-	public static void setRobot(Robot robot) {
-		Interpreter.robot = robot;
+	public static void setRobotController(RobotController robotController) {
+		Interpreter.robotController = robotController;
 	}
 
+	public static void setViewController(ViewController viewController) {
+		Interpreter.viewController = viewController;
+	}
 	
 	/**
 	 * <h1>Connection</h1>
@@ -90,7 +102,12 @@ public final class Interpreter {
 		if(pCommand == null) throw new NullPointerException();
 		
 		ConnectionType type = ConnectionType.valueOf((String) pCommand.get("type"));
-		Connection command = gson.fromJson(pCommand.toString(), Connection.class);
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();
+		
+		Connection command = localgson.fromJson(pCommand.toString(), Connection.class);
 		
 		switch(type){
 			case Connect:

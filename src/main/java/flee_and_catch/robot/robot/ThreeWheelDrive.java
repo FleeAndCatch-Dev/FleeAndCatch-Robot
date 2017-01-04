@@ -7,11 +7,13 @@
 package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.RoleType;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
-import flee_and_catch.robot.localisation.Direction;
+
+import org.jfree.util.Rotation;
+
+import flee_and_catch.robot.communication.command.component.Direction;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 
@@ -34,15 +36,23 @@ public class ThreeWheelDrive implements Robot {
 	//Adjustment parameter of the motor runtime for rotation on spot:
 	private static final float ADJUST_SEC_ROTATE = 1.00000f;
 	
+	//Represents the maximum speed of a motor in degrees per second:
+	private static final float MAX_SPEED_MOTOR = 1440.0f;
+	
 //### ATTRIBUTES ###########################################################################################################################
 	
-	//???
+	//Represents an object to identify the robot:
 	private RobotIdentification identification;
+	//Saves if the robot is controlled bei an app:
 	private boolean active;
 	//Represents the position and the orientation of the robot:
 	private Position pos;
 	//Represents the Speed of the speed of the robot:
 	private float speed;
+	
+	//
+	private float rotationSpeed;
+	
 	//Represents the total distance that the robot covered:
 	private float totalDistance;
 	
@@ -63,27 +73,10 @@ public class ThreeWheelDrive implements Robot {
 		//Initialize the attributes:
 		this.pos = new Position();			//x=0, y=0, orientation=0°!
 		this.speed = 50.0f;					//Set speed to 50mm/s!
+		this.rotationSpeed = 50.0f;
 		this.totalDistance = 0.0f;
 		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), pSubtype, RoleType.Undefined.toString());
 		this.active = false;
-		
-		//Initialize the robot components:
-		this.initComponents();
-		
-	}
-	
-	/* DefaultRobot [Constructor]: Constructor to initialize the robot with a position and speed *//**
-	 * 
-	 * @param pos
-	 * @param speed
-	 */
-	public ThreeWheelDrive(Position pos, float speed) {
-		
-	
-		//Initialize the attributes:
-		this.pos = pos;						//x=0, y=0, orientation=0°!
-		this.speed = speed;					//Set speed to 50mm/s!
-		this.totalDistance = 0.0f;
 		
 		//Initialize the robot components:
 		this.initComponents();
@@ -177,6 +170,16 @@ public class ThreeWheelDrive implements Robot {
 		return active;
 	}
 	
+	/* isMoving [Method]: Method that tells whether the robot is moving *//**
+	 * 
+	 * @return
+	 */
+	public boolean isMoving() {
+		
+		return (this.motorRight.isMoving() || this.motorLeft.isMoving());
+	
+	}
+
 	/* getPosition [Method]: Returns the current position and orientation of the robot as a Position object *//**
 	 * 
 	 * @return
@@ -212,32 +215,65 @@ public class ThreeWheelDrive implements Robot {
 		return this.totalDistance + this.getLongitudinalDistance();
 	}
 	
+	@Override
+	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
+		// TODO Auto-generated method stub
+		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), this.speed);
+	}
+	
+	//--- Setter -------------------------------------------------------------------------------------------------------
+	
 	/* setSpeed [Method]: Method to set the speed of the robot in millimeter per second *//**
 	 * 
 	 */
 	public void setSpeed(float speed) {
-		
-		//Set speed attribute:
-		this.speed = speed;
-		
-		//Convert speed in milli/sec to degrees/sec:
+				
+		//Convert speed from milli/sec to degrees/sec:
 		float degrees = speed / ThreeWheelDrive.DISTANCE_DEGREE;
-		//Set the rotation speed (degrees/sec) of the both motors:
-		this.motorRight.setSpeed(degrees);
-		this.motorLeft.setSpeed(degrees);
+		
+		//Check if the speed is not negative:
+		if(speed < 0.0f) {
+			//Set the rotation speed (degrees/sec) of the both motors to zero:
+			this.motorRight.setSpeed(0.0f);
+			this.motorLeft.setSpeed(0.0f);
+			//Set speed attribute:
+			this.speed = 0.0f;
+		}
+		//Check if the speed is not to high:
+		else if(degrees > ThreeWheelDrive.MAX_SPEED_MOTOR) {
+			//Set the rotation speed (degrees/sec) of the both motors to maximum:
+			this.motorRight.setSpeed(ThreeWheelDrive.MAX_SPEED_MOTOR);
+			this.motorLeft.setSpeed(ThreeWheelDrive.MAX_SPEED_MOTOR);
+			//Set speed attribute:
+			this.speed = ThreeWheelDrive.MAX_SPEED_MOTOR * ThreeWheelDrive.DISTANCE_DEGREE;
+		}
+		else {
+			//Set the rotation speed (degrees/sec) of the both motors:
+			this.motorRight.setSpeed(degrees);
+			this.motorLeft.setSpeed(degrees);
+			//Set speed attribute:
+			this.speed = speed;
+		}
+
+	}
+	
+	/* setActive [Method]: Method to set if the robot is controlled or not *//**
+	 * 	
+	 */
+	@Override
+	public void setActive(boolean active) {
+		this.active = active;
 		
 	}
 	
 //### PUBLIC METHODS #######################################################################################################################
 	
-	/* isMoving [Method]: Method that tells whether the robot is moving *//**
-	 * 
-	 * @return
-	 */
-	public boolean isMoving() {
-		
-		return (this.motorRight.isMoving() || this.motorLeft.isMoving());
+	public void increaseSpeed() {
+		this.setSpeed(this.getSpeed() + 10.0f);
+	}
 	
+	public void decreaseSpeed() {
+		this.setSpeed(this.getSpeed() - 10.0f);
 	}
 	
 	/* stop [Method]: Method to stop the robot moving *//**
@@ -258,10 +294,45 @@ public class ThreeWheelDrive implements Robot {
 	 */
 	public void move() {
 		
+		this.setSpeed(this.speed);
+		
 		this.motorRight.forward();
 		this.motorLeft.forward();
 	
 	}
+	
+	
+	@Override
+	public void rotate(Direction direction) {
+		
+		//First stop the robot moving (Depends on the moving concept):
+		//if(this.isMoving()) { this.stop(); }
+		
+		this.setSpeed(rotationSpeed);
+		
+		//Start motors:
+		switch(direction) {
+			case Left:
+				//Activate motors:
+				this.motorRight.forward();
+				this.motorLeft.backward();
+				break;
+			case Right:
+				//Activate motors:
+				this.motorRight.backward();
+				this.motorLeft.forward();
+				break;
+			default:
+				//Error!
+				break;
+		}
+		
+		//TODO: Calculate Position:
+		
+	}
+
+	
+	//--- Temporarily effects ------------------------------------------------------------------------------------------
 	
 	/* move [Method]: Method to let the robot move a distance forward *//**
 	 * 
@@ -304,14 +375,14 @@ public class ThreeWheelDrive implements Robot {
 		
 		//Start motors:
 		switch(direct) {
-			case LEFT:
+			case Left:
 				//Set new robot orientation:
 				this.pos.calculateNewOrientation(angle);
 				//Activate motors:
 				this.motorRight.forward();
 				this.motorLeft.backward();
 				break;
-			case RIGHT:
+			case Right:
 				//Set new robot orientation:
 				this.pos.calculateNewOrientation(-angle);
 				//Activate motors:
@@ -338,25 +409,16 @@ public class ThreeWheelDrive implements Robot {
 		
 		if(angle < 0) {
 			angle *= -1;
-			this.rotate(Direction.RIGHT, angle);
+			this.rotate(Direction.Right, angle);
 		}
 		else {
-			this.rotate(Direction.LEFT, angle);
+			this.rotate(Direction.Left, angle);
 		}
 		
 	}
 
-	@Override
-	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
-		// TODO Auto-generated method stub
-		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), this.speed);
-	}
 
-	@Override
-	public void setActive(boolean active) {
-		this.active = active;
-		
-	}
+
 
 //##########################################################################################################################################
 }

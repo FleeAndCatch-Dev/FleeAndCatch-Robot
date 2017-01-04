@@ -35,9 +35,16 @@ public class Program {
 		//Get selected robot from the user:
 		Robot robot = viewController.getSelectedRobot();
 		
+		//Get information about the field from the user over the app: (NOT IMPLEMENTED)
+		PlayingField field = new PlayingField(1000, 1000);
+		
+		//Initialize a robot-controller with the selected robot and the playing field:
+		RobotController robotController = new RobotController(robot, field);
+		
 		//Tell client the robot:
 		Client.setDevice((Device)robot.getJSONRobot());
-		Interpreter.setRobot(robot);
+		Interpreter.setRobotController(robotController);
+		Interpreter.setViewController(viewController);
 		
 		//Backend connection:
 		try {
@@ -55,13 +62,7 @@ public class Program {
 		
 		//TODO: Get position of the robot!!!
 		//TODO: Get dimensions of the playing field!!!
-		
-		//Get information about the field from the user over the app: (NOT IMPLEMENTED)
-		PlayingField field = new PlayingField(1000, 1000);
-		
-		//Initialize a robot-controller with the selected robot and the playing field:
-		new RobotController(robot, field);
-		
+				
 		//Controller drives robot ...*/
 		
 		viewController.showExit();

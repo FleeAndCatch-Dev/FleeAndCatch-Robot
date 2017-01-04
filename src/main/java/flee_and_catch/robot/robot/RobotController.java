@@ -5,8 +5,9 @@ package flee_and_catch.robot.robot;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
+import flee_and_catch.robot.communication.command.device.robot.Steering;
+import flee_and_catch.robot.communication.command.component.Direction;
 //### IMPORTS ##############################################################################################################################
-import flee_and_catch.robot.localisation.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.robot.ThreeWheelDrive;
 import flee_and_catch.robot.threads.SynchronizationThread;
@@ -26,6 +27,10 @@ public class RobotController {
 	//Thread that sends the robot data to the backend:
 	Thread syncThread;
 	
+	private boolean acceptSterring;
+	
+	private Direction direction = null;
+	
 //### CONSTRUCTORS #########################################################################################################################
 	
 	/* RobotController [Constructor]: Initialize the controller with a robot and a playing field *//**
@@ -36,6 +41,7 @@ public class RobotController {
 		this.robot = robot;
 		this.field = field;
 		this.syncThread = new Thread(new SynchronizationThread(this.robot));
+		this.acceptSterring = true;
 		
 		//Start thread for data sending to backend:
 		//syncThread.start();
@@ -44,8 +50,49 @@ public class RobotController {
 	
 //### METHODS ##############################################################################################################################
 	
-	public void controlRobot(Direction direction, Speed speed) {
+	public void controlRobot(Steering steering) {
 		
+		long start = 0;
+		long end = 0;
+		
+		//Handle speed command:
+		switch(Speed.valueOf(steering.getSpeed())) {
+			case Faster:
+				this.robot.increaseSpeed();
+				break;
+			case Slower:
+				this.robot.decreaseSpeed();
+				break;
+			default:
+				break;
+		}
+		
+		switch(Direction.valueOf(steering.getDirection())) {
+			case Right:
+				if(this.direction != Direction.valueOf(steering.getDirection())) {
+					this.robot.rotate(Direction.valueOf(steering.getDirection()));
+					this.direction = Direction.valueOf(steering.getDirection());
+				}
+				break;
+			case Left:
+				if(this.direction != Direction.valueOf(steering.getDirection())) {
+					this.robot.rotate(Direction.valueOf(steering.getDirection()));
+					this.direction = Direction.valueOf(steering.getDirection());
+				}
+				break;
+			case StraightOn:
+				start = System.currentTimeMillis();
+				this.robot.move();
+				end = System.currentTimeMillis() - start;
+				this.direction = Direction.valueOf(steering.getDirection());
+				break;
+		}
+		
+		
+	}
+	
+	public void setRobotActive(boolean active) {
+		this.robot.setActive(active);
 	}
 	
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
@@ -68,7 +115,7 @@ public class RobotController {
  		Position posStart = new Position(575, 550, 0);
  		
  		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDrive robot = new ThreeWheelDrive(posStart, 150.0f);		//Initialize a new Robot!
+		ThreeWheelDrive robot = new ThreeWheelDrive(RobotType.ThreeWheelDrive.toString());		//Initialize a new Robot!
 		
 		//Size: width=2000mm, height=2000mm
 		PlayingField field = new PlayingField(1150, 1100);				//Initialize a new PlayingField!
@@ -103,7 +150,7 @@ public class RobotController {
  			if(!field.isIn(pos)) {
  				
  				//Make a turn:
- 				robot.rotate(Direction.LEFT, 180);		//180° turn!
+ 				robot.rotate(Direction.Left, 180);		//180° turn!
  				//Buffer so that the robot get back in the field until the next check:
  				robot.move(50);							//Move 50mm forward!
  				//Let the robot still move:
@@ -185,7 +232,7 @@ public class RobotController {
 		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
 		
 		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 90);
+		robot.rotate(Direction.Left, 90);
 		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
 		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
 		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
@@ -199,7 +246,7 @@ public class RobotController {
 		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
 		
 		//Let the robot rotate:
-		robot.rotate(Direction.RIGHT, 30);
+		robot.rotate(Direction.Right, 30);
 		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
 		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
 		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
@@ -213,7 +260,7 @@ public class RobotController {
 		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
 		
 		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 165);
+		robot.rotate(Direction.Left, 165);
 		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
 		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
 		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
@@ -227,7 +274,7 @@ public class RobotController {
 		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
 		
 		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 93);
+		robot.rotate(Direction.Left, 93);
 		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
 		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
 		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
@@ -241,7 +288,7 @@ public class RobotController {
 		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
 		
 		//Let the robot rotate:
-		robot.rotate(Direction.RIGHT, 117);
+		robot.rotate(Direction.Right, 117);
 		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
 		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
 		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
@@ -270,7 +317,7 @@ public class RobotController {
  		LCD.drawString("testRun2() - Start", 0, 0);
  		
  		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDrive robot = new ThreeWheelDrive(new Position(), 80.0f);		//Initialize a new Robot!
+		ThreeWheelDrive robot = new ThreeWheelDrive(RobotType.ThreeWheelDrive.toString());		//Initialize a new Robot!
 		
 		//Size: width=2000mm, height=2000mm
 		//PlayingField field = new PlayingField(2000, 2000);					//Initialize a new PlayingField!
