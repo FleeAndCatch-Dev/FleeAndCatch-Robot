@@ -38,7 +38,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pType.toString(), Configuration.address, Configuration.port);
+			identification = new ClientIdentification(0, pType.toString(), Configuration.BACKEND_ADDRESS, Configuration.BACKEND_PORT);
 			startConnection();
 			return;
 		}
@@ -56,7 +56,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pType.toString(), pAddress, Configuration.port);
+			identification = new ClientIdentification(0, pType.toString(), pAddress, Configuration.BACKEND_PORT);
 			startConnection();
 			return;
 		}

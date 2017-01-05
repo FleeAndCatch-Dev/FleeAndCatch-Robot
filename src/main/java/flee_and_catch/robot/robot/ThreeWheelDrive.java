@@ -8,6 +8,7 @@ package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RoleType;
+import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 
@@ -322,6 +323,9 @@ public class ThreeWheelDrive implements Robot {
 				this.motorRight.backward();
 				this.motorLeft.forward();
 				break;
+			case StraightOn:
+				this.motorRight.forward();
+				this.motorLeft.forward();
 			default:
 				//Error!
 				break;
@@ -413,6 +417,24 @@ public class ThreeWheelDrive implements Robot {
 		}
 		else {
 			this.rotate(Direction.Left, angle);
+		}
+		
+	}
+
+	@Override
+	public void changeSpeed(Speed speed) {
+
+		switch(speed) {
+			case Faster:
+				this.increaseSpeed();
+				break;
+			case Slower:
+				this.decreaseSpeed();
+				break;
+			case Equal:
+				break;
+			default:
+				break;
 		}
 		
 	}

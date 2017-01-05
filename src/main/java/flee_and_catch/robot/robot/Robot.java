@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 import flee_and_catch.robot.communication.command.component.Direction;
+import flee_and_catch.robot.communication.command.component.Speed;
 
 /* Robot [Interface]: Interface that defines all necessary functions that a robot must implement *//**
  * 
@@ -40,6 +41,8 @@ public interface Robot {
 	void decreaseSpeed();
 	
 	void rotate(Direction direction);
+	
+	void changeSpeed(Speed speed);
 	
 	void move();
 	
@@ -141,6 +144,12 @@ public interface Robot {
 
 		@Override
 		public void move() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void changeSpeed(Speed speed) {
 			// TODO Auto-generated method stub
 			
 		}

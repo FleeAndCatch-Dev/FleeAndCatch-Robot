@@ -8,10 +8,14 @@ public class Configuration {
 	
 //### CONSTANTS ############################################################################################################################
 	
-	public static final String address = "192.168.100.90";
-	public static final int port = 5000;
+	public static final String BACKEND_ADDRESS = "192.168.100.100";
+	public static final int BACKEND_PORT = 5000;
+	
 	private static final boolean SOUND  = true;
 	private static final byte 	 VOLUME = 20;			//Range 0 to 100 (0 = no sound)
+	
+	public static final int STEERING_THREAD_SLEEP = 25;
+	public static final int SYNCHRONIZATION_THREAD_SLEEP = 25;
 	
 //### ATTRIBUTES ###########################################################################################################################
 

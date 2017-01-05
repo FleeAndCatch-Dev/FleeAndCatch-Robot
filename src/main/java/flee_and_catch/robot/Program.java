@@ -44,7 +44,6 @@ public class Program {
 		//Tell client the robot:
 		Client.setDevice((Device)robot.getJSONRobot());
 		Interpreter.setRobotController(robotController);
-		Interpreter.setViewController(viewController);
 		
 		//Backend connection:
 		try {

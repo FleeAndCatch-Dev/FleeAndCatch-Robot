@@ -2,15 +2,19 @@
 
 package flee_and_catch.robot.robot;
 
+//### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
+import flee_and_catch.robot.Configuration;
+import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.Synchronization;
+import flee_and_catch.robot.communication.command.SynchronizationType;
 import flee_and_catch.robot.communication.command.component.Direction;
-//### IMPORTS ##############################################################################################################################
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.robot.ThreeWheelDrive;
-import flee_and_catch.robot.threads.SynchronizationThread;
 import flee_and_catch.robot.robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
@@ -24,12 +28,17 @@ public class RobotController {
 	private Robot robot;
 	//Represents the playing field in that the robot moves:
 	private PlayingField field;
-	//Thread that sends the robot data to the backend:
-	Thread syncThread;
-	
+	//Represents the new steering command:
+	private Steering newSteering;
+	//Represents the current steering command:
+	private Steering currentSteering;
+	//Shows if the robot accepts steering commands:
 	private boolean acceptSterring;
 	
-	private Direction direction = null;
+	//Thread that sends the robot data to the backend (data synchronization):
+	Thread syncThread;
+	//Thread that implements the steering commands:
+	Thread steeringThread;
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
@@ -40,61 +49,111 @@ public class RobotController {
 		
 		this.robot = robot;
 		this.field = field;
-		this.syncThread = new Thread(new SynchronizationThread(this.robot));
+		
+		this.syncThread = new Thread(new SynchronizationThread());
+		this.steeringThread = new Thread(new SteeringThread());
+		
 		this.acceptSterring = true;
 		
 		//Start thread for data sending to backend:
-		//syncThread.start();
-
+		//this.syncThread.start();
+		
+		//Start thread for steering the robot:
+		this.steeringThread.start();
 	}
 	
-//### METHODS ##############################################################################################################################
 	
-	public void controlRobot(Steering steering) {
+//### INNER CLASSES ########################################################################################################################
+	
+	class SteeringThread implements Runnable {
+
+		@Override
+		public void run() {
+			
+			//Controlling loop:
+			while(true) {
+				
+				try {
+					
+					//Should the steering should be processed and their is a steering to process:
+					if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
+						
+						//Convert the direction and the speed to enums:
+						Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
+						Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
+						
+						//Process direction:
+						RobotController.this.robot.rotate(direction);
+						
+						//Process speed:
+						RobotController.this.robot.changeSpeed(speed);
+						
+						//Set Steering to processed:
+						RobotController.this.newSteering = null;
+					}
+					
+					//Wait:
+					Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
+					
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		
-		long start = 0;
-		long end = 0;
-		
-		//Handle speed command:
-		switch(Speed.valueOf(steering.getSpeed())) {
-			case Faster:
-				this.robot.increaseSpeed();
-				break;
-			case Slower:
-				this.robot.decreaseSpeed();
-				break;
-			default:
-				break;
 		}
 		
-		switch(Direction.valueOf(steering.getDirection())) {
-			case Right:
-				if(this.direction != Direction.valueOf(steering.getDirection())) {
-					this.robot.rotate(Direction.valueOf(steering.getDirection()));
-					this.direction = Direction.valueOf(steering.getDirection());
+	}
+
+	
+	class SynchronizationThread implements Runnable {
+
+		@Override
+		public void run() {
+			
+			//Synchronization loop:
+			while(true) {
+				//Create synchronization object:
+				Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.Robots.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+				
+				try {
+					
+					Client.sendCmd(sync.getCommand());
+					Thread.sleep(Configuration.SYNCHRONIZATION_THREAD_SLEEP);
+					
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();		
 				}
-				break;
-			case Left:
-				if(this.direction != Direction.valueOf(steering.getDirection())) {
-					this.robot.rotate(Direction.valueOf(steering.getDirection()));
-					this.direction = Direction.valueOf(steering.getDirection());
-				}
-				break;
-			case StraightOn:
-				start = System.currentTimeMillis();
-				this.robot.move();
-				end = System.currentTimeMillis() - start;
-				this.direction = Direction.valueOf(steering.getDirection());
-				break;
+				
+				
+			}
+			
 		}
 		
-		
+	}
+	
+	
+//### GETTER/SETTER ########################################################################################################################
+	
+	public Steering getCurrentSteering() {
+		return currentSteering;
+	}
+
+	public void setAcceptSteering(boolean acceptSteering) {
+		this.acceptSterring = acceptSteering;
 	}
 	
 	public void setRobotActive(boolean active) {
 		this.robot.setActive(active);
 	}
 	
+	public void setNewSteering(Steering newSteering) {
+		this.newSteering = newSteering;
+	}
+	
+//### METHODS ##############################################################################################################################
+	
+
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 
 	 */
