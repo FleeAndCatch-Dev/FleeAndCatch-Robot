@@ -8,11 +8,11 @@ import org.json.JSONObject;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 
-public class Synchronization extends Command {
+public class SynchronizationCommand extends Command {
 
 	private ArrayList<Robot> robots;
 	
-	public Synchronization(String pId, String pType, ClientIdentification pIdentification, Robot pRobot) {
+	public SynchronizationCommand(String pId, String pType, ClientIdentification pIdentification, Robot pRobot) {
 		super(pId, pType, pIdentification);
 		this.robots = new ArrayList<Robot>();
 		this.robots.add(pRobot);

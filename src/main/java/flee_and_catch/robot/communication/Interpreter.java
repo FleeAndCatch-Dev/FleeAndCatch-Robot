@@ -10,16 +10,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Connection;
-import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.command.SzenarioCommand;
-import flee_and_catch.robot.communication.command.SzenarioCommandType;
+import flee_and_catch.robot.communication.command.ConnectionCommand;
+import flee_and_catch.robot.communication.command.ConnectionCommandType;
+import flee_and_catch.robot.communication.command.ControlCommand;
+import flee_and_catch.robot.communication.command.ControlCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
-import flee_and_catch.robot.communication.command.szenario.Control;
-import flee_and_catch.robot.communication.command.szenario.ControlType;
-import flee_and_catch.robot.communication.command.szenario.Szenario;
-import flee_and_catch.robot.communication.command.szenario.SzenarioAdapter;
 import flee_and_catch.robot.robot.RobotController;
 
 /* Interpreter [class]: Class that parses and interprets arrived JSON objects *//**
@@ -53,14 +49,14 @@ public final class Interpreter {
 	private static void connection(JSONObject pCommand) throws Exception {
 		
 		//Read out the type of the connection command:
-		ConnectionType type = ConnectionType.valueOf((String) pCommand.get("type"));
+		ConnectionCommandType type = ConnectionCommandType.valueOf((String) pCommand.get("type"));
 		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
-		Connection command = localgson.fromJson(pCommand.toString(), Connection.class);
+		ConnectionCommand command = localgson.fromJson(pCommand.toString(), ConnectionCommand.class);
 		
 		switch(type){
 			//Set the id of this client:
@@ -82,86 +78,39 @@ public final class Interpreter {
 	 * @param pCommand
 	 * @throws Exception
 	 */
-	private static void szenario(JSONObject pCommand) throws Exception {
+	private static void control(JSONObject pCommand) throws Exception {
 		
 		if(pCommand == null) throw new NullPointerException();  //???
 		
-		SzenarioCommandType type = SzenarioCommandType.valueOf((String) pCommand.get("type"));
-		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Szenario.class, new SzenarioAdapter());
-		builder.setPrettyPrinting();
-		Gson localgson = builder.create();			
-		SzenarioCommand command = localgson.fromJson(pCommand.toString(), SzenarioCommand.class);
-		
-		switch (type) {
-			case Control:
-				szenarioControl(command);
-				break;
-			case Synchron:
-			
-				break;
-			case Follow:
-	
-				break;
-			default:
-				break;
-		}
-		
 		//Read out the type of the control command:
-		/*ControlType type = ControlType.valueOf((String) pCommand.get("type"));
+		ControlCommandType type = ControlCommandType.valueOf((String) pCommand.get("type"));
 		//Serialize the JSON object to a Control class object:
-		Control command = gson.fromJson(pCommand.toString(), Control.class);
+		ControlCommand command = gson.fromJson(pCommand.toString(), ControlCommand.class);
 		
 		switch(type){
-			//Set the flag that indicates that the robot is controlled by an app:
-			case Begin:
-				Interpreter.robotController.setRobotActive(true);
-				return;
-			//Set the flag that indicates that the robot is controlled by an app:
-			case End:
-				Interpreter.robotController.setRobotActive(false);
-				return;
-			//Turn the steering of the robot on (steering commands get accepted and implemented):
-			case Start:
-				Interpreter.robotController.setAcceptSteering(true);
-				return;
-			//Turn the steering of the robot off:
-			case Stop:
-				Interpreter.robotController.setAcceptSteering(false);
-				return;
-			//Set a new steering command for the robot:
-			case Control:
-				Interpreter.robotController.setNewSteering(command.getSteering());
-				return;
-			default:
-				throw new Exception("Argument out of range");
-		}*/
-	}
-	
-	private static void szenarioControl(SzenarioCommand pCommand) throws Exception{
-		ControlType type = ControlType.valueOf(pCommand.getSzenario().getSzenariotype());
-		switch(type){
+		//Set the flag that indicates that the robot is controlled by an app:
 		case Begin:
+			Interpreter.robotController.setRobotActive(true);
+			return;
+		//Set the flag that indicates that the robot is controlled by an app:
 		case End:
-			Interpreter.robotController.setRobotActive(pCommand.getSzenario().getRobots().get(0).isActive());
+			Interpreter.robotController.setRobotActive(false);
 			return;
+		//Turn the steering of the robot on (steering commands get accepted and implemented):
 		case Start:
-			//TODO: Add functionality!
+			Interpreter.robotController.setAcceptSteering(true);
 			return;
+		//Turn the steering of the robot off:
 		case Stop:
-			//TODO: Add functionality!
+			Interpreter.robotController.setAcceptSteering(false);
 			return;
+		//Set a new steering command for the robot:
 		case Control:
-			Control control = (Control) pCommand.getSzenario();
-			Interpreter.robotController.setNewSteering(control.getSteering());
-			//robotController.getLockSteering().lock();
-			//Interpreter.robotController.controlRobot(control.getSteering());
-			//robotController.getLockSteering().unlock();
-			//Interpreter.viewController.showStatus("Control");
+			Interpreter.robotController.setNewSteering(command.getSteering());
 			return;
 		default:
 			throw new Exception("Argument out of range");
-			}
+		}
 	}
 
 //### PUBLIC STATIC METHODS ################################################################################################################
@@ -194,8 +143,8 @@ public final class Interpreter {
 				Interpreter.connection(jsonCommand);
 				return;
 			//Command to control the robot:
-			case Szenario:
-				Interpreter.szenario(jsonCommand);
+			case Control:
+				Interpreter.control(jsonCommand);
 				return;
 			//Unkown command:
 			default:

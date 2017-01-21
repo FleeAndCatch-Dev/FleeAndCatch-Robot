@@ -8,7 +8,7 @@ public class Configuration {
 	
 //### CONSTANTS ############################################################################################################################
 	
-	public static final String BACKEND_ADDRESS = "192.168.100.100";
+	public static final String BACKEND_ADDRESS = "192.168.0.101";
 	public static final int BACKEND_PORT = 5000;
 	
 	private static final boolean SOUND  = true;

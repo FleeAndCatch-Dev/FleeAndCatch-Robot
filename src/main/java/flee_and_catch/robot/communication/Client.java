@@ -12,8 +12,8 @@ import org.json.JSONObject;
 
 import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Connection;
-import flee_and_catch.robot.communication.command.ConnectionType;
+import flee_and_catch.robot.communication.command.ConnectionCommand;
+import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
@@ -120,7 +120,7 @@ public final class Client {
 		outputStream = new DataOutputStream(socket.getOutputStream());		
 		connected = true;
 		
-		Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Connect.toString(), identification, device);
+		ConnectionCommand command = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Connect.toString(), identification, device);
         sendCmd(command.getCommand());
 		
 		while(connected){
@@ -217,7 +217,7 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), identification, device);
+			ConnectionCommand command = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Disconnect.toString(), identification, device);
 			sendCmd(command.getCommand());
 			return;
 		}

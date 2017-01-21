@@ -10,8 +10,8 @@ import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Synchronization;
-import flee_and_catch.robot.communication.command.SynchronizationType;
+import flee_and_catch.robot.communication.command.SynchronizationCommand;
+import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.localisation.PlayingField;
 import flee_and_catch.robot.robot.ThreeWheelDrive;
@@ -36,9 +36,9 @@ public class RobotController {
 	private boolean acceptSterring;
 	
 	//Thread that sends the robot data to the backend (data synchronization):
-	Thread syncThread;
+	//Thread syncThread;
 	//Thread that implements the steering commands:
-	Thread steeringThread;
+	//Thread steeringThread;
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
@@ -50,8 +50,17 @@ public class RobotController {
 		this.robot = robot;
 		this.field = field;
 		
-		this.syncThread = new Thread(new SynchronizationThread());
-		this.steeringThread = new Thread(new SteeringThread());
+		//this.syncThread = new Thread(new SynchronizationThread());
+		//this.steeringThread = new Thread(new SteeringThread());
+		
+		Thread steeringThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				controlRobot();
+			}
+		});
+		steeringThread.start();
 		
 		this.acceptSterring = true;
 		
@@ -59,13 +68,44 @@ public class RobotController {
 		//this.syncThread.start();
 		
 		//Start thread for steering the robot:
-		this.steeringThread.start();
+		//this.steeringThread.start();
+	}
+
+	private void controlRobot(){
+		while(robot.isActive()) {
+			
+			try {
+				
+				//Should the steering should be processed and their is a steering to process:
+				if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
+					
+					//Convert the direction and the speed to enums:
+					Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
+					Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
+					
+					//Process direction:
+					RobotController.this.robot.rotate(direction);
+					
+					//Process speed:
+					RobotController.this.robot.changeSpeed(speed);
+					
+					//Set Steering to processed:
+					RobotController.this.newSteering = null;
+				}
+				
+				//Wait:
+				Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
+				
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	
 //### INNER CLASSES ########################################################################################################################
 	
-	class SteeringThread implements Runnable {
+	/*class SteeringThread implements Runnable {
 
 		@Override
 		public void run() {
@@ -102,10 +142,10 @@ public class RobotController {
 		
 		}
 		
-	}
+	}*/
 
 	
-	class SynchronizationThread implements Runnable {
+	/*class SynchronizationThread implements Runnable {
 
 		@Override
 		public void run() {
@@ -113,11 +153,11 @@ public class RobotController {
 			//Synchronization loop:
 			while(true) {
 				//Create synchronization object:
-				Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.Robots.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+				//SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationType.Robots.toString(), Client.getClientIdentification(), robot.getJSONRobot());
 				
 				try {
 					
-					Client.sendCmd(sync.getCommand());
+					//Client.sendCmd(sync.getCommand());
 					Thread.sleep(Configuration.SYNCHRONIZATION_THREAD_SLEEP);
 					
 				} catch (Exception e) {
@@ -130,7 +170,7 @@ public class RobotController {
 			
 		}
 		
-	}
+	}*/
 	
 	
 //### GETTER/SETTER ########################################################################################################################

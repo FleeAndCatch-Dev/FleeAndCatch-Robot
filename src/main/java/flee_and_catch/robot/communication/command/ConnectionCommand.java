@@ -6,7 +6,7 @@ import org.json.JSONObject;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 
-public class Connection extends Command {
+public class ConnectionCommand extends Command {
 	private Device device;
 	
 	/**
@@ -19,7 +19,7 @@ public class Connection extends Command {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public Connection(String pId, String pType, ClientIdentification pIdentification, Device pDevice){
+	public ConnectionCommand(String pId, String pType, ClientIdentification pIdentification, Device pDevice){
 		super(pId, pType, pIdentification);
 		this.device = pDevice;
 	}
