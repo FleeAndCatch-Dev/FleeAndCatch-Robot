@@ -38,12 +38,9 @@ public class RobotController {
 	private Steering currentSteering;
 	//Shows if the robot accepts steering commands:
 	private boolean acceptSterring;
-	private Thread steeringThread;
 	
-	//Thread that sends the robot data to the backend (data synchronization):
-	//Thread syncThread;
-	//Thread that implements the steering commands:
-	//Thread steeringThread;
+	private Thread steeringThread;
+	private Thread synchronizeThread;
 	
 //### CONSTRUCTORS #########################################################################################################################
 	
@@ -55,9 +52,6 @@ public class RobotController {
 		this.robot = robot;
 		this.field = field;
 		
-		//this.syncThread = new Thread(new SynchronizationThread());
-		//this.steeringThread = new Thread(new SteeringThread());
-		
 		steeringThread = new Thread(new Runnable() {
 			
 			@Override
@@ -65,14 +59,20 @@ public class RobotController {
 				controlRobot();
 			}
 		});
+		synchronizeThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					synchronize();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 		this.acceptSterring = true;
-		
-		//Start thread for data sending to backend:
-		//this.syncThread.start();
-		
-		//Start thread for steering the robot:
-		//this.steeringThread.start();
 	}
 
 	private void controlRobot(){
@@ -85,7 +85,7 @@ public class RobotController {
 					
 					//Convert the direction and the speed to enums:
 					Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
-					Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
+					Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());  //Nullpointer Exception
 					
 					//Process direction:
 					RobotController.this.robot.rotate(direction);
@@ -105,77 +105,29 @@ public class RobotController {
 			}
 		}
 	}
-	
-	
-//### INNER CLASSES ########################################################################################################################
-	
-	/*class SteeringThread implements Runnable {
-
-		@Override
-		public void run() {
-			
-			//Controlling loop:
-			while(true) {
+	private void synchronize() throws InterruptedException{
+		while(robot.isActive()){
+			//Should the steering should be processed and their is a steering to process:
+			if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
 				
-				try {
-					
-					//Should the steering should be processed and their is a steering to process:
-					if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
-						
-						//Convert the direction and the speed to enums:
-						Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
-						Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
-						
-						//Process direction:
-						RobotController.this.robot.rotate(direction);
-						
-						//Process speed:
-						RobotController.this.robot.changeSpeed(speed);
-						
-						//Set Steering to processed:
-						RobotController.this.newSteering = null;
-					}
-					
-					//Wait:
-					Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
-					
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		
-		}
-		
-	}*/
-
-	
-	/*class SynchronizationThread implements Runnable {
-
-		@Override
-		public void run() {
-			
-			//Synchronization loop:
-			while(true) {
-				//Create synchronization object:
-				//SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationType.Robots.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+				//Convert the direction and the speed to enums:
+				Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
+				Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
 				
-				try {
-					
-					//Client.sendCmd(sync.getCommand());
-					Thread.sleep(Configuration.SYNCHRONIZATION_THREAD_SLEEP);
-					
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();		
-				}
+				//Process direction:
+				RobotController.this.robot.rotate(direction);
 				
+				//Process speed:
+				RobotController.this.robot.changeSpeed(speed);
 				
+				//Set Steering to processed:
+				RobotController.this.newSteering = null;
 			}
 			
+			//Wait:
+			Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
 		}
-		
-	}*/
-	
+	}	
 	
 //### GETTER/SETTER ########################################################################################################################
 	
@@ -199,7 +151,12 @@ public class RobotController {
 		return steeringThread;
 	}
 	
+	
 //### METHODS ##############################################################################################################################
+
+	public Thread getSynchronizeThread() {
+		return synchronizeThread;
+	}
 
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 

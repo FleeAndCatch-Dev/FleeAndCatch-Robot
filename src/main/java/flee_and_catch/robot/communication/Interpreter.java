@@ -2,6 +2,7 @@
 
 package flee_and_catch.robot.communication;
 
+import java.io.IOException;
 //### IMPORTS ##############################################################################################################################
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.ControlCommand;
 import flee_and_catch.robot.communication.command.ControlCommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.robot.RobotController;
@@ -92,6 +95,7 @@ public final class Interpreter {
 		case Begin:
 			Interpreter.robotController.setRobotActive(true);
 			Interpreter.robotController.getSteeringThread().start();
+			Interpreter.robotController.getSynchronizeThread().start();
 			return;
 		//Set the flag that indicates that the robot is controlled by an app:
 		case End:
@@ -113,6 +117,30 @@ public final class Interpreter {
 			throw new Exception("Argument out of range");
 		}
 	}
+	
+	private static void exception(JSONObject pCommand){
+		//Read out the type of the connection command:
+		ExceptionCommandType type = ExceptionCommandType.valueOf((String) pCommand.get("type"));
+		
+		//Deserialize the JSON object to a Connection class object:
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();
+		ExceptionCommand command = localgson.fromJson(pCommand.toString(), ExceptionCommand.class);
+		
+		switch (type) {
+			case Undefined:
+				break;
+			case UnhandeldDisconnection:
+				//Set active of robot false
+				break;
+			default:
+				break;
+		}
+		
+		//Get new exception
+	}
 
 //### PUBLIC STATIC METHODS ################################################################################################################
 	
@@ -131,26 +159,28 @@ public final class Interpreter {
 		JSONObject jsonCommand = new JSONObject(pCommand);
 		
 		//If the command has not the right identification:
-		if(!Objects.equals((String) jsonCommand.get("apiid"), "@@fleeandcatch@@")) {
-			throw new Exception("Wrong apiid of json command");	
+		if(Objects.equals((String) jsonCommand.get("apiid"), "@@fleeandcatch@@")){
+			//Read out the type of the command:
+			CommandType type = CommandType.valueOf((String) jsonCommand.get("id"));
+			
+			switch(type){
+				//Command to initialize a connection to the backend:
+				case Connection:
+					Interpreter.connection(jsonCommand);
+					return;
+				//Command to control the robot:
+				case Control:
+					Interpreter.control(jsonCommand);
+					return;
+				case Exception:
+					Interpreter.exception(jsonCommand);
+					return;
+				//Unkown command:
+				default:
+					throw new Exception("Argument out of range");
+			}
 		}
-		
-		//Read out the type of the command:
-		CommandType type = CommandType.valueOf((String) jsonCommand.get("id"));
-		
-		switch(type){
-			//Command to initialize a connection to the backend:
-			case Connection:
-				Interpreter.connection(jsonCommand);
-				return;
-			//Command to control the robot:
-			case Control:
-				Interpreter.control(jsonCommand);
-				return;
-			//Unkown command:
-			default:
-				throw new Exception("Argument out of range");
-		}			
+		return;
 	}
 	
 	/* [Method]: Method to set the reference to the robot controller *//*
