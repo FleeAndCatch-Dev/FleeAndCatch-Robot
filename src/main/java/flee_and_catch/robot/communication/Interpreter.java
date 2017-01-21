@@ -91,6 +91,7 @@ public final class Interpreter {
 		//Set the flag that indicates that the robot is controlled by an app:
 		case Begin:
 			Interpreter.robotController.setRobotActive(true);
+			Interpreter.robotController.getSteeringThread().start();
 			return;
 		//Set the flag that indicates that the robot is controlled by an app:
 		case End:

@@ -65,7 +65,7 @@ public class Program {
 		//Controller drives robot ...*/
 		
 		viewController.showExit();
-		
+		robot.setActive(false);
 		try {
 			Client.close();
 		} catch (Exception e) {

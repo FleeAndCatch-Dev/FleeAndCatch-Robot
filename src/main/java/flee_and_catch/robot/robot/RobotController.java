@@ -7,6 +7,10 @@ import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
@@ -34,6 +38,7 @@ public class RobotController {
 	private Steering currentSteering;
 	//Shows if the robot accepts steering commands:
 	private boolean acceptSterring;
+	private Thread steeringThread;
 	
 	//Thread that sends the robot data to the backend (data synchronization):
 	//Thread syncThread;
@@ -53,14 +58,13 @@ public class RobotController {
 		//this.syncThread = new Thread(new SynchronizationThread());
 		//this.steeringThread = new Thread(new SteeringThread());
 		
-		Thread steeringThread = new Thread(new Runnable() {
+		steeringThread = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				controlRobot();
 			}
 		});
-		steeringThread.start();
 		
 		this.acceptSterring = true;
 		
@@ -191,8 +195,11 @@ public class RobotController {
 		this.newSteering = newSteering;
 	}
 	
-//### METHODS ##############################################################################################################################
+	public Thread getSteeringThread() {
+		return steeringThread;
+	}
 	
+//### METHODS ##############################################################################################################################
 
 	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
 	 * 
