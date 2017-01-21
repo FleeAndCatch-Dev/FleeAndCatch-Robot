@@ -56,7 +56,12 @@ public class RobotController {
 			
 			@Override
 			public void run() {
-				controlRobot();
+				try {
+					controlRobot();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 		synchronizeThread = new Thread(new Runnable() {
@@ -75,7 +80,7 @@ public class RobotController {
 		this.acceptSterring = true;
 	}
 
-	private void controlRobot(){
+	private void controlRobot() throws InterruptedException{
 		while(robot.isActive()) {
 			
 			try {
@@ -97,35 +102,41 @@ public class RobotController {
 					RobotController.this.newSteering = null;
 				}
 				
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
 				//Wait:
 				Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
 	}
 	private void synchronize() throws InterruptedException{
 		while(robot.isActive()){
-			//Should the steering should be processed and their is a steering to process:
-			if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
-				
-				//Convert the direction and the speed to enums:
-				Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
-				Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
-				
-				//Process direction:
-				RobotController.this.robot.rotate(direction);
-				
-				//Process speed:
-				RobotController.this.robot.changeSpeed(speed);
-				
-				//Set Steering to processed:
-				RobotController.this.newSteering = null;
-			}
 			
-			//Wait:
-			Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
+			try{
+				//Should the steering should be processed and their is a steering to process:
+				if(RobotController.this.acceptSterring && RobotController.this.newSteering != null) {
+					
+					//Convert the direction and the speed to enums:
+					Direction direction = Direction.valueOf(RobotController.this.newSteering.getDirection());
+					Speed speed = Speed.valueOf(RobotController.this.newSteering.getSpeed());
+					
+					//Process direction:
+					RobotController.this.robot.rotate(direction);
+					
+					//Process speed:
+					RobotController.this.robot.changeSpeed(speed);
+					
+					//Set Steering to processed:
+					RobotController.this.newSteering = null;
+				}
+			}
+			catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				//Wait:
+				Thread.sleep(Configuration.STEERING_THREAD_SLEEP);
+			}
 		}
 	}	
 	
