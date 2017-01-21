@@ -12,10 +12,14 @@ import com.google.gson.GsonBuilder;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.Connection;
 import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.command.Control;
-import flee_and_catch.robot.communication.command.ControlType;
+import flee_and_catch.robot.communication.command.SzenarioCommand;
+import flee_and_catch.robot.communication.command.SzenarioCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
+import flee_and_catch.robot.communication.command.szenario.Control;
+import flee_and_catch.robot.communication.command.szenario.ControlType;
+import flee_and_catch.robot.communication.command.szenario.Szenario;
+import flee_and_catch.robot.communication.command.szenario.SzenarioAdapter;
 import flee_and_catch.robot.robot.RobotController;
 
 /* Interpreter [class]: Class that parses and interprets arrived JSON objects *//**
@@ -78,12 +82,33 @@ public final class Interpreter {
 	 * @param pCommand
 	 * @throws Exception
 	 */
-	private static void control(JSONObject pCommand) throws Exception {
+	private static void szenario(JSONObject pCommand) throws Exception {
 		
 		if(pCommand == null) throw new NullPointerException();  //???
 		
+		SzenarioCommandType type = SzenarioCommandType.valueOf((String) pCommand.get("type"));
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Szenario.class, new SzenarioAdapter());
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();			
+		SzenarioCommand command = localgson.fromJson(pCommand.toString(), SzenarioCommand.class);
+		
+		switch (type) {
+			case Control:
+				szenarioControl(command);
+				break;
+			case Synchron:
+			
+				break;
+			case Follow:
+	
+				break;
+			default:
+				break;
+		}
+		
 		//Read out the type of the control command:
-		ControlType type = ControlType.valueOf((String) pCommand.get("type"));
+		/*ControlType type = ControlType.valueOf((String) pCommand.get("type"));
 		//Serialize the JSON object to a Control class object:
 		Control command = gson.fromJson(pCommand.toString(), Control.class);
 		
@@ -110,7 +135,33 @@ public final class Interpreter {
 				return;
 			default:
 				throw new Exception("Argument out of range");
-		}
+		}*/
+	}
+	
+	private static void szenarioControl(SzenarioCommand pCommand) throws Exception{
+		ControlType type = ControlType.valueOf(pCommand.getSzenario().getSzenariotype());
+		switch(type){
+		case Begin:
+		case End:
+			Interpreter.robotController.setRobotActive(pCommand.getSzenario().getRobots().get(0).isActive());
+			return;
+		case Start:
+			//TODO: Add functionality!
+			return;
+		case Stop:
+			//TODO: Add functionality!
+			return;
+		case Control:
+			Control control = (Control) pCommand.getSzenario();
+			Interpreter.robotController.setNewSteering(control.getSteering());
+			//robotController.getLockSteering().lock();
+			//Interpreter.robotController.controlRobot(control.getSteering());
+			//robotController.getLockSteering().unlock();
+			//Interpreter.viewController.showStatus("Control");
+			return;
+		default:
+			throw new Exception("Argument out of range");
+			}
 	}
 
 //### PUBLIC STATIC METHODS ################################################################################################################
@@ -143,8 +194,8 @@ public final class Interpreter {
 				Interpreter.connection(jsonCommand);
 				return;
 			//Command to control the robot:
-			case Control:
-				Interpreter.control(jsonCommand);
+			case Szenario:
+				Interpreter.szenario(jsonCommand);
 				return;
 			//Unkown command:
 			default:
