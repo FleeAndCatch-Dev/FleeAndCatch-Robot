@@ -16,6 +16,13 @@ public class ClientIdentification extends Identification {
 		this.address = pAddress;
 		this.port = pPort;
 	}
+	
+	public ClientIdentification(ClientIdentification pClientIdentification){
+		this.id = pClientIdentification.getId();
+		this.type = pClientIdentification.getType();
+		this.address = pClientIdentification.getAddress();
+		this.port = pClientIdentification.getPort();
+	}
 
 	/**
 	 * <h1>Get identification</h1>

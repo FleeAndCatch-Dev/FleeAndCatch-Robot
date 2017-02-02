@@ -2,11 +2,10 @@
 
 package flee_and_catch.robot.communication;
 
-import java.io.IOException;
-//### IMPORTS ##############################################################################################################################
 import java.util.Objects;
 
 import org.json.JSONObject;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -21,25 +20,22 @@ import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.robot.RobotController;
 
+//### IMPORTS ##############################################################################################################################
+
 /* Interpreter [class]: Class that parses and interprets arrived JSON objects *//**
  * 
+ * @author Simon Lang
  * @author Manuel Bothner
  *
  */
 public final class Interpreter {
 
 //### STATIC VARIABLES #####################################################################################################################
-
+	
 	private static Gson gson = new Gson();
-	private static RobotController robotController = null;
-	
-//### CONSTRUCTORS #########################################################################################################################
-	
-	/* Interpreter [constructor]: Private constructor to prevent that objects are created */
-	private Interpreter() {}
 	
 //### PRIVATE STATIC METHODS ###############################################################################################################
-		
+
 	/* connection [Method]: Processes a JSON object of the type connection to initialize the connection to the backend *//**
 	 * <h1>Connection</h1>
 	 * Parse connection command.
@@ -83,8 +79,6 @@ public final class Interpreter {
 	 */
 	private static void control(JSONObject pCommand) throws Exception {
 		
-		if(pCommand == null) throw new NullPointerException();  //???
-		
 		//Read out the type of the control command:
 		ControlCommandType type = ControlCommandType.valueOf((String) pCommand.get("type"));
 		//Serialize the JSON object to a Control class object:
@@ -93,25 +87,28 @@ public final class Interpreter {
 		switch(type){
 		//Set the flag that indicates that the robot is controlled by an app:
 		case Begin:
-			Interpreter.robotController.setRobotActive(true);
-			Interpreter.robotController.getSteeringThread().start();
-			Interpreter.robotController.getSynchronizeThread().start();
+			RobotController.getRobot().setActive(true);
+			RobotController.getSteeringThread().start();
+			RobotController.getSynchronizeThread().start();
 			return;
 		//Set the flag that indicates that the robot is controlled by an app:
 		case End:
-			Interpreter.robotController.setRobotActive(false);
+			//RobotController.setRobotActive(false);
+			//TODO
 			return;
 		//Turn the steering of the robot on (steering commands get accepted and implemented):
 		case Start:
-			Interpreter.robotController.setAcceptSteering(true);
+			//RobotController.setAcceptSteering(true);
+			//TODO
 			return;
 		//Turn the steering of the robot off:
 		case Stop:
-			Interpreter.robotController.setAcceptSteering(false);
+			//RobotController.setAcceptSteering(false);
+			//TODO
 			return;
 		//Set a new steering command for the robot:
 		case Control:
-			Interpreter.robotController.setNewSteering(command.getSteering());
+			RobotController.setSteering(command.getSteering());
 			return;
 		default:
 			throw new Exception("Argument out of range");
@@ -140,10 +137,11 @@ public final class Interpreter {
 		}
 		
 		//Get new exception
+		//TODO
 	}
-
-//### PUBLIC STATIC METHODS ################################################################################################################
 	
+//### PUBLIC STATIC METHODS ################################################################################################################
+
 	/* parse [Method]: Method to parse a command (JSON object as string): *//**
 	 * <h1>Parse command</h1>
 	 * Parse json command and run it, when the parsing is correct. Sort it in different id.
@@ -166,14 +164,14 @@ public final class Interpreter {
 			switch(type){
 				//Command to initialize a connection to the backend:
 				case Connection:
-					Interpreter.connection(jsonCommand);
+					connection(jsonCommand);
 					return;
 				//Command to control the robot:
 				case Control:
-					Interpreter.control(jsonCommand);
+					control(jsonCommand);
 					return;
 				case Exception:
-					Interpreter.exception(jsonCommand);
+					exception(jsonCommand);
 					return;
 				//Unkown command:
 				default:
@@ -181,13 +179,6 @@ public final class Interpreter {
 			}
 		}
 		return;
-	}
-	
-	/* [Method]: Method to set the reference to the robot controller *//*
-	 * 
-	 */
-	public static void setRobotController(RobotController robotController) {
-		Interpreter.robotController = robotController;
 	}
 	
 //##########################################################################################################################################

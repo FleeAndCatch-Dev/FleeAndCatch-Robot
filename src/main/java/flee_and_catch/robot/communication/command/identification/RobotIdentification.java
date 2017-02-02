@@ -4,7 +4,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.RoleType;
 
 public class RobotIdentification extends Identification {

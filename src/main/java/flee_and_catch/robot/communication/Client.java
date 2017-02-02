@@ -6,19 +6,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import flee_and_catch.robot.Configuration;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
-import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.configuration.CommunicationConfig;
 
 public final class Client {
 	
@@ -29,6 +31,9 @@ public final class Client {
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
 	
+	private static Lock idLock = new ReentrantLock();
+	private static Lock deviceLock = new ReentrantLock();
+	
 	/**
 	 * <h1>Connect</h1>
 	 * Open a connection to the server. 
@@ -38,7 +43,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pType.toString(), Configuration.BACKEND_ADDRESS, Configuration.BACKEND_PORT);
+			identification = new ClientIdentification(0, pType.toString(), CommunicationConfig.BACKEND_ADDRESS, CommunicationConfig.BACKEND_PORT);
 			startConnection();
 			return;
 		}
@@ -56,7 +61,7 @@ public final class Client {
 	 */
 	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
 		if(!connected){
-			identification = new ClientIdentification(0, pType.toString(), pAddress, Configuration.BACKEND_PORT);
+			identification = new ClientIdentification(0, pType.toString(), pAddress, CommunicationConfig.BACKEND_PORT);
 			startConnection();
 			return;
 		}
@@ -238,19 +243,23 @@ public final class Client {
 		return new JSONObject(pCommand);
 	}
 
-	public static boolean isConnected() {
-		return connected;
-	}
-
 	public static Device getDevice() {
-		return device;
+		deviceLock.lock();
+		Device temp = new Robot((Robot) device);
+		deviceLock.unlock();
+		return temp;
 	}
 
 	public static void setDevice(Device pDevice) {
+		deviceLock.lock();
 		device = pDevice;
+		deviceLock.unlock();
 	}
 
 	public static ClientIdentification getClientIdentification() {
-		return identification;
+		idLock.lock();
+		ClientIdentification temp = new ClientIdentification(identification);
+		idLock.unlock();
+		return temp;
 	}
 }

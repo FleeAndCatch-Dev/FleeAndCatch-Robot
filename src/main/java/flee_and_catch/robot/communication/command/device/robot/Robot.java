@@ -8,10 +8,10 @@ import flee_and_catch.robot.communication.command.identification.RobotIdentifica
 
 public class Robot implements Device {
 	
-	private RobotIdentification identification;
-	private boolean active;
-	private Position position;
-	private double speed;
+	protected RobotIdentification identification;
+	protected boolean active;
+	protected Position position;
+	protected double speed;
 	
 	public Robot(RobotIdentification pIdentification, Position pPosition, double pSpeed){
 		this.identification = pIdentification;
@@ -26,6 +26,13 @@ public class Robot implements Device {
 		this.active = pActive;
 		this.position = pPosition;
 		this.speed = pSpeed;
+	}
+	
+	public Robot(Robot pRobot){
+		this.identification = pRobot.getIdentification();
+		this.active = pRobot.isActive();
+		this.position = pRobot.getPosition();
+		this.speed = pRobot.getSpeed();
 	}
 	
 	/**
