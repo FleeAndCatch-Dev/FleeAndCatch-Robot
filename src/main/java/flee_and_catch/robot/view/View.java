@@ -1,20 +1,9 @@
-//### View.java ############################################################################################################################
-
 package flee_and_catch.robot.view;
 
-import flee_and_catch.robot.component.RobotType;
+import flee_and_catch.robot.communication.command.component.RobotType;
 import lejos.hardware.lcd.LCD;
 
-/* View [Class]: Class that represents the graphical interface via LCD of the robot *//**
- * 
- * 
- * <u>Visibility:</u> package-wide
- * @author Manuel Bothner
- *
- */
-class View {
-	
-//### PRIVATE METHODS ######################################################################################################################
+public class View {
 
 	private void printFrame() {
 		
@@ -35,8 +24,6 @@ class View {
 		
 	}
 	
-//### PACKAGEWIDE METHODS ##################################################################################################################
-	
 	void showRobotSelectionScreen(int pointer) {
 		
 		//Read out all elements of the enum:
@@ -50,7 +37,7 @@ class View {
 		int pagePointer = pointer % 4;	
 		
 		//Max number of shown elements:
-		int max = 4;		//Are enough elements in the array the standard value is 4!
+		int max = RobotType.values().length;		//Are enough elements in the array the standard value is 4!
 		//If there are not enough elements in the array cause it's the last page: 
 		if(arrayPointer + 3 > possibleRobots.length) {
 			max = possibleRobots.length % 4;	//Number of the remaining elements (of the last page)!
@@ -63,12 +50,12 @@ class View {
 		for(int i = 0; i < max; i++) {
 			
 			if(i == pagePointer) {
-				//Draw als marked:
-				LCD.drawString(possibleRobots[arrayPointer].getName(), 2, i + 2, true);
+				//Draw as marked:
+				LCD.drawString(possibleRobots[arrayPointer].toString(), 2, i + 2, true);
 			}
 			else {
 				//Draw normal:
-				LCD.drawString(possibleRobots[arrayPointer].getName(), 2, i + 2, false);
+				LCD.drawString(possibleRobots[arrayPointer].toString(), 2, i + 2, false);
 			}
 			
 			arrayPointer++;
@@ -82,7 +69,4 @@ class View {
 		LCD.drawString(pageInfo, 1, 7);
 		
 	}
-
-//##########################################################################################################################################
 }
-//### EOF ##################################################################################################################################

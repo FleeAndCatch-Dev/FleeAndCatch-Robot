@@ -1,5 +1,5 @@
 package flee_and_catch.robot.communication.command;
 
-public enum SynchronizationType {
-	SetData
+public enum SynchronizationCommandType {
+	Robots
 }

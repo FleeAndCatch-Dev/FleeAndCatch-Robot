@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Assert;
 import org.junit.Test;
 
+import flee_and_catch.robot.communication.command.device.robot.Position;
+
 
 
 public class PositionTest {

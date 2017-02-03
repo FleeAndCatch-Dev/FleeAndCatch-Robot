@@ -2,16 +2,20 @@
 
 package flee_and_catch.robot;
 
-import flee_and_catch.robot.communication.Client;
-import flee_and_catch.robot.component.IdentificationType;
-import flee_and_catch.robot.component.RobotType;
-import lejos.hardware.Button;
+import com.google.gson.Gson;
 
-//### IMPORTS ##############################################################################################################################
-import flee_and_catch.robot.localisation.PlayingField;
+import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
+import flee_and_catch.robot.communication.command.component.IdentificationType;
+import flee_and_catch.robot.configuration.SoundConfig;
 import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
+import flee_and_catch.robot.communication.command.component.RobotType;
+
+//### IMPORTS ##############################################################################################################################
 
 
 /* Program [Class]: Main class of the program *//**
@@ -25,30 +29,52 @@ public class Program {
 //### PUBLIC METHODS #######################################################################################################################
 	
 	public static void main(String[] args) {
+
+		SoundConfig.applyConfigurations();
 		
-		Configuration.applyConfigurations();
+		//Show a start screen for welcome
+		ViewController.showStartScreen();
+		//Get a robot of the user
+		Robot robot = ViewController.getSelectedRobot();
+		//Set the choosen robot to the controller
+		RobotController.setRobot(robot);
 		
-		ViewController viewController = new ViewController();
-		
-		//Get selected robot from the user:
-		Robot robot = viewController.getSelectedRobot();
-		
-		//Connection Init!
+		Client.setDevice(robot.getJSONRobot());
+		//Backend connection:
 		try {
-			Client.connect(IdentificationType.Typ.Robot.toString(), RobotType.valueOf(robot.getType()).toString());
+			//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
+			Client.connect(IdentificationType.Robot, RobotType.valueOf(robot.getIdentification().getSubtype()));
+					
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//Locate the field and generate an object of thet
+		//TODO
+		//TODO: Get position of the robot!!!
+		//TODO: Get dimensions of the playing field!!!
+		
+		ViewController.showExit();
+		
+		//Tide up
+		if(RobotController.getRobot().isActive()){
+			Gson gson = new Gson();
+			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Unhandeld disconnection", Client.getDevice()));
+			try {
+				Client.sendCmd(gson.toJson(cmd));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			RobotController.changeActive(false);
+		}
+		
+		try {
+			Client.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//Get information about the field from the user over the app: (NOT IMPLEMENTED)
-		PlayingField field = new PlayingField(1000, 1000);
-		
-		//Initialize a robot-controller with the selected robot and the playing field:
-		RobotController robotController = new RobotController(robot, field);
-		
-		//Controller drives robot ...*/
-
 	}
 
 //##########################################################################################################################################

@@ -9,19 +9,23 @@ import java.net.UnknownHostException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Connection;
-import flee_and_catch.robot.communication.command.ConnectionType;
-import flee_and_catch.robot.communication.command.Identification;
+import flee_and_catch.robot.communication.command.ConnectionCommand;
+import flee_and_catch.robot.communication.command.ConnectionCommandType;
+import flee_and_catch.robot.communication.command.component.IdentificationType;
+import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.identification.ClientIdentification;
+import flee_and_catch.robot.configuration.CommunicationConfig;
 
 public final class Client {
 	
 	private static boolean connected;
-	private static int id;
-	private static String address;
-	private static int port;
-	private static String type;
-	private static String subtype;
+	private static ClientIdentification identification;
+	private static Device device;
 	private static Socket socket;
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
@@ -31,15 +35,11 @@ public final class Client {
 	 * Open a connection to the server. 
 	 * 
 	 * @throws Exception
-	 * 
-	 * @author ThunderSL94
+	 *  * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = Default.address;
-			port = Default.port;
+			identification = new ClientIdentification(0, pType.toString(), CommunicationConfig.BACKEND_ADDRESS, CommunicationConfig.BACKEND_PORT);
 			startConnection();
 			return;
 		}
@@ -55,12 +55,9 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype, String pAddress) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = pAddress;
-			port = Default.port;
+			identification = new ClientIdentification(0, pType.toString(), pAddress, CommunicationConfig.BACKEND_PORT);
 			startConnection();
 			return;
 		}
@@ -77,12 +74,9 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(String pType, String pSubtype, String pAddress, int pPort) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress, int pPort) throws Exception{
 		if(!connected){
-			type = pType;
-			subtype = pSubtype;
-			address = pAddress;
-			port = pPort;
+			identification = new ClientIdentification(0, pType.toString(), pAddress, pPort);
 			startConnection();
 			return;
 		}
@@ -99,7 +93,7 @@ public final class Client {
 	 * @author ThunderSL94
 	 */
 	private static void startConnection() throws UnknownHostException, IOException{
-		socket = new Socket(address, port);
+		socket = new Socket(identification.getAddress(), identification.getPort());
 		Thread listenerThread = new Thread(new Runnable() {
 			
 			@Override
@@ -124,9 +118,13 @@ public final class Client {
 	 */
 	private static void listen() throws Exception {
 		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		outputStream = new DataOutputStream(socket.getOutputStream());
-		
+		outputStream = new DataOutputStream(socket.getOutputStream());		
 		connected = true;
+		
+		Gson gson = new Gson();
+		ConnectionCommand command = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Connect.toString(), identification, device);
+        sendCmd(gson.toJson(command));
+		
 		while(connected){
 			Interpreter.parse(receiveCmd());
 		}
@@ -221,8 +219,9 @@ public final class Client {
 	 */
 	public static void close() throws Exception {
 		if(connected){
-			Connection command = new Connection(CommandType.Connection.toString(), ConnectionType.Disconnect.toString(), new Identification(id, address, port, type, subtype));
-			sendCmd(command.getCommand());
+			Gson gson = new Gson();
+			ConnectionCommand command = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Disconnect.toString(), identification, device);
+			sendCmd(gson.toJson(command));
 			return;
 		}
 		throw new Exception("There is no connection to the server");
@@ -242,30 +241,15 @@ public final class Client {
 		return new JSONObject(pCommand);
 	}
 
-	public static boolean isConnected() {
-		return connected;
+	public static Device getDevice() {
+		return device;
 	}
 
-	public static int getId() {
-		return id;
-	}
-	public static void setId(int id) {
-		Client.id = id;
+	public static void setDevice(Device pDevice) {
+		device = pDevice;
 	}
 
-	public static String getAddress() {
-		return address;
-	}
-
-	public static int getPort() {
-		return port;
-	}
-
-	public static String getType() {
-		return type;
-	}
-
-	public static String getSubtype() {
-		return subtype;
+	public static ClientIdentification getClientIdentification() {
+		return identification;
 	}
 }

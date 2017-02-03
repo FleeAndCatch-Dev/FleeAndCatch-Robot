@@ -1,8 +1,6 @@
 //### Position.java ########################################################################################################################
 
-package flee_and_catch.robot.localisation;
-
-import org.json.JSONObject;
+package flee_and_catch.robot.communication.command.device.robot;
 
 //### IMPORTS ##############################################################################################################################
 
@@ -92,6 +90,8 @@ public class Position {
 	
 //### METHODS ##############################################################################################################################
 
+	
+	
 	/* calculateNewOrientation [Method]: Method that calculates the new orientation based of a rotation angle *//**
 	 * 
 	 * @param angle
@@ -125,15 +125,6 @@ public class Position {
 		
 		return this.x + ", " + this.y + ", " + this.orientation;
 		
-	}
-	
-	public JSONObject getJSONObject(){
-		JSONObject jsonPosition = new JSONObject();
-		jsonPosition.put("x", x);
-		jsonPosition.put("y", y);
-		jsonPosition.put("orientation", orientation);
-		
-		return jsonPosition;
 	}
 	
 //##########################################################################################################################################	

@@ -1,314 +1,116 @@
-//### RobotController.java #################################################################################################################
-
 package flee_and_catch.robot.robot;
 
-//### IMPORTS ##############################################################################################################################
-import org.json.JSONObject;
-
-import flee_and_catch.robot.localisation.Direction;
-import flee_and_catch.robot.localisation.PlayingField;
-import flee_and_catch.robot.localisation.Position;
-import flee_and_catch.robot.robot.ThreeWheelDriveRobot;
-import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.communication.Client;
-import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.Identification;
-import flee_and_catch.robot.communication.command.Synchronization;
-import flee_and_catch.robot.communication.command.SynchronizationType;
-import lejos.hardware.Button;
-import lejos.hardware.lcd.LCD;
+import flee_and_catch.robot.communication.command.component.Direction;
+import flee_and_catch.robot.communication.command.component.Speed;
+import flee_and_catch.robot.communication.command.device.robot.Steering;
+import flee_and_catch.robot.configuration.ThreadConfig;
 
-/* RobotController [Class]: */
-public class RobotController {
-	
-//### ATTRIBUTES ###########################################################################################################################
-	
-	//Represents the robot that is controlled:
-	private Robot robot;
-	//Represents the playing field in that the robot moves:
-	private PlayingField field;
-	
-//### CONSTRUCTORS #########################################################################################################################
-	
-	/* RobotController [Constructor]: Initialize the controller with a robot and a playing field *//**
-	 * 
-	 */
-	public RobotController(Robot robot, PlayingField field) {
-		
-		//this.robot = robot;
-		//this.field = field;
-		Identification ident = new Identification(Client.getId(), Client.getAddress(), Client.getPort(), Client.getType(), Client.getSubtype());
-		flee_and_catch.robot.localisation.Position p = new flee_and_catch.robot.localisation.Position(1.0,1.0,1.0);
-		flee_and_catch.robot.communication.command.Robot r = new flee_and_catch.robot.communication.command.Robot(ident, p, 1.0);
-		Synchronization sync = new Synchronization(CommandType.Synchronization.toString(),SynchronizationType.SetData.toString(),ident,r);
-		try {
-			Client.sendCmd(sync.getCommand());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+public final class RobotController {
+
+	private static Robot robot;
+	private static Steering steering;
+	private static boolean accept;
+
+	private static Thread steeringThread;
+	private static Thread synchronizeThread;
+
+	public static void intitComponents(){
+		steeringThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					controlRobot();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		synchronizeThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				synchronize();
+			}
+		});
+	}
+
+	private static void controlRobot() throws InterruptedException {
+		while(getRobot().isActive()) {
+			
+			try {
+				
+				//Should the steering should be processed and their is a steering to process:
+				if(getSteering() != null && getSteering().getSpeed() != null && getSteering().getDirection() != null && accept) {
+					
+					//Convert the direction and the speed to enums:
+					Direction direction = Direction.valueOf(getSteering().getDirection());
+					Speed speed = Speed.valueOf(getSteering().getSpeed());
+					
+					//Process direction:
+					getRobot().rotate(direction);
+					
+					//Process speed:
+					getRobot().changeSpeed(speed);
+					
+					//Set Steering to processed:
+					setSteering(null);
+				}
+				
+			} catch (Exception e) {
+				// TODO: handle exception
+			} finally {
+				//Wait:
+				Thread.sleep(ThreadConfig.STEERING_SLEEP);
+			}
 		}
 	}
-	
-//### METHODS ##############################################################################################################################
-
-
-
-	/* runRandomEasy [Method]: Method that let the robot move randomly in an easy way *//**
-	 * 
-	 */
-	public void runRandomEasy() {
-		
-		LCD.drawString("runRandomEasy() - Start", 0, 0);
-	
-	}
-	
-	/* runRandom [Method]: Method that let the robot move randomly *//**
-	 * @throws InterruptedException 
-	 * 
-	 */
- 	public void runRandom() throws InterruptedException {
-		
- 		LCD.drawString("runRandom() - Start", 0, 0);
- 		
- 		Position posStart = new Position(575, 550, 0);
- 		
- 		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(posStart, 150.0f);		//Initialize a new Robot!
-		
-		//Size: width=2000mm, height=2000mm
-		PlayingField field = new PlayingField(1150, 1100);				//Initialize a new PlayingField!
- 		
-		//Minimal distance that the robot must move before turn:
-		float minDistance = 100.0f;		//10cm
-		//Maximal distance that the robot can move before turn:
-		float maxDistance = 400.0f;		//40cm
-		//Probability for turn:
-		float probability = 15.0f;		//25%
-		//Minimal time between two shifts in direction:
-		float time        = 500.0f;	 	//500ms
-		//Start angle:
-		float startAngle  = -150.0f;	//-150°
-		//End angle:
-		float endAngle    = 150.0f;		//150°
-		
-		//Helping variables:
-		int counter = 0;
-		//Save the last totalDistance value:
-		float savedDistance = 0.0f;
-		
-		//Start robot to move:
-		robot.move();
-		
-		//Run robot until it has a covered a specific distance:
- 		while(robot.getTotalDistance() < 3500) {
- 			
- 			Position pos = robot.getPosition();
- 			
- 			//Check if robot currently out of the playing field:
- 			if(!field.isIn(pos)) {
- 				
- 				//Make a turn:
- 				robot.rotate(Direction.LEFT, 180);		//180° turn!
- 				//Buffer so that the robot get back in the field until the next check:
- 				robot.move(50);							//Move 50mm forward!
- 				//Let the robot still move:
- 				robot.move();
- 				
- 			}
- 			//Is the robot in the field and check time is reached:
- 			else if(counter >= time / 25) {
- 				
- 				float distance = robot.getTotalDistance() - savedDistance;
- 				
- 				//If a turn is possible:
- 				if(distance >= minDistance && distance <= maxDistance) {
- 					
- 					int rand = (int)(Math.random() * 100) + 1;
- 					
- 					if(rand <= probability) {
- 						
- 						int angle = (int) ((int)(Math.random() * (endAngle - startAngle)) + startAngle);	//Angle between 30° and 150°
- 						robot.rotate(angle);
- 						savedDistance = robot.getTotalDistance();
- 						robot.move();
- 					}
- 				}
- 				//If a turn is required:
- 				else if(distance > maxDistance) {
- 					
- 					int angle = (int) ((int)(Math.random() * (endAngle - startAngle)) + startAngle);	//Angle between 30° and 150°
-					robot.rotate(angle);
-					robot.move();
-					savedDistance = robot.getTotalDistance();
- 				}
- 				//If no turn is allowed:
- 				//... do nothing!
- 				counter = 0;
- 			}
- 			
- 			counter++;
- 			
- 			//Print information:
- 			LCD.drawString("x: " + pos.getX(), 0, 1);
- 			LCD.drawString("y: " + pos.getY(), 0, 2);
- 			LCD.drawString("o: " + pos.getOrientation(), 0, 3);
- 			LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
- 			
- 			//Wait 25ms:
- 			Thread.sleep(25);
- 		}
- 		
- 		robot.stop();
- 		
-		/*Wait for any key to be pressed*/ 
-		LCD.drawString("Press btn to exit!", 0, 7); 
-		Button.waitForAnyPress(); 
+	private static void synchronize() {
+		// TODO Auto-generated method stub
+		// TODO send update to backend
 	}
 
-	/* testRun1 [Method]: Temporary method to test some stuff *//**
-	 * 
-	 * @throws InterruptedException
-	 */
-	public void testRun1() throws InterruptedException {
-		
-		LCD.drawString("testRun() - Start", 0, 0);
-		
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot();		//Initialize a new Robot!
-		robot.setSpeed(80.0f);							//Set speed to 20 mm/sec!
-		
-		//Print information:
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(325.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 90);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(288.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot rotate:
-		robot.rotate(Direction.RIGHT, 30);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(170.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 165);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(533.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot rotate:
-		robot.rotate(Direction.LEFT, 93);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(415.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot rotate:
-		robot.rotate(Direction.RIGHT, 117);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		//Let the robot move forward:
-		robot.move(309.0f);
-		LCD.drawString("x: " + robot.getPosition().getX(), 0, 1);
-		LCD.drawString("y: " + robot.getPosition().getY(), 0, 2);
-		LCD.drawString("o: " + robot.getPosition().getOrientation(), 0, 3);
-		LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-		
-		LCD.drawString("testRun() - Finished", 0, 0);
-		
-		/*Wait for any key to be pressed*/ 
-		LCD.drawString("Press btn to exit!", 0, 7); 
-		Button.waitForAnyPress(); 
-	}
-
-	/* testRun2 [Method]: Temporary method to test some stuff *//**
-	 * 
-	 * @throws InterruptedException
-	 */
-	public void testRun2() throws InterruptedException {
-		
- 		LCD.drawString("testRun2() - Start", 0, 0);
- 		
- 		//Position: x = 0mm, y = 0mm, orientation = 0°; speed: 80mm/s:
-		ThreeWheelDriveRobot robot = new ThreeWheelDriveRobot(new Position(), 80.0f);		//Initialize a new Robot!
-		
-		//Size: width=2000mm, height=2000mm
-		//PlayingField field = new PlayingField(2000, 2000);					//Initialize a new PlayingField!
-		
-		robot.move();
-		
-		//Run robot until it has a covered a specific distance:
- 		while(robot.getTotalDistance() < 2000) {
- 			
- 			Position pos = robot.getPosition();
- 			
-			//Print information:
-			LCD.drawString("x: " + pos.getX(), 0, 1);
-			LCD.drawString("y: " + pos.getY(), 0, 2);
-			LCD.drawString("o: " + pos.getOrientation(), 0, 3);
-			LCD.drawString("d: " + robot.getTotalDistance(), 0, 4);
-			
-			//Wait 25ms:
-			Thread.sleep(25);
-		
- 		}
-		
- 		robot.stop();
- 		
-		LCD.drawString("testRun2() - Finished", 0, 0);
-		
-		/*Wait for any key to be pressed*/ 
-		LCD.drawString("Press btn to exit!", 0, 7); 
-		Button.waitForAnyPress(); 
-		
-		
+	public static void changeActive(boolean pState){
+		robot.setActive(pState);
+		Client.setDevice(robot.getJSONRobot());
 	}
 	
-//##########################################################################################################################################
+	public static Robot getRobot() {
+		return robot;
+	}
+	public static void setRobot(Robot robot) {
+		RobotController.robot = robot;
+	}
+
+	public static Steering getSteering() {
+		return steering;
+	}
+	public static void setSteering(Steering steering) {
+		RobotController.steering = steering;
+	}
+
+	public static boolean isAccept() {
+		return accept;
+	}
+	public static void setAccept(boolean accept) {
+		RobotController.accept = accept;
+	}
+
+	public static Thread getSteeringThread() {
+		return steeringThread;
+	}
+	public static void setSteeringThread(Thread steeringThread) {
+		RobotController.steeringThread = steeringThread;
+	}
+
+	public static Thread getSynchronizeThread() {
+		return synchronizeThread;
+	}
+	public static void setSynchronizeThread(Thread synchronizeThread) {
+		RobotController.synchronizeThread = synchronizeThread;
+	}
+	
+	
 }
-//### EOF ##################################################################################################################################

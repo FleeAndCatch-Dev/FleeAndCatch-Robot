@@ -1,6 +1,4 @@
-package flee_and_catch.robot.component;
-
-import sun.security.action.GetBooleanAction;
+package flee_and_catch.robot.communication.command.component;
 
 public enum Speed {
 	
@@ -26,7 +24,6 @@ public enum Speed {
 			default:
 				return null;
 		}
-		
 	}
 
 	public int getValue() {
