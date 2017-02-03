@@ -26,16 +26,6 @@ public abstract class Command {
 		this.apiid = "@@fleeandcatch@@";
 		this.identification = pIdentification;
 	}
-	
-	/**
-	 * <h1>Get command</h1>
-	 * Get command as json string.
-	 * 
-	 * @return Json string.
-	 * 
-	 * @author ThunderSL94
-	 */
-	public abstract String getCommand();
 
 	public String getId() {
 		return id;

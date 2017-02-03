@@ -2,9 +2,13 @@
 
 package flee_and_catch.robot;
 
+import com.google.gson.Gson;
+
 import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.configuration.SoundConfig;
 import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
@@ -35,7 +39,7 @@ public class Program {
 		//Set the choosen robot to the controller
 		RobotController.setRobot(robot);
 		
-		Client.setDevice((Device) robot.getJSONRobot());
+		Client.setDevice(robot.getJSONRobot());
 		//Backend connection:
 		try {
 			//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
@@ -53,7 +57,17 @@ public class Program {
 		ViewController.showExit();
 		
 		//Tide up
-		//TODO
+		if(RobotController.getRobot().isActive()){
+			Gson gson = new Gson();
+			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Unhandeld disconnection", Client.getDevice()));
+			try {
+				Client.sendCmd(gson.toJson(cmd));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			RobotController.changeActive(false);
+		}
 		
 		try {
 			Client.close();

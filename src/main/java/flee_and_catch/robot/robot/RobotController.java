@@ -1,5 +1,6 @@
 package flee_and_catch.robot.robot;
 
+import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
@@ -9,11 +10,12 @@ public final class RobotController {
 
 	private static Robot robot;
 	private static Steering steering;
+	private static boolean accept;
 
 	private static Thread steeringThread;
 	private static Thread synchronizeThread;
 
-	private RobotController(){
+	public static void intitComponents(){
 		steeringThread = new Thread(new Runnable() {
 			
 			@Override
@@ -35,26 +37,26 @@ public final class RobotController {
 		});
 	}
 
-	private void controlRobot() throws InterruptedException {
-		while(robot.isActive()) {
+	private static void controlRobot() throws InterruptedException {
+		while(getRobot().isActive()) {
 			
 			try {
 				
 				//Should the steering should be processed and their is a steering to process:
-				if(steering != null && steering.getSpeed() != null && steering.getDirection() != null) {
+				if(getSteering() != null && getSteering().getSpeed() != null && getSteering().getDirection() != null && accept) {
 					
 					//Convert the direction and the speed to enums:
-					Direction direction = Direction.valueOf(steering.getDirection());
-					Speed speed = Speed.valueOf(steering.getSpeed());
+					Direction direction = Direction.valueOf(getSteering().getDirection());
+					Speed speed = Speed.valueOf(getSteering().getSpeed());
 					
 					//Process direction:
-					robot.rotate(direction);
+					getRobot().rotate(direction);
 					
 					//Process speed:
-					robot.changeSpeed(speed);
+					getRobot().changeSpeed(speed);
 					
 					//Set Steering to processed:
-					steering = null;
+					setSteering(null);
 				}
 				
 			} catch (Exception e) {
@@ -65,11 +67,16 @@ public final class RobotController {
 			}
 		}
 	}
-	private void synchronize() {
+	private static void synchronize() {
 		// TODO Auto-generated method stub
 		// TODO send update to backend
 	}
 
+	public static void changeActive(boolean pState){
+		robot.setActive(pState);
+		Client.setDevice(robot.getJSONRobot());
+	}
+	
 	public static Robot getRobot() {
 		return robot;
 	}
@@ -82,6 +89,13 @@ public final class RobotController {
 	}
 	public static void setSteering(Steering steering) {
 		RobotController.steering = steering;
+	}
+
+	public static boolean isAccept() {
+		return accept;
+	}
+	public static void setAccept(boolean accept) {
+		RobotController.accept = accept;
 	}
 
 	public static Thread getSteeringThread() {

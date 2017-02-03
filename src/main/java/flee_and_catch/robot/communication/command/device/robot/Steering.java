@@ -1,7 +1,5 @@
 package flee_and_catch.robot.communication.command.device.robot;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.Speed;;
 
@@ -14,12 +12,9 @@ public class Steering {
 		this.speed = Speed.valueOf(pSpeed).toString();	
 	}
 	
-	public JSONObject getJSONObject() throws JSONException{
-		JSONObject jsonSteering = new JSONObject();
-		jsonSteering.put("direction", direction);
-		jsonSteering.put("speed", speed);
-		
-		return jsonSteering;
+	public Steering(Steering steering) {
+		this.direction = steering.getDirection();
+		this.speed = steering.getSpeed();
 	}
 
 	public String getDirection() {

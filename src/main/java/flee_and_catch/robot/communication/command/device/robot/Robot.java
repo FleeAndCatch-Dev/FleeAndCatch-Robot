@@ -1,68 +1,39 @@
 package flee_and_catch.robot.communication.command.device.robot;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 
-public class Robot implements Device {
+public class Robot extends Device {
 	
 	protected RobotIdentification identification;
-	protected boolean active;
+	
 	protected Position position;
 	protected double speed;
 	
 	public Robot(RobotIdentification pIdentification, Position pPosition, double pSpeed){
+		super(false);
 		this.identification = pIdentification;
-		this.active = false;
 		this.position = pPosition;
 		this.speed = pSpeed;
 	}
 
 	
 	public Robot(RobotIdentification pIdentification, boolean pActive, Position pPosition, double pSpeed){
+		super(pActive);
 		this.identification = pIdentification;
-		this.active = pActive;
 		this.position = pPosition;
 		this.speed = pSpeed;
 	}
 	
 	public Robot(Robot pRobot){
+		super(pRobot.isActive());
 		this.identification = pRobot.getIdentification();
-		this.active = pRobot.isActive();
 		this.position = pRobot.getPosition();
 		this.speed = pRobot.getSpeed();
-	}
-	
-	/**
-	 * <h1>Get robot</h1>
-	 * Get robot as json object.
-	 * 
-	 * @return
-	 * @throws JSONException
-	 * 
-	 * @author ThunderSL94
-	 */
-	public JSONObject getJSONObject() throws JSONException{
-		JSONObject jsonRobot = new JSONObject();
-		jsonRobot.put("identification", identification.getJSONObject());
-		jsonRobot.put("active", active);
-		jsonRobot.put("position", position.getJSONObject());
-		jsonRobot.put("speed", speed);
-
-		return jsonRobot;
 	}
 
 	public RobotIdentification getIdentification() {
 		return identification;
-	}
-	
-	public boolean isActive() {
-		return active;
-	}
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 
 	public Position getPosition() {

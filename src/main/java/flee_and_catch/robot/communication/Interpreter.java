@@ -14,8 +14,6 @@ import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.ControlCommand;
 import flee_and_catch.robot.communication.command.ControlCommandType;
-import flee_and_catch.robot.communication.command.ExceptionCommand;
-import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.robot.RobotController;
@@ -87,24 +85,24 @@ public final class Interpreter {
 		switch(type){
 		//Set the flag that indicates that the robot is controlled by an app:
 		case Begin:
-			RobotController.getRobot().setActive(true);
+			RobotController.intitComponents();
+			RobotController.changeActive(true);
 			RobotController.getSteeringThread().start();
 			RobotController.getSynchronizeThread().start();
+			RobotController.setAccept(true);
 			return;
 		//Set the flag that indicates that the robot is controlled by an app:
 		case End:
-			//RobotController.setRobotActive(false);
-			//TODO
+			RobotController.getRobot().stop();
+			RobotController.changeActive(false);
 			return;
 		//Turn the steering of the robot on (steering commands get accepted and implemented):
 		case Start:
-			//RobotController.setAcceptSteering(true);
-			//TODO
+			RobotController.setAccept(true);
 			return;
 		//Turn the steering of the robot off:
 		case Stop:
-			//RobotController.setAcceptSteering(false);
-			//TODO
+			RobotController.setAccept(false);
 			return;
 		//Set a new steering command for the robot:
 		case Control:
@@ -117,7 +115,7 @@ public final class Interpreter {
 	
 	private static void exception(JSONObject pCommand){
 		//Read out the type of the connection command:
-		ExceptionCommandType type = ExceptionCommandType.valueOf((String) pCommand.get("type"));
+		/*ExceptionCommandType type = ExceptionCommandType.valueOf((String) pCommand.get("type"));
 		
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
@@ -134,7 +132,7 @@ public final class Interpreter {
 				break;
 			default:
 				break;
-		}
+		}*/
 		
 		//Get new exception
 		//TODO
