@@ -1,6 +1,11 @@
 package flee_and_catch.robot.robot;
 
+import com.google.gson.Gson;
+
 import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.SynchronizationCommand;
+import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
@@ -68,8 +73,20 @@ public final class RobotController {
 		}
 	}
 	private static void synchronize() {
-		// TODO Auto-generated method stub
-		// TODO send update to backend
+		while(getRobot().isActive()) {
+			//Create synchronization object:
+			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.Current.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+			
+			try {
+				Gson gson = new Gson();
+				Client.sendCmd(gson.toJson(sync));
+				Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();		
+			}
+		}
 	}
 
 	public static void changeActive(boolean pState){

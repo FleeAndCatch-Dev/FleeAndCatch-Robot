@@ -59,6 +59,7 @@ public final class Interpreter {
 			//Set the id of this client:
 			case Connect:
 				Client.getClientIdentification().setId(command.getIdentification().getId());
+				RobotController.getRobot().getIdentification().setId(command.getIdentification().getId());
 				return;
 			//Disconnect the client:
 			case Disconnect:
@@ -102,6 +103,7 @@ public final class Interpreter {
 			return;
 		//Turn the steering of the robot off:
 		case Stop:
+			RobotController.getRobot().stop();
 			RobotController.setAccept(false);
 			return;
 		//Set a new steering command for the robot:
