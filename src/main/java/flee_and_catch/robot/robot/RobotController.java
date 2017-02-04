@@ -49,7 +49,7 @@ public final class RobotController {
 				
 				//Should the steering should be processed and their is a steering to process:
 				if(getSteering() != null && getSteering().getSpeed() != null && getSteering().getDirection() != null && accept) {
-					
+
 					//Convert the direction and the speed to enums:
 					Direction direction = Direction.valueOf(getSteering().getDirection());
 					Speed speed = Speed.valueOf(getSteering().getSpeed());

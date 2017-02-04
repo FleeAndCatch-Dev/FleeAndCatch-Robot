@@ -14,8 +14,11 @@ import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.ControlCommand;
 import flee_and_catch.robot.communication.command.ControlCommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
+import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
 
 //### IMPORTS ##############################################################################################################################
@@ -45,9 +48,6 @@ public final class Interpreter {
 	 */
 	private static void connection(JSONObject pCommand) throws Exception {
 		
-		//Read out the type of the connection command:
-		ConnectionCommandType type = ConnectionCommandType.valueOf((String) pCommand.get("type"));
-		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
@@ -55,10 +55,14 @@ public final class Interpreter {
 		Gson localgson = builder.create();
 		ConnectionCommand command = localgson.fromJson(pCommand.toString(), ConnectionCommand.class);
 		
+		//Read out the type of the connection command:
+		ConnectionCommandType type = ConnectionCommandType.valueOf(command.getType());
+		
 		switch(type){
 			//Set the id of this client:
 			case Connect:
 				Client.getClientIdentification().setId(command.getIdentification().getId());
+				((Robot)Client.getDevice()).getIdentification().setId(command.getIdentification().getId());
 				RobotController.getRobot().getIdentification().setId(command.getIdentification().getId());
 				return;
 			//Disconnect the client:
@@ -77,11 +81,12 @@ public final class Interpreter {
 	 * @throws Exception
 	 */
 	private static void control(JSONObject pCommand) throws Exception {
-		
-		//Read out the type of the control command:
-		ControlCommandType type = ControlCommandType.valueOf((String) pCommand.get("type"));
+			
 		//Serialize the JSON object to a Control class object:
 		ControlCommand command = gson.fromJson(pCommand.toString(), ControlCommand.class);
+		
+		//Read out the type of the control command:
+		ControlCommandType type = ControlCommandType.valueOf(command.getType());
 		
 		switch(type){
 		//Set the flag that indicates that the robot is controlled by an app:
@@ -115,9 +120,7 @@ public final class Interpreter {
 		}
 	}
 	
-	private static void exception(JSONObject pCommand){
-		//Read out the type of the connection command:
-		/*ExceptionCommandType type = ExceptionCommandType.valueOf((String) pCommand.get("type"));
+	private static void exception(JSONObject pCommand) throws Exception{
 		
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
@@ -126,15 +129,19 @@ public final class Interpreter {
 		Gson localgson = builder.create();
 		ExceptionCommand command = localgson.fromJson(pCommand.toString(), ExceptionCommand.class);
 		
+		//Read out the type of the connection command:
+		ExceptionCommandType type = ExceptionCommandType.valueOf(command.getType());
+		
 		switch (type) {
 			case Undefined:
-				break;
+				throw new Exception(command.getException().getMessage());
 			case UnhandeldDisconnection:
-				//Set active of robot false
+				RobotController.changeActive(false);
+				RobotController.getRobot().stop();
 				break;
 			default:
 				break;
-		}*/
+		}
 		
 		//Get new exception
 		//TODO

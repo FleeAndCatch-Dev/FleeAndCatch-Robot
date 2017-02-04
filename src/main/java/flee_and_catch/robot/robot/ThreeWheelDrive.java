@@ -172,7 +172,7 @@ public class ThreeWheelDrive implements Robot {
 		//First stop the robot moving (Depends on the moving concept):
 		//if(this.isMoving()) { this.stop(); }
 				
-		this.setSpeed(RobotConfig.ROTATION_SPEED);
+		this.setSpeed(RobotConfig.ROTATION_SPEED);				
 				
 		//Start motors:
 		switch(direction) {

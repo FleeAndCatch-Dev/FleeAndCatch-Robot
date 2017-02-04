@@ -59,7 +59,7 @@ public class Program {
 		//Tide up
 		if(RobotController.getRobot().isActive()){
 			Gson gson = new Gson();
-			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Unhandeld disconnection", Client.getDevice()));
+			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Devie is disconnecting", Client.getDevice()));
 			try {
 				Client.sendCmd(gson.toJson(cmd));
 			} catch (Exception e) {
