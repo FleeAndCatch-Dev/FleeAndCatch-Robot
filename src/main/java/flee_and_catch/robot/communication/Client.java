@@ -94,6 +94,7 @@ public final class Client {
 	 */
 	private static void startConnection() throws UnknownHostException, IOException{
 		socket = new Socket(identification.getAddress(), identification.getPort());
+		socket.setTcpNoDelay(true);
 		Thread listenerThread = new Thread(new Runnable() {
 			
 			@Override
