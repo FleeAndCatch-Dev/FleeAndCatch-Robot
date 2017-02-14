@@ -75,7 +75,7 @@ public final class RobotController {
 	private static void synchronize() {
 		while(getRobot().isActive()) {
 			//Create synchronization object:
-			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.Current.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
 			
 			try {
 				Gson gson = new Gson();

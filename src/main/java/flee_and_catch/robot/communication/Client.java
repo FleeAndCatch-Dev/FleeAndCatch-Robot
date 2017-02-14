@@ -102,6 +102,7 @@ public final class Client {
 				try {
 					listen();
 				} catch (Exception e) {
+					//stop robot
 					e.printStackTrace();
 				}
 			}
