@@ -16,5 +16,7 @@ public class RobotConfig {
 	public static final float MAX_SPEED_MOTOR = 1440.0f;
 	
 	//Represents the rotation speed of a motor in degrees per second:
-	public static final float ROTATION_SPEED = 50.0f;
+	public static final float ROTATION_SPEED = 30.0f;
+	
+	public static final String PORT_ULTRASONIC = "S4";
 }

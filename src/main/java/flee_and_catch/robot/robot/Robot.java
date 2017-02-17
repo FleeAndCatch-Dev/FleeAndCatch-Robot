@@ -1,37 +1,53 @@
 package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.Direction;
-import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 
 public interface Robot {
 	
-	void increaseSpeed();
-	void decreaseSpeed();
-	
-	/* stop [Method]: Method to stop the robot moving *//**
+	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved *//**
+	* 
+	* @return
+	*/
+	float getLongitudinalDistance();
+	/* resetLongitudinalDistance [Method]: Method that resets the rotation counters of the motors *//**
 	 * 
 	 */
-	void stop();
+	void resetLongitudinalDistance();
+	
+	void increaseSpeed();
+	void decreaseSpeed();
 	
 	/* move [Method]: Method to let the robot move forward *//**
 	 * 
 	 */
-	void move();
+	void forward();
+	/* move [Method]: Method to let the robot move backward *//**
+	 * 
+	 */
+	void backward();
 	
 	/* move [Method]: Method to let the robot move a distance forward *//**
 	 * 
 	 * @param distance
 	 * @throws InterruptedException
 	*/
-	void move(float distance) throws InterruptedException;
+	void moveForward(float distance) throws InterruptedException;
+	/* move [Method]: Method to let the robot move a distance forward *//**
+	 * 
+	 * @param distance
+	 * @throws InterruptedException
+	*/
+	void moveBackward(float distance) throws InterruptedException;
+	/* stop [Method]: Method to stop the robot moving *//**
+	 * 
+	 */
+	void stop();
 	
 	void rotate(Direction direction);
 	void rotate(float angle) throws InterruptedException;
 	void rotate(Direction direct, float angle) throws InterruptedException;
-
-	void changeSpeed(Speed speed);
 	
 	public abstract flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 	
@@ -52,5 +68,6 @@ public interface Robot {
 	float getSpeed();
 	void setSpeed(float speed);
 
+	float getUltrasonicDistance();
 	float getTotalDistance();
 }

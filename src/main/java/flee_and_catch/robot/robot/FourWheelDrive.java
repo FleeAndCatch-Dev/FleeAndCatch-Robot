@@ -1,11 +1,22 @@
 package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.Direction;
-import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 
 public class FourWheelDrive implements Robot {
+
+	@Override
+	public float getLongitudinalDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void resetLongitudinalDistance() {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public void increaseSpeed() {
@@ -20,19 +31,31 @@ public class FourWheelDrive implements Robot {
 	}
 
 	@Override
+	public void forward() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void backward() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveForward(float distance) throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moveBackward(float distance) throws InterruptedException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
 	public void stop() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void move() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void move(float distance) throws InterruptedException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -51,12 +74,6 @@ public class FourWheelDrive implements Robot {
 
 	@Override
 	public void rotate(Direction direct, float angle) throws InterruptedException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void changeSpeed(Speed speed) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -115,4 +132,9 @@ public class FourWheelDrive implements Robot {
 		return 0;
 	}
 
+	@Override
+	public float getUltrasonicDistance() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

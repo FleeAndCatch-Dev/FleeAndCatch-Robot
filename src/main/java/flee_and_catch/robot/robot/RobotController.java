@@ -55,10 +55,16 @@ public final class RobotController {
 					Speed speed = Speed.valueOf(getSteering().getSpeed());
 					
 					//Process direction:
-					getRobot().rotate(direction);
+					if(direction == Direction.Left || direction == Direction.Right)
+						getRobot().rotate(direction);
+					else
+						getRobot().forward();
 					
 					//Process speed:
-					getRobot().changeSpeed(speed);
+					if(speed == Speed.Faster)
+						getRobot().increaseSpeed();
+					else if(speed == Speed.Slower)
+						getRobot().decreaseSpeed();
 					
 					//Set Steering to processed:
 					setSteering(null);

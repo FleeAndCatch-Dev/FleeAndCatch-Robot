@@ -20,14 +20,14 @@ public final class ViewController {
 	private static void showSelectRobot() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C#########0.9#", 0, 0);
-		LCD.drawString("#               #", 0, 1);
-		LCD.drawString("#    Press a    #", 0, 2);
-		LCD.drawString("#   button to   #", 0, 3);
-		LCD.drawString("#   select a    #", 0, 4);
-		LCD.drawString("#     robot!    #", 0, 5);
-		LCD.drawString("#               #", 0, 6);
-		LCD.drawString("#################", 0, 7);
+		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#                #", 0, 1);
+		LCD.drawString("#    Press a     #", 0, 2);
+		LCD.drawString("#   button to    #", 0, 3);
+		LCD.drawString("#   select a     #", 0, 4);
+		LCD.drawString("#    robot!      #", 0, 5);
+		LCD.drawString("#                #", 0, 6);
+		LCD.drawString("##################", 0, 7);
 		
 	}
 	
@@ -36,14 +36,14 @@ public final class ViewController {
 	public static void showStartScreen() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C#########0.9#", 0, 0);
-		LCD.drawString("#               #", 0, 1);
-		LCD.drawString("#  Welcome to   #", 0, 2);
-		LCD.drawString("#   Flee and    #", 0, 3);
-		LCD.drawString("#     Catch     #", 0, 4);
-		LCD.drawString("#               #", 0, 5);
-		LCD.drawString("#               #", 0, 6);
-		LCD.drawString("#################", 0, 7);
+		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#                #", 0, 1);
+		LCD.drawString("#   Welcome to   #", 0, 2);
+		LCD.drawString("#    Flee and    #", 0, 3);
+		LCD.drawString("#      Catch     #", 0, 4);
+		LCD.drawString("#                #", 0, 5);
+		LCD.drawString("#                #", 0, 6);
+		LCD.drawString("##################", 0, 7);
 		
 		Button.waitForAnyPress();
 	}
@@ -51,14 +51,14 @@ public final class ViewController {
 	public static void showExit() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C#########0.9#", 0, 0);
-		LCD.drawString("#               #", 0, 1);
-		LCD.drawString("#    Press a    #", 0, 2);
-		LCD.drawString("#   button to   #", 0, 3);
-		LCD.drawString("#     exit!     #", 0, 4);
-		LCD.drawString("#               #", 0, 5);
-		LCD.drawString("#               #", 0, 6);
-		LCD.drawString("#################", 0, 7);
+		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#                #", 0, 1);
+		LCD.drawString("#    Press a     #", 0, 2);
+		LCD.drawString("#   button to    #", 0, 3);
+		LCD.drawString("#     exit!      #", 0, 4);
+		LCD.drawString("#                #", 0, 5);
+		LCD.drawString("#                #", 0, 6);
+		LCD.drawString("##################", 0, 7);
 		
 		Button.waitForAnyPress();
 	}
@@ -66,14 +66,14 @@ public final class ViewController {
 	public static void showStatus(String status) {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C#########0.9#", 0, 0);
-		LCD.drawString("#    Status:    #", 0, 1);
-		LCD.drawString("# " +status + " #", 0, 2);
-		LCD.drawString("#               #", 0, 3);
-		LCD.drawString("#               #", 0, 4);
-		LCD.drawString("#               #", 0, 5);
-		LCD.drawString("#               #", 0, 6);
-		LCD.drawString("#################", 0, 7);
+		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#     Status:    #", 0, 1);
+		LCD.drawString("# " + status + " #", 0, 2);
+		LCD.drawString("#                #", 0, 3);
+		LCD.drawString("#                #", 0, 4);
+		LCD.drawString("#                #", 0, 5);
+		LCD.drawString("#                #", 0, 6);
+		LCD.drawString("##################", 0, 7);
 	}
 	
 	public static Robot getSelectedRobot() {
