@@ -8,4 +8,5 @@ public class ThreeWheelDriveConfig {
 	public static final Port PORT_MOTOR_RIGHT = MotorPort.C;
 	public static final Port PORT_MOTOR_LEFT = MotorPort.B;
 	public static final Port PORT_ULTRASONIC = SensorPort.S4;
+	public static final Port PORT_GYRO = SensorPort.S2;
 }

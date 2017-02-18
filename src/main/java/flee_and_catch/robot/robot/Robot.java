@@ -67,7 +67,6 @@ public interface Robot {
 
 	float getSpeed();
 	void setSpeed(float speed);
-
-	float getUltrasonicDistance();
+	
 	float getTotalDistance();
 }

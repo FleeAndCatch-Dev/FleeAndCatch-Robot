@@ -8,6 +8,7 @@ import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 import flee_and_catch.robot.configuration.RobotConfig;
 import flee_and_catch.robot.configuration.ThreeWheelDriveConfig;
+import flee_and_catch.robot.robot.sensor.Gyro;
 import flee_and_catch.robot.robot.sensor.Ultrasonic;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
@@ -27,6 +28,7 @@ public class ThreeWheelDrive implements Robot {
 	private EV3MediumRegulatedMotor motorLeft;
 	
 	private Ultrasonic ultrasonic;
+	private Gyro gyro;
 	
 	public ThreeWheelDrive(){
 		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
@@ -58,6 +60,7 @@ public class ThreeWheelDrive implements Robot {
 			this.motorLeft.resetTachoCount();
 			
 			ultrasonic = new Ultrasonic(ThreeWheelDriveConfig.PORT_ULTRASONIC);
+			gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
 		}
 	
 //### PUBLIC METHODS ########################################################################################################################
@@ -307,11 +310,17 @@ public class ThreeWheelDrive implements Robot {
 	/**Get the ultrasonic distance into meter
 	 * 
 	 */
-	@Override
 	public float getUltrasonicDistance(){
 		if(!ultrasonic.isEnable())
 			ultrasonic.enable();
 		return ultrasonic.getDistance();
+	}
+	
+	public float getGyroAngle(){
+		return gyro.getAngle();
+	}
+	public void resetGyro(){
+		gyro.reset();
 	}
 	
 	@Override
