@@ -83,7 +83,7 @@ public class Position {
 	public void setY(double y) {
 		this.y = y;
 	}
-
+	
 	/* setOrientation [Method]: Method to set the orientation *//**
 	 * 
 	 * @param orientation
@@ -91,16 +91,6 @@ public class Position {
 	public void setOrientation(double orientation) {
 		this.orientation = orientation;
 	}
-	
-	/* setOrientation [Method]: Method to set the orientation *//**
-	 * 
-	 * @param orientation
-	 */
-	/*public void setOrientation(double angle) {
-		angle = angle % 360;
-		if(angle < 0) { angle += 360; }
-		this.orientation = angle;
-	}*/
 	
 //### METHODS ##############################################################################################################################
 
@@ -110,17 +100,21 @@ public class Position {
 	 * 
 	 * @param angle
 	 */
-	/*public void calculateNewOrientation(float angle) {
+	public double calculateNewOrientation(float angle) {
 		
-		this.orientation = (this.orientation + angle) % 360;
-		if(this.orientation < 0) { this.orientation += 360; }
+		double tempOrientation = (this.orientation + angle) % 360;
+		if(this.orientation < 0) 
+			tempOrientation += 360;
 		
-	}*/
+		return tempOrientation;
+	}
 	
 	/* calculateNewPosition [Method]: Method that calculates a new position based of a covered longitudinal distance*//**
 	 * 
 	 */
-	/*public void calculateNewPosition(float longitudinalDistance) {
+	public Position calculateNewPosition(float longitudinalDistance) {
+		
+		Position tempPosition = new Position(this);
 		
 		//Convert the orientation from degree in radian:
 		double orientationRad = this.orientation * (Math.PI / 180);
@@ -130,9 +124,11 @@ public class Position {
 		float distY = (float) Math.sin(orientationRad) * longitudinalDistance;
 		
 		//Add the moved distance to position:
-		this.x += distX;
-		this.y += distY;
-	}*/
+		tempPosition.setX(this.getX() + distX);
+		tempPosition.setY(this.getY() + distY);
+		
+		return tempPosition;
+	}
 	
 //##########################################################################################################################################	
 }

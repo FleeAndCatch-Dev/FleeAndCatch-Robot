@@ -84,6 +84,8 @@ public final class RobotController {
 			
 			//Calculate the current position			
 			
+			//Show position and speed, other variables
+			
 			//Create synchronization object:
 			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
 			

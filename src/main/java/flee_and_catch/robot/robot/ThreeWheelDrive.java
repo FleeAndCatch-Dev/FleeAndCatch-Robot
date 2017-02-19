@@ -17,9 +17,10 @@ public class ThreeWheelDrive implements Robot {
 	private RobotIdentification identification;
 	private boolean active;
 	private Position position;
-	private float totalDistance;
-	private float lastDistance;
+	private double totalDistance;
+	private double speedDistance;
 	private float speed;
+	private Status status;
 	
 	//Motor that driving the right wheel:
 	private EV3MediumRegulatedMotor motorRight;
@@ -36,8 +37,8 @@ public class ThreeWheelDrive implements Robot {
 		this.active = false;
 		this.position = new Position();	
 		this.totalDistance = 0;
-		this.lastDistance = 0;
-		
+		this.speedDistance = 0;
+		this.status = Status.Waiting;
 		initComponents();
 	}
 	
@@ -64,6 +65,52 @@ public class ThreeWheelDrive implements Robot {
 			gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
 		}
 	
+		@Override
+		public void checkStatus(Status status) {		
+			
+			if(status == Status.MovingForward) {
+				if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+				}
+				else if(this.status == Status.MovingBackward) {
+					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+				}
+			}
+			else if(status == Status.MovingBackward) {
+				if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+				}
+				else if(this.status == Status.MovingForward) {
+					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+				}
+			}
+			else if(status == Status.RotateLeft) {
+				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+				}
+				else if(this.status == Status.RotateRight) {
+					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+				}
+			}
+			else if(status == Status.RotateRight) {
+				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+				}
+				else if(this.status == Status.RotateLeft) {
+					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+				}
+			}
+			else if(status == Status.Waiting) {
+				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+				}
+				else if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+				}
+			}
+			this.status = status;
+		}
+		
 //### PUBLIC METHODS ########################################################################################################################
 	
 	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved in millimeter *//**
@@ -77,15 +124,33 @@ public class ThreeWheelDrive implements Robot {
 		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
 		float distance = degrees * RobotConfig.DISTANCE_DEGREE;
 		totalDistance = totalDistance + distance;
+		resetLongitudinalDistance();
+		
 		return distance;
 	}
-			
+	
+	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved in millimeter *//**
+	* 
+	* @return
+	*/
+	@Override
+	public float getAngle() {
+		//Calculate the average of both rotation counters:
+		//float distanceR = this.motorRight.getTachoCount() * RobotConfig.DISTANCE_DEGREE;
+		//float distanceL = this.motorLeft.getTachoCount() * RobotConfig.DISTANCE_DEGREE;
+		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
+		float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
+		resetLongitudinalDistance();
+		
+		return angle;
+	}
+		
 	/* resetLongitudinalDistance [Method]: Method that resets the rotation counters of the motors *//**
 	 * 
 	 */
 	@Override
 	public void resetLongitudinalDistance() {				
-		//Reset the rotation counters of the motors:
+		//Reset the rotation counters of the motors:			
 		this.motorRight.resetTachoCount();
 		this.motorLeft.resetTachoCount();				
 	}
@@ -102,18 +167,22 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public void forward() {
+		this.checkStatus(Status.MovingForward);
 		motorLeft.forward();
 		motorRight.forward();		
 	}
 
 	@Override
 	public void backward() {
+		this.checkStatus(Status.MovingBackward);
 		motorLeft.backward();
 		motorRight.backward();
 	}
 
 	@Override
 	public void moveForward(float distance) throws InterruptedException {
+		
+		this.checkStatus(Status.MovingForward);
 		//Calculate the time in seconds that the motors must move:
 		float sec = distance / this.getSpeed();
 					
@@ -128,6 +197,8 @@ public class ThreeWheelDrive implements Robot {
 	}
 	@Override
 	public void moveBackward(float distance) throws InterruptedException {
+		
+		this.checkStatus(Status.MovingBackward);
 		//Calculate the time in seconds that the motors must move:
 		float sec = distance / this.getSpeed();
 					
@@ -142,10 +213,11 @@ public class ThreeWheelDrive implements Robot {
 	}
 
 	@Override
-	public void stop() {		
+	public void stop() {			
 		motorLeft.stop();
 		motorRight.stop();
 		this.setSpeed(0);
+		this.checkStatus(Status.Waiting);
 	}
 
 	@Override
@@ -163,11 +235,13 @@ public class ThreeWheelDrive implements Robot {
 		switch(direction) {
 			case Left:
 				//Activate motors:
+				this.checkStatus(Status.RotateLeft);
 				this.motorRight.forward();
 				this.motorLeft.backward();
 				break;
 			case Right:
 				//Activate motors:
+				this.checkStatus(Status.RotateRight);
 				this.motorRight.backward();
 				this.motorLeft.forward();
 				break;
@@ -184,9 +258,11 @@ public class ThreeWheelDrive implements Robot {
 	public void rotate(float angle) throws InterruptedException {
 		if(angle < 0) {
 			angle *= -1;
+			this.checkStatus(Status.RotateRight);
 			this.rotate(Direction.Right, angle);
 		}
 		else {
+			this.checkStatus(Status.RotateLeft);
 			this.rotate(Direction.Left, angle);
 		}
 	}
@@ -206,15 +282,17 @@ public class ThreeWheelDrive implements Robot {
 		//Start motors:
 		switch(direct) {
 			case Left:
+				this.checkStatus(Status.RotateLeft);
 				//Set new robot orientation:
-				//this.position.calculateNewOrientation(angle);
+				this.position.calculateNewOrientation(angle);
 				//Activate motors:
 				this.motorRight.forward();
 				this.motorLeft.backward();
 				break;
 			case Right:
+				this.checkStatus(Status.RotateRight);
 				//Set new robot orientation:
-				//this.position.calculateNewOrientation(-angle);
+				this.position.calculateNewOrientation(-angle);
 				//Activate motors:
 				this.motorRight.backward();
 				this.motorLeft.forward();
@@ -232,7 +310,7 @@ public class ThreeWheelDrive implements Robot {
 	
 	@Override
 	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
-		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getSpeed());
+		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getRealSpeed());
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
@@ -259,12 +337,23 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public Position getPosition() {
-		//TODO
-		
 		//Duplicate the saved (old) position of the robot:
 		Position curPos = new Position(this.position);
+		
 		//Calculate the current position of the robot:
-		//curPos.calculateNewPosition(this.getLongitudinalDistance());
+		if(status == Status.MovingBackward || status == Status.MovingForward){
+			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
+			float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
+			curPos.calculateNewOrientation(angle);
+		}
+		else if(status == Status.RotateLeft || status == Status.RotateRight){
+			//Calculate the average of both rotation counters:
+			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
+			//Multiply the number of rotated degrees with the millimeter that are covered per degree:
+			float distance = degrees * RobotConfig.DISTANCE_DEGREE;
+			curPos.calculateNewPosition(distance);
+		}
+		
 		//Return the current position of the robot:*/
 		return curPos;
 	}
@@ -274,10 +363,12 @@ public class ThreeWheelDrive implements Robot {
 		//calculate the real speed by the sensors
 		long time = System.currentTimeMillis() - clock;
 		clock = System.currentTimeMillis();
+			
+		double tempDistance = getTotalDistance();
 		
-		float realSpeed = (getLongitudinalDistance() * 10) / time;
-		resetLongitudinalDistance();
-		
+		float realSpeed = (float) (((tempDistance - speedDistance) * 10) / time);
+		speedDistance = tempDistance;
+			
 		return realSpeed;
 	}
 	
@@ -334,8 +425,13 @@ public class ThreeWheelDrive implements Robot {
 	}
 	
 	@Override
-	public float getTotalDistance() {
-		//Current total distance = (old) saved total distance + current longitudinal distance:
-		return totalDistance;
+	public double getTotalDistance() {
+
+		//Calculate the average of both rotation counters:
+		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
+		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
+		double distance = degrees * RobotConfig.DISTANCE_DEGREE;
+
+		return totalDistance + distance;
 	}
 }

@@ -77,5 +77,7 @@ public interface Robot {
 	float getSpeed();
 	void setSpeed(float speed);
 	
-	float getTotalDistance();
+	double getTotalDistance();
+	void checkStatus(Status status);
+	float getAngle();
 }
