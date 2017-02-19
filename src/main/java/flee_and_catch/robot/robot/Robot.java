@@ -65,6 +65,15 @@ public interface Robot {
 
 	Position getPosition();
 
+	/**Get the real speed, calculated by the sensors in cm/s
+	 * 
+	 * @return
+	 */
+	float getRealSpeed();
+	/**Get the speed which the user ist setting
+	 * 
+	 * @return
+	 */
 	float getSpeed();
 	void setSpeed(float speed);
 	

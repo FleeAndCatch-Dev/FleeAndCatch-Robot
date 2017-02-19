@@ -8,7 +8,6 @@ public class Gyro {
 
 	private EV3GyroSensor gyroSensor;
 	private SampleProvider provider;
-	private boolean enable;
 	
 	public Gyro(Port port){
 		gyroSensor = new EV3GyroSensor(port);

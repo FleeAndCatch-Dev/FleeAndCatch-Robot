@@ -3,7 +3,6 @@ package flee_and_catch.robot.robot.sensor;
 import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
-import lejos.robotics.filter.AbstractFilter;
 
 public class Ultrasonic {
 

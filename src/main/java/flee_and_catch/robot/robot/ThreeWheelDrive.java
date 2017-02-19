@@ -11,8 +11,6 @@ import flee_and_catch.robot.configuration.ThreeWheelDriveConfig;
 import flee_and_catch.robot.robot.sensor.Gyro;
 import flee_and_catch.robot.robot.sensor.Ultrasonic;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
-import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.robotics.SampleProvider;
 
 public class ThreeWheelDrive implements Robot {
 
@@ -20,6 +18,7 @@ public class ThreeWheelDrive implements Robot {
 	private boolean active;
 	private Position position;
 	private float totalDistance;
+	private float lastDistance;
 	private float speed;
 	
 	//Motor that driving the right wheel:
@@ -30,11 +29,14 @@ public class ThreeWheelDrive implements Robot {
 	private Ultrasonic ultrasonic;
 	private Gyro gyro;
 	
+	private long clock;
+	
 	public ThreeWheelDrive(){
 		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
 		this.active = false;
 		this.position = new Position();	
 		this.totalDistance = 0;
+		this.lastDistance = 0;
 		
 		initComponents();
 	}
@@ -44,7 +46,6 @@ public class ThreeWheelDrive implements Robot {
 		/* initComponents [Method]: Method that initialize the components (motors, sensors, etc.) of the robot *//**
 		 * 
 		 */
-		@SuppressWarnings("resource")
 		private void initComponents() {
 			
 			//Initial motors with standard ports:
@@ -65,7 +66,7 @@ public class ThreeWheelDrive implements Robot {
 	
 //### PUBLIC METHODS ########################################################################################################################
 	
-	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved *//**
+	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved in millimeter *//**
 	* 
 	* @return
 	*/
@@ -74,7 +75,9 @@ public class ThreeWheelDrive implements Robot {
 		//Calculate the average of both rotation counters:
 		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
 		//Multiply the number of rotated degrees with the millimeter that are covered per degree:
-		return degrees * RobotConfig.DISTANCE_DEGREE;
+		float distance = degrees * RobotConfig.DISTANCE_DEGREE;
+		totalDistance = totalDistance + distance;
+		return distance;
 	}
 			
 	/* resetLongitudinalDistance [Method]: Method that resets the rotation counters of the motors *//**
@@ -99,14 +102,8 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public void forward() {
-		float distance = ultrasonic.getDistance();
-		if(ultrasonic.getDistance() >= 0.25){
-			motorLeft.forward();
-			motorRight.forward();
-		}
-		else{
-			this.stop();
-		}			
+		motorLeft.forward();
+		motorRight.forward();		
 	}
 
 	@Override
@@ -210,14 +207,14 @@ public class ThreeWheelDrive implements Robot {
 		switch(direct) {
 			case Left:
 				//Set new robot orientation:
-				this.position.calculateNewOrientation(angle);
+				//this.position.calculateNewOrientation(angle);
 				//Activate motors:
 				this.motorRight.forward();
 				this.motorLeft.backward();
 				break;
 			case Right:
 				//Set new robot orientation:
-				this.position.calculateNewOrientation(-angle);
+				//this.position.calculateNewOrientation(-angle);
 				//Activate motors:
 				this.motorRight.backward();
 				this.motorLeft.forward();
@@ -262,17 +259,28 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public Position getPosition() {
+		//TODO
+		
 		//Duplicate the saved (old) position of the robot:
-		Position curPos = new Position();
-		curPos.setX(this.position.getX());
-		curPos.setY(this.position.getY());
-		curPos.setOrientation(this.position.getOrientation());
+		Position curPos = new Position(this.position);
 		//Calculate the current position of the robot:
-		curPos.calculateNewPosition(this.getLongitudinalDistance());
-		//Return the current position of the robot:
+		//curPos.calculateNewPosition(this.getLongitudinalDistance());
+		//Return the current position of the robot:*/
 		return curPos;
 	}
 
+	@Override
+	public float getRealSpeed() {
+		//calculate the real speed by the sensors
+		long time = System.currentTimeMillis() - clock;
+		clock = System.currentTimeMillis();
+		
+		float realSpeed = (getLongitudinalDistance() * 10) / time;
+		resetLongitudinalDistance();
+		
+		return realSpeed;
+	}
+	
 	@Override
 	public float getSpeed() {
 		return speed;
@@ -308,12 +316,14 @@ public class ThreeWheelDrive implements Robot {
 	}
 
 	/**Get the ultrasonic distance into meter
+	 * @throws Exception 
 	 * 
 	 */
-	public float getUltrasonicDistance(){
+	public float getUltrasonicDistance() throws Exception{
 		if(!ultrasonic.isEnable())
-			ultrasonic.enable();
-		return ultrasonic.getDistance();
+			throw new Exception("The ultrasonic sensor isn't enable");
+		else
+			return ultrasonic.getDistance();
 	}
 	
 	public float getGyroAngle(){
@@ -326,6 +336,6 @@ public class ThreeWheelDrive implements Robot {
 	@Override
 	public float getTotalDistance() {
 		//Current total distance = (old) saved total distance + current longitudinal distance:
-		return totalDistance + getLongitudinalDistance();
+		return totalDistance;
 	}
 }

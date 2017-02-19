@@ -80,6 +80,10 @@ public final class RobotController {
 	}
 	private static void synchronize() {
 		while(getRobot().isActive()) {
+			//Calculate the speed
+			
+			//Calculate the current position			
+			
 			//Create synchronization object:
 			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
 			

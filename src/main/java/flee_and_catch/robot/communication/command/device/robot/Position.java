@@ -42,6 +42,12 @@ public class Position {
 		this.setOrientation(orientation);
 	}
 	
+	public Position(Position position) {
+		this.x = position.getX();
+		this.y = position.getY();
+		this.orientation = position.getOrientation();
+	}
+	
 //### GETTER/SETTER ########################################################################################################################
 
 	/* getX [Method]: Returns the x-coordinate of the position *//**
@@ -82,11 +88,19 @@ public class Position {
 	 * 
 	 * @param orientation
 	 */
-	public void setOrientation(double angle) {
+	public void setOrientation(double orientation) {
+		this.orientation = orientation;
+	}
+	
+	/* setOrientation [Method]: Method to set the orientation *//**
+	 * 
+	 * @param orientation
+	 */
+	/*public void setOrientation(double angle) {
 		angle = angle % 360;
 		if(angle < 0) { angle += 360; }
 		this.orientation = angle;
-	}
+	}*/
 	
 //### METHODS ##############################################################################################################################
 
@@ -96,17 +110,17 @@ public class Position {
 	 * 
 	 * @param angle
 	 */
-	public void calculateNewOrientation(float angle) {
+	/*public void calculateNewOrientation(float angle) {
 		
 		this.orientation = (this.orientation + angle) % 360;
 		if(this.orientation < 0) { this.orientation += 360; }
 		
-	}
+	}*/
 	
 	/* calculateNewPosition [Method]: Method that calculates a new position based of a covered longitudinal distance*//**
 	 * 
 	 */
-	public void calculateNewPosition(float longitudinalDistance) {
+	/*public void calculateNewPosition(float longitudinalDistance) {
 		
 		//Convert the orientation from degree in radian:
 		double orientationRad = this.orientation * (Math.PI / 180);
@@ -118,14 +132,7 @@ public class Position {
 		//Add the moved distance to position:
 		this.x += distX;
 		this.y += distY;
-	}
-
-	/* toStringLCD [Method]: Returns the attribute values in a compact string format for the robot LCD */
-	public String toStringLCD() {
-		
-		return this.x + ", " + this.y + ", " + this.orientation;
-		
-	}
+	}*/
 	
 //##########################################################################################################################################	
 }

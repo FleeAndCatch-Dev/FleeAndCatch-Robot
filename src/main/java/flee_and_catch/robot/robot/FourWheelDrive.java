@@ -131,4 +131,10 @@ public class FourWheelDrive implements Robot {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public float getRealSpeed() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
