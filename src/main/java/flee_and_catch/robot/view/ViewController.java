@@ -1,10 +1,8 @@
 package flee_and_catch.robot.view;
 
 import flee_and_catch.robot.communication.command.component.RobotType;
-import flee_and_catch.robot.robot.ChainDrive;
-import flee_and_catch.robot.robot.FourWheelDrive;
+import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.robot.Robot;
-import flee_and_catch.robot.robot.ThreeWheelDrive;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
@@ -20,7 +18,7 @@ public final class ViewController {
 	private static void showSelectRobot() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#F&C##############", 0, 0);
 		LCD.drawString("#                #", 0, 1);
 		LCD.drawString("#    Press a     #", 0, 2);
 		LCD.drawString("#   button to    #", 0, 3);
@@ -36,7 +34,7 @@ public final class ViewController {
 	public static void showStartScreen() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#F&C##############", 0, 0);
 		LCD.drawString("#                #", 0, 1);
 		LCD.drawString("#   Welcome to   #", 0, 2);
 		LCD.drawString("#    Flee and    #", 0, 3);
@@ -51,7 +49,7 @@ public final class ViewController {
 	public static void showExit() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#F&C##############", 0, 0);
 		LCD.drawString("#                #", 0, 1);
 		LCD.drawString("#    Press a     #", 0, 2);
 		LCD.drawString("#   button to    #", 0, 3);
@@ -63,14 +61,20 @@ public final class ViewController {
 		Button.waitForAnyPress();
 	}
 	
-	public static void showStatus(String status) {
+	public static void showStatus(String status, Position position, double speed) {
+		
+		String x = Double.toString(((double) ((int) (position.getX() * 100))) / 100);
+		String y = Double.toString(((double) ((int) (position.getY() * 100))) / 100);
+		String o = Double.toString(((double) ((int) (position.getOrientation() * 100))) / 100);
+		String s = Double.toString(((double) ((int) (speed * 100))) / 100);
+		
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#F&C##############", 0, 0);
 		LCD.drawString("#     Status:    #", 0, 1);
 		LCD.drawString("# " + status + " #", 0, 2);
-		LCD.drawString("#                #", 0, 3);
-		LCD.drawString("#                #", 0, 4);
+		LCD.drawString("# X: " + x + " Y: " + y + " O: " + o + "#", 0, 3);
+		LCD.drawString("# Speed: " + s + "#", 0, 4);
 		LCD.drawString("#                #", 0, 5);
 		LCD.drawString("#                #", 0, 6);
 		LCD.drawString("##################", 0, 7);
@@ -140,23 +144,7 @@ public final class ViewController {
 		//Keep in the loop until the enter or escape button is pressed:	
 		} while(!(pressedBtn == Button.ID_ENTER || pressedBtn == Button.ID_ESCAPE));
 		
-		Robot robot = null;
-		
-		switch(selectedRobot){
-			case ThreeWheelDrive:
-				robot = new ThreeWheelDrive();
-				break;
-			case FourWheelDrive:
-				robot = new FourWheelDrive();
-				break;
-			case ChainDrive:
-				robot = new ChainDrive();
-				break;
-			default:
-				break;
-		}
-		
-		return robot;
+		return selectedRobot.getRobot();
 	}
 	
 }

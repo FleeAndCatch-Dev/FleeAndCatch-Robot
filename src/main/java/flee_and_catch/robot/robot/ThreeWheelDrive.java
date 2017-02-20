@@ -32,7 +32,7 @@ public class ThreeWheelDrive implements Robot {
 	
 	private long clock;
 	
-	public ThreeWheelDrive(){
+	public ThreeWheelDrive(String pSubtype){
 		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
 		this.active = false;
 		this.position = new Position();	
@@ -309,8 +309,8 @@ public class ThreeWheelDrive implements Robot {
 	}
 	
 	@Override
-	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
-		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getRealSpeed());
+	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() throws Exception {
+		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getRealSpeed(), getUltrasonicDistance(), getGyroAngle());
 	}
 	
 //### GETTER/SETTER ########################################################################################################################

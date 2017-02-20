@@ -37,7 +37,12 @@ public final class RobotController {
 			
 			@Override
 			public void run() {
-				synchronize();
+				try {
+					synchronize();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	}
@@ -78,7 +83,7 @@ public final class RobotController {
 			}
 		}
 	}
-	private static void synchronize() {
+	private static void synchronize() throws Exception {
 		while(getRobot().isActive()) {
 			//Calculate the speed
 			
@@ -101,7 +106,7 @@ public final class RobotController {
 		}
 	}
 
-	public static void changeActive(boolean pState){
+	public static void changeActive(boolean pState) throws Exception{
 		robot.setActive(pState);
 		Client.setDevice(robot.getJSONRobot());
 	}

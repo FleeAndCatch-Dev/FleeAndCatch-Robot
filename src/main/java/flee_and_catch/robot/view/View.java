@@ -7,7 +7,7 @@ public class View {
 
 	private void printFrame() {
 		
-		LCD.drawString("#F&C##########0.9#", 0, 0);
+		LCD.drawString("#F&C##############", 0, 0);
 		LCD.drawChar('#', 0, 1);
 		LCD.drawChar('#', 17, 1);
 		LCD.drawChar('#', 0, 2);

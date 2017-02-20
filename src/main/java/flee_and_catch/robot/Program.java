@@ -39,7 +39,12 @@ public class Program {
 		//Set the choosen robot to the controller
 		RobotController.setRobot(robot);
 		
-		Client.setDevice(robot.getJSONRobot());
+		try {
+			Client.setDevice(robot.getJSONRobot());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		//Backend connection:
 		try {
 			//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
@@ -66,7 +71,12 @@ public class Program {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			RobotController.changeActive(false);
+			try {
+				RobotController.changeActive(false);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		try {

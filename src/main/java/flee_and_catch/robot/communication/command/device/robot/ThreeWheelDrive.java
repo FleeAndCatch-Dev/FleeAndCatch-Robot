@@ -5,8 +5,8 @@ import flee_and_catch.robot.communication.command.identification.RobotIdentifica
 public class ThreeWheelDrive extends Robot {
 
 
-	public ThreeWheelDrive(RobotIdentification pIdentification, Position pPosition, double pSpeed) {
-		super(pIdentification, pPosition, pSpeed);
+	public ThreeWheelDrive(RobotIdentification pIdentification, Position pPosition, double pSpeed, double pUltrasonic, double pGyro) {
+		super(pIdentification, pPosition, pSpeed, pUltrasonic, pGyro);
 	}
 
 }
