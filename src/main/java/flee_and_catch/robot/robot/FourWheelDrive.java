@@ -149,4 +149,10 @@ public class FourWheelDrive implements Robot {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void initComponents() {
+		// TODO Auto-generated method stub
+		
+	}
 }

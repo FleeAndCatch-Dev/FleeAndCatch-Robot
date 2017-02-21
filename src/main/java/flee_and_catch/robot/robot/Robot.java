@@ -6,11 +6,15 @@ import flee_and_catch.robot.communication.command.identification.RobotIdentifica
 
 public interface Robot {
 	
+	
+	void initComponents();
+	
 	/* getLongitudinalDistance [Method]: Returns the longitudinal distance that the robot moved *//**
 	* 
 	* @return
 	*/
 	float getLongitudinalDistance();
+	
 	/* resetLongitudinalDistance [Method]: Method that resets the rotation counters of the motors *//**
 	 * 
 	 */
@@ -20,10 +24,12 @@ public interface Robot {
 	void decreaseSpeed();
 	
 	/* move [Method]: Method to let the robot move forward *//**
+	 * @throws Exception 
 	 * 
 	 */
 	void forward();
 	/* move [Method]: Method to let the robot move backward *//**
+	 * @throws Exception 
 	 * 
 	 */
 	void backward();
@@ -32,15 +38,18 @@ public interface Robot {
 	 * 
 	 * @param distance
 	 * @throws InterruptedException
+	 * @throws Exception 
 	*/
 	void moveForward(float distance) throws InterruptedException;
 	/* move [Method]: Method to let the robot move a distance forward *//**
 	 * 
 	 * @param distance
 	 * @throws InterruptedException
+	 * @throws Exception 
 	*/
 	void moveBackward(float distance) throws InterruptedException;
 	/* stop [Method]: Method to stop the robot moving *//**
+	 * @throws Exception 
 	 * 
 	 */
 	void stop();
@@ -49,7 +58,7 @@ public interface Robot {
 	void rotate(float angle) throws InterruptedException;
 	void rotate(Direction direct, float angle) throws InterruptedException;
 	
-	public abstract flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() throws Exception;
+	public abstract flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 	
 //### GETTER/SETTER ########################################################################################################################
 	

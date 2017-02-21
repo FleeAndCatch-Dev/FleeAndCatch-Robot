@@ -11,22 +11,21 @@ public final class ViewController {
 
 //### ATTRIBUTES ###########################################################################################################################
 	
-	private static View view = new View();;
+	private static View view = new View();
 
 //### PRIVATE METHODS ######################################################################################################################
 	
 	private static void showSelectRobot() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##############", 0, 0);
-		LCD.drawString("#                #", 0, 1);
-		LCD.drawString("#    Press a     #", 0, 2);
-		LCD.drawString("#   button to    #", 0, 3);
-		LCD.drawString("#   select a     #", 0, 4);
-		LCD.drawString("#    robot!      #", 0, 5);
-		LCD.drawString("#                #", 0, 6);
-		LCD.drawString("##################", 0, 7);
-		
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("     Press a      ", 0, 2);
+		LCD.drawString("    button to     ", 0, 3);
+		LCD.drawString("     select a     ", 0, 4);
+		LCD.drawString("      robot!      ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);		
 	}
 	
 //### PUBLIC METHODS #######################################################################################################################	
@@ -34,31 +33,71 @@ public final class ViewController {
 	public static void showStartScreen() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##############", 0, 0);
-		LCD.drawString("#                #", 0, 1);
-		LCD.drawString("#   Welcome to   #", 0, 2);
-		LCD.drawString("#    Flee and    #", 0, 3);
-		LCD.drawString("#      Catch     #", 0, 4);
-		LCD.drawString("#                #", 0, 5);
-		LCD.drawString("#                #", 0, 6);
-		LCD.drawString("##################", 0, 7);
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("                  ", 0, 2);
+		LCD.drawString("    Welcome to    ", 0, 3);
+		LCD.drawString("   FleeAndCatch   ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
 		
 		Button.waitForAnyPress();
+	}
+	
+	public static void showInitScreen() {
+		
+		//              12345678901234567
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("                  ", 0, 2);
+		LCD.drawString(" Wait initialize  ", 0, 3);
+		LCD.drawString("      Robot!      ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
+		
+	}
+	
+	public static void showErrorScreen(String msg) {
+		
+		//              12345678901234567
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("                  ", 0, 2);
+		LCD.drawString("      Error:      ", 0, 3);
+		LCD.drawString(" "   +  msg  +  " ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
+		
 	}
 	
 	public static void showExit() {
 		
 		//              12345678901234567
-		LCD.drawString("#F&C##############", 0, 0);
-		LCD.drawString("#                #", 0, 1);
-		LCD.drawString("#    Press a     #", 0, 2);
-		LCD.drawString("#   button to    #", 0, 3);
-		LCD.drawString("#     exit!      #", 0, 4);
-		LCD.drawString("#                #", 0, 5);
-		LCD.drawString("#                #", 0, 6);
-		LCD.drawString("##################", 0, 7);
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("      Press       ", 0, 2);
+		LCD.drawString("    escape to     ", 0, 3);
+		LCD.drawString("      exit!       ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
+	
+	}
+	
+	public static void noConnection() {
 		
-		Button.waitForAnyPress();
+		//              12345678901234567
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("  No connection   ", 0, 2);
+		LCD.drawString("  could create.   ", 0, 3);
+		LCD.drawString("                  ", 0, 4);
+		LCD.drawString("    Try again!    ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
 	}
 	
 	public static void showStatus(String status, Position position, double speed) {
@@ -68,19 +107,21 @@ public final class ViewController {
 		String o = Double.toString(((double) ((int) (position.getOrientation() * 100))) / 100);
 		String s = Double.toString(((double) ((int) (speed * 100))) / 100);
 		
-		
 		//              12345678901234567
-		LCD.drawString("#F&C##############", 0, 0);
-		LCD.drawString("#     Status:    #", 0, 1);
-		LCD.drawString("# " + status + " #", 0, 2);
-		LCD.drawString("# X: " + x + " Y: " + y + " O: " + o + "#", 0, 3);
-		LCD.drawString("# Speed: " + s + "#", 0, 4);
-		LCD.drawString("#                #", 0, 5);
-		LCD.drawString("#                #", 0, 6);
-		LCD.drawString("##################", 0, 7);
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("     Status:      ", 0, 1);
+		LCD.drawString("  " + status + "  ", 0, 2);
+		LCD.drawString(" X: " + x + "     ", 0, 3);
+		LCD.drawString(" Y: " + y + "     ", 0, 4);
+		LCD.drawString(" O: " + o + "     ", 0, 5);
+		LCD.drawString(" Speed: " + s + " ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
 	}
 	
 	public static Robot getSelectedRobot() {
+		
+		//Show a start/info screen for robot selection:
+		showSelectRobot();
 		
 		//Represents the selected robot:
 		RobotType selectedRobot = null;
@@ -92,8 +133,7 @@ public final class ViewController {
 		//Max number of robots:
 		int numberOfRobots = RobotType.values().length;
 		
-		//Show a start/info screen for robot selection:
-		showSelectRobot();
+
 		
 		//Wait until user confirm by press a button:
 		Button.waitForAnyPress();

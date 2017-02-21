@@ -2,7 +2,6 @@ package flee_and_catch.robot.robot;
 
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.component.RoleType;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
@@ -31,85 +30,87 @@ public class ThreeWheelDrive implements Robot {
 	private Gyro gyro;
 	
 	private long clock;
+	private float saveSpeed;
 	
 	public ThreeWheelDrive(String pSubtype){
-		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), RobotType.ThreeWheelDrive.toString(), RoleType.Undefined.toString());
+		this.identification = new RobotIdentification(-1, IdentificationType.Robot.toString(), pSubtype, RoleType.Undefined.toString());
 		this.active = false;
 		this.position = new Position();	
 		this.totalDistance = 0;
 		this.speedDistance = 0;
 		this.status = Status.Waiting;
-		initComponents();
 	}
 	
 //### INITIAL METHODS ######################################################################################################################
 	
-		/* initComponents [Method]: Method that initialize the components (motors, sensors, etc.) of the robot *//**
-		 * 
-		 */
-		private void initComponents() {
+	/* initComponents [Method]: Method that initialize the components (motors, sensors, etc.) of the robot *//**
+	 * 
+	 */
+	@Override
+	public void initComponents() {
 			
-			//Initial motors with standard ports:
-			this.motorRight = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_RIGHT);
-			this.motorLeft  = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_LEFT);
+		//Initial motors with standard ports:
+		this.motorRight = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_RIGHT);
+		this.motorLeft  = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_LEFT);
 			
-			//Set default values for speed (degrees/sec):
-			this.motorRight.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
-			this.motorLeft.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
+		//Set default values for speed (degrees/sec):
+		this.motorRight.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
+		this.motorLeft.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
 			
-			//Reset the turn counter of the motors:
-			this.motorRight.resetTachoCount();
-			this.motorLeft.resetTachoCount();
+		//Reset the turn counter of the motors:
+		this.motorRight.resetTachoCount();
+		this.motorLeft.resetTachoCount();
 			
-			ultrasonic = new Ultrasonic(ThreeWheelDriveConfig.PORT_ULTRASONIC);
-			gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
-		}
+		ultrasonic = new Ultrasonic(ThreeWheelDriveConfig.PORT_ULTRASONIC);
+		ultrasonic.enable();
+		gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
+	}
 	
-		@Override
-		public void checkStatus(Status status) {		
+	@Override
+	public void checkStatus(Status status) {		
 			
-			if(status == Status.MovingForward) {
-				if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
-					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
-				}
-				else if(this.status == Status.MovingBackward) {
-					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
-				}
+		if(status == Status.MovingForward) {
+			if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+				this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
 			}
-			else if(status == Status.MovingBackward) {
-				if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
-					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
-				}
-				else if(this.status == Status.MovingForward) {
-					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
-				}
+			else if(this.status == Status.MovingBackward) {
+				this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
 			}
-			else if(status == Status.RotateLeft) {
-				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
-					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
-				}
-				else if(this.status == Status.RotateRight) {
-					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
-				}
-			}
-			else if(status == Status.RotateRight) {
-				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
-					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
-				}
-				else if(this.status == Status.RotateLeft) {
-					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
-				}
-			}
-			else if(status == Status.Waiting) {
-				if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
-					this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
-				}
-				else if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
-					this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
-				}
-			}
-			this.status = status;
 		}
+		else if(status == Status.MovingBackward) {
+			if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+				this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+			}
+			else if(this.status == Status.MovingForward) {
+				this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+			}
+		}
+		else if(status == Status.RotateLeft) {
+			if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+				this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+			}
+			else if(this.status == Status.RotateRight) {
+				this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+			}
+		}
+		else if(status == Status.RotateRight) {
+			if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+				this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+			}
+			else if(this.status == Status.RotateLeft) {
+				this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+			}
+		}
+		else if(status == Status.Waiting) {
+			if(this.status == Status.MovingForward || this.status == Status.MovingBackward) {
+				this.position = new Position(this.position.calculateNewPosition(this.getLongitudinalDistance()));
+			}
+			else if(this.status == Status.RotateLeft || this.status == Status.RotateRight) {
+				this.position.setOrientation(this.position.calculateNewOrientation(getAngle()));
+			}
+		}
+		this.status = status;
+	}
 		
 //### PUBLIC METHODS ########################################################################################################################
 	
@@ -195,6 +196,7 @@ public class ThreeWheelDrive implements Robot {
 		//Stop motors:
 		this.stop();
 	}
+	
 	@Override
 	public void moveBackward(float distance) throws InterruptedException {
 		
@@ -309,7 +311,7 @@ public class ThreeWheelDrive implements Robot {
 	}
 	
 	@Override
-	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() throws Exception {
+	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
 		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getRealSpeed(), getUltrasonicDistance(), getGyroAngle());
 	}
 	
@@ -342,16 +344,15 @@ public class ThreeWheelDrive implements Robot {
 		
 		//Calculate the current position of the robot:
 		if(status == Status.MovingBackward || status == Status.MovingForward){
-			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
-			float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
-			curPos.calculateNewOrientation(angle);
-		}
-		else if(status == Status.RotateLeft || status == Status.RotateRight){
 			//Calculate the average of both rotation counters:
 			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
 			//Multiply the number of rotated degrees with the millimeter that are covered per degree:
 			float distance = degrees * RobotConfig.DISTANCE_DEGREE;
-			curPos.calculateNewPosition(distance);
+			curPos.calculateNewPosition(distance);		}
+		else if(status == Status.RotateLeft || status == Status.RotateRight){
+			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
+			float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
+			curPos.calculateNewOrientation(angle);
 		}
 		
 		//Return the current position of the robot:*/
@@ -360,16 +361,20 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public float getRealSpeed() {
-		//calculate the real speed by the sensors
-		long time = System.currentTimeMillis() - clock;
-		clock = System.currentTimeMillis();
-			
-		double tempDistance = getTotalDistance();
 		
-		float realSpeed = (float) (((tempDistance - speedDistance) * 10) / time);
-		speedDistance = tempDistance;
+		if(status == Status.MovingForward || status == Status.MovingBackward){
+			//calculate the real speed by the sensors
+			long time = System.currentTimeMillis() - this.clock;
+			this.clock = System.currentTimeMillis();
+				
+			double tempDistance = this.getTotalDistance();
 			
-		return realSpeed;
+			float realSpeed = (float) (((tempDistance - this.speedDistance) * 10) / time);
+			this.speedDistance = tempDistance;
+			this.saveSpeed = realSpeed;
+		}		
+			
+		return saveSpeed;
 	}
 	
 	@Override
@@ -410,9 +415,9 @@ public class ThreeWheelDrive implements Robot {
 	 * @throws Exception 
 	 * 
 	 */
-	public float getUltrasonicDistance() throws Exception{
+	public float getUltrasonicDistance() {
 		if(!ultrasonic.isEnable())
-			throw new Exception("The ultrasonic sensor isn't enable");
+			return -1;			//Ultrasonic isn't enable
 		else
 			return ultrasonic.getDistance();
 	}

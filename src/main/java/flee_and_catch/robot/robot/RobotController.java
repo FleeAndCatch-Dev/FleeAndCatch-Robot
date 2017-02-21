@@ -1,7 +1,6 @@
 package flee_and_catch.robot.robot;
 
 import com.google.gson.Gson;
-
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.SynchronizationCommand;
@@ -10,6 +9,7 @@ import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
+import flee_and_catch.robot.view.ViewController;
 
 public final class RobotController {
 
@@ -29,7 +29,8 @@ public final class RobotController {
 					controlRobot();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					ViewController.showErrorScreen("SteeringT");
 				}
 			}
 		});
@@ -41,7 +42,8 @@ public final class RobotController {
 					synchronize();
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					ViewController.showErrorScreen("SyncT");
 				}
 			}
 		});
@@ -83,7 +85,7 @@ public final class RobotController {
 			}
 		}
 	}
-	private static void synchronize() throws Exception {
+	public static void synchronize() throws Exception {
 		while(getRobot().isActive()) {
 			//Calculate the speed
 			

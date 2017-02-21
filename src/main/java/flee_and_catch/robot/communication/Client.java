@@ -20,6 +20,7 @@ import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
 import flee_and_catch.robot.configuration.CommunicationConfig;
+import flee_and_catch.robot.view.ViewController;
 
 public final class Client {
 	
@@ -93,6 +94,26 @@ public final class Client {
 	 * @author ThunderSL94
 	 */
 	private static void startConnection() throws UnknownHostException, IOException{
+		/*Thread connectionThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				for(int i=0;i<30;i++){
+					if(connected)
+						return;
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				ViewController.noConnection();
+				System.exit(0);
+			}
+		});
+		connectionThread.start();*/
+		
 		socket = new Socket(identification.getAddress(), identification.getPort());
 		socket.setTcpNoDelay(true);
 		Thread listenerThread = new Thread(new Runnable() {
@@ -103,7 +124,8 @@ public final class Client {
 					listen();
 				} catch (Exception e) {
 					//stop robot
-					e.printStackTrace();
+					//e.printStackTrace();
+					ViewController.showErrorScreen("Client");
 				}
 			}
 		});

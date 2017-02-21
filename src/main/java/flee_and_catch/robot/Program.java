@@ -13,6 +13,7 @@ import flee_and_catch.robot.configuration.SoundConfig;
 import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
+import lejos.hardware.Button;
 import flee_and_catch.robot.communication.command.component.RobotType;
 
 //### IMPORTS ##############################################################################################################################
@@ -31,11 +32,15 @@ public class Program {
 	public static void main(String[] args) {
 
 		SoundConfig.applyConfigurations();
-		
+		//Init the robot types
+		RobotType.values();
 		//Show a start screen for welcome
 		ViewController.showStartScreen();
 		//Get a robot of the user
 		Robot robot = ViewController.getSelectedRobot();
+		//
+		ViewController.showInitScreen();
+		robot.initComponents();
 		//Set the choosen robot to the controller
 		RobotController.setRobot(robot);
 		
@@ -59,7 +64,8 @@ public class Program {
 		//TODO: Get position of the robot!!!
 		//TODO: Get dimensions of the playing field!!!
 		
-		ViewController.showExit();
+		ViewController.showExit();		
+		Button.ESCAPE.waitForPressAndRelease();
 		
 		//Tide up
 		if(RobotController.getRobot().isActive()){

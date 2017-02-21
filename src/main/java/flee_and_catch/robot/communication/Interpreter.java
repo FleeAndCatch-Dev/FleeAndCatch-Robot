@@ -20,6 +20,7 @@ import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
+import flee_and_catch.robot.view.ViewController;
 
 //### IMPORTS ##############################################################################################################################
 
@@ -34,6 +35,7 @@ public final class Interpreter {
 //### STATIC VARIABLES #####################################################################################################################
 	
 	private static Gson gson = new Gson();
+	private static boolean syncThread;
 	
 //### PRIVATE STATIC METHODS ###############################################################################################################
 
@@ -93,30 +95,41 @@ public final class Interpreter {
 		case Begin:
 			RobotController.intitComponents();
 			RobotController.changeActive(true);
-			RobotController.getSteeringThread().start();
-			RobotController.getSynchronizeThread().start();
+			syncThread = true;
 			RobotController.setAccept(true);
-			return;
+			break;
 		//Set the flag that indicates that the robot is controlled by an app:
 		case End:
 			RobotController.getRobot().stop();
 			RobotController.changeActive(false);
-			return;
+			break;
 		//Turn the steering of the robot on (steering commands get accepted and implemented):
 		case Start:
 			RobotController.setAccept(true);
-			return;
+			break;
 		//Turn the steering of the robot off:
 		case Stop:
 			RobotController.getRobot().stop();
 			RobotController.setAccept(false);
-			return;
+			break;
 		//Set a new steering command for the robot:
 		case Control:
 			RobotController.setSteering(command.getSteering());
-			return;
+			if(syncThread){
+				RobotController.getSteeringThread().start();
+				RobotController.getSynchronizeThread().start();
+				syncThread = false;
+			}
+			break;
 		default:
 			throw new Exception("Argument out of range");
+		}
+		
+		if(type != ControlCommandType.End){
+			ViewController.showStatus(type.toString(), RobotController.getRobot().getPosition(), RobotController.getRobot().getRealSpeed());
+		}
+		else {
+			ViewController.showExit();
 		}
 	}
 	
