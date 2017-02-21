@@ -15,7 +15,21 @@ public final class ViewController {
 
 //### PRIVATE METHODS ######################################################################################################################
 	
+	private static void clearScreen() {
+		
+		//              12345678901234567
+		LCD.drawString("                  ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString("                  ", 0, 2);
+		LCD.drawString("                  ", 0, 3);
+		LCD.drawString("                  ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);		
+	}
+	
 	private static void showSelectRobot() {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -31,6 +45,7 @@ public final class ViewController {
 //### PUBLIC METHODS #######################################################################################################################	
 	
 	public static void showStartScreen() {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -46,6 +61,7 @@ public final class ViewController {
 	}
 	
 	public static void showInitScreen() {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -60,6 +76,7 @@ public final class ViewController {
 	}
 	
 	public static void showErrorScreen(String msg) {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -74,6 +91,7 @@ public final class ViewController {
 	}
 	
 	public static void showExit() {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -88,6 +106,7 @@ public final class ViewController {
 	}
 	
 	public static void noConnection() {
+		clearScreen();
 		
 		//              12345678901234567
 		LCD.drawString(" F&C              ", 0, 0);
@@ -101,6 +120,7 @@ public final class ViewController {
 	}
 	
 	public static void showStatus(String status, Position position, double speed) {
+		clearScreen();
 		
 		String x = Double.toString(((double) ((int) (position.getX() * 100))) / 100);
 		String y = Double.toString(((double) ((int) (position.getY() * 100))) / 100);
@@ -137,6 +157,8 @@ public final class ViewController {
 		
 		//Wait until user confirm by press a button:
 		Button.waitForAnyPress();
+		
+		clearScreen();
 		
 		//Show a list of the possible robots to select one (for first button is pressed):
 		view.showRobotSelectionScreen(pointer);

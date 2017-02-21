@@ -94,7 +94,7 @@ public final class Client {
 	 * @author ThunderSL94
 	 */
 	private static void startConnection() throws UnknownHostException, IOException{
-		/*Thread connectionThread = new Thread(new Runnable() {
+		Thread connectionThread = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -112,7 +112,7 @@ public final class Client {
 				System.exit(0);
 			}
 		});
-		connectionThread.start();*/
+		connectionThread.start();
 		
 		socket = new Socket(identification.getAddress(), identification.getPort());
 		socket.setTcpNoDelay(true);
