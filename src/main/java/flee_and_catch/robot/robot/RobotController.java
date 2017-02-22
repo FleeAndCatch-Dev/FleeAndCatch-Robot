@@ -30,7 +30,8 @@ public final class RobotController {
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					//e.printStackTrace();
-					ViewController.showErrorScreen("SteeringT");
+					ViewController.showErrorScreen("Steering");
+					System.exit(0);
 				}
 			}
 		});
@@ -43,7 +44,8 @@ public final class RobotController {
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					//e.printStackTrace();
-					ViewController.showErrorScreen("SyncT");
+					ViewController.showErrorScreen("Synchronization");
+					System.exit(0);
 				}
 			}
 		});
@@ -96,15 +98,9 @@ public final class RobotController {
 			//Create synchronization object:
 			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
 			
-			try {
-				Gson gson = new Gson();
-				Client.sendCmd(gson.toJson(sync));
-				Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);
-				
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();		
-			}
+			Gson gson = new Gson();
+			Client.sendCmd(gson.toJson(sync));
+			Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);
 		}
 	}
 

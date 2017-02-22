@@ -73,9 +73,6 @@ public final class Interpreter {
 			case Disconnect:
 				Client.disconnect();
 				return;
-			//Unknown connection type:
-			default:
-				throw new Exception("Argument out of range");
 		}
 	}
 	
@@ -127,8 +124,6 @@ public final class Interpreter {
 				syncThread = false;
 			}
 			break;
-		default:
-			throw new Exception("Argument out of range");
 		}
 		
 		if(type != ControlCommandType.End){
@@ -158,8 +153,6 @@ public final class Interpreter {
 			case UnhandeldDisconnection:
 				RobotController.changeActive(false);
 				RobotController.getRobot().stop();
-				break;
-			default:
 				break;
 		}
 		
@@ -200,9 +193,10 @@ public final class Interpreter {
 				case Exception:
 					exception(jsonCommand);
 					return;
-				//Unkown command:
-				default:
-					throw new Exception("Argument out of range");
+				case Synchronization:
+					return;
+			default:
+				break;
 			}
 		}
 		return;

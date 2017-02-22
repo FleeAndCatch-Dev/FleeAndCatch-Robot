@@ -88,6 +88,7 @@ public final class ViewController {
 		LCD.drawString("                  ", 0, 6);
 		LCD.drawString("              v1.1", 0, 7);
 		
+		Button.waitForAnyPress();
 	}
 	
 	public static void showExit() {

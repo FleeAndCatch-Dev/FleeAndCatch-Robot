@@ -15,8 +15,6 @@ import com.google.gson.Gson;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
-import flee_and_catch.robot.communication.command.ExceptionCommand;
-import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
@@ -46,7 +44,6 @@ public final class Client {
 			startConnection();
 			return;
 		}
-		throw new Exception("Connection to server exist");
 	}
 	
 	/**
@@ -64,7 +61,6 @@ public final class Client {
 			startConnection();
 			return;
 		}
-		throw new Exception("Connection to server exist");
 	}
 	
 	/**
@@ -83,7 +79,6 @@ public final class Client {
 			startConnection();
 			return;
 		}
-		throw new Exception("Connection to server exist");
 	}
 	
 	/**
@@ -125,18 +120,8 @@ public final class Client {
 				try {
 					listen();
 				} catch (Exception e) {
-					//stop robot
-					//e.printStackTrace();
-					//ViewController.showErrorScreen(e.getMessage());
-					//System.out.println(e.getMessage());
-					ExceptionCommand command = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.Undefined.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.Undefined.toString(), e.getMessage(), Client.getDevice()));
-					Gson gson = new Gson();
-					try {
-						Client.sendCmd(gson.toJson(command));
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					ViewController.showErrorScreen("Connection");
+					System.exit(0);
 				}
 			}
 		});
@@ -226,7 +211,6 @@ public final class Client {
 			outputStream.flush();
 			return;
 		}
-		throw new Exception("Send of new command failed");
 	}
 	
 	/**
@@ -259,7 +243,6 @@ public final class Client {
 			sendCmd(gson.toJson(command));
 			return;
 		}
-		throw new Exception("There is no connection to the server");
 	}
 	
 	/**

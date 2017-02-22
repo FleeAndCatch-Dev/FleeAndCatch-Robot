@@ -38,8 +38,9 @@ public class Program {
 		ViewController.showStartScreen();
 		//Get a robot of the user
 		Robot robot = ViewController.getSelectedRobot();
-		//
+		//SHows the initialization screen
 		ViewController.showInitScreen();
+		//Init the sensors of the robot
 		robot.initComponents();
 		//Set the choosen robot to the controller
 		RobotController.setRobot(robot);
