@@ -18,7 +18,7 @@ public final class RobotController {
 	private static boolean accept;
 
 	private static Thread steeringThread;
-	private static Thread synchronizeThread;
+	private static int updateCounter;
 
 	public static void intitComponents(){
 		steeringThread = new Thread(new Runnable() {
@@ -31,20 +31,6 @@ public final class RobotController {
 					// TODO Auto-generated catch block
 					//e.printStackTrace();
 					ViewController.showErrorScreen("Steering");
-					System.exit(0);
-				}
-			}
-		});
-		synchronizeThread = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					synchronize();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-					ViewController.showErrorScreen("Synchronization");
 					System.exit(0);
 				}
 			}
@@ -77,6 +63,15 @@ public final class RobotController {
 					
 					//Set Steering to processed:
 					setSteering(null);
+					
+					if(updateCounter >= 3){
+						//Create synchronization object:
+						SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());					
+						Gson gson = new Gson();
+						Client.sendCmd(gson.toJson(sync));
+						updateCounter = 0;
+					}					
+					updateCounter++;
 				}
 				
 			} catch (Exception e) {
@@ -85,22 +80,6 @@ public final class RobotController {
 				//Wait:
 				Thread.sleep(ThreadConfig.STEERING_SLEEP);
 			}
-		}
-	}
-	public static void synchronize() throws Exception {
-		while(getRobot().isActive()) {
-			//Calculate the speed
-			
-			//Calculate the current position			
-			
-			//Show position and speed, other variables
-			
-			//Create synchronization object:
-			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
-			
-			Gson gson = new Gson();
-			Client.sendCmd(gson.toJson(sync));
-			Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);
 		}
 	}
 
@@ -135,14 +114,5 @@ public final class RobotController {
 	}
 	public static void setSteeringThread(Thread steeringThread) {
 		RobotController.steeringThread = steeringThread;
-	}
-
-	public static Thread getSynchronizeThread() {
-		return synchronizeThread;
-	}
-	public static void setSynchronizeThread(Thread synchronizeThread) {
-		RobotController.synchronizeThread = synchronizeThread;
-	}
-	
-	
+	}	
 }

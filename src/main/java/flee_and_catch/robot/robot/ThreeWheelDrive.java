@@ -137,8 +137,6 @@ public class ThreeWheelDrive implements Robot {
 	@Override
 	public float getAngle() {
 		//Calculate the average of both rotation counters:
-		//float distanceR = this.motorRight.getTachoCount() * RobotConfig.DISTANCE_DEGREE;
-		//float distanceL = this.motorLeft.getTachoCount() * RobotConfig.DISTANCE_DEGREE;
 		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
 		float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
 		resetLongitudinalDistance();

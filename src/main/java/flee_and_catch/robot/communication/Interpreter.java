@@ -19,8 +19,6 @@ import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
-import flee_and_catch.robot.communication.command.identification.Identification;
-import flee_and_catch.robot.communication.command.identification.IdentificationAdapter;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
 
@@ -53,7 +51,6 @@ public final class Interpreter {
 		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
@@ -83,7 +80,6 @@ public final class Interpreter {
 	 */
 	private static void control(JSONObject pCommand) throws Exception {
 		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
 		
@@ -120,7 +116,6 @@ public final class Interpreter {
 			RobotController.setSteering(command.getSteering());
 			if(syncThread){
 				RobotController.getSteeringThread().start();
-				RobotController.getSynchronizeThread().start();
 				syncThread = false;
 			}
 			break;
@@ -138,7 +133,6 @@ public final class Interpreter {
 				
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
-		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();

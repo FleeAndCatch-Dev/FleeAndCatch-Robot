@@ -25,9 +25,17 @@ public class Robot extends Device {
 		super(pActive);
 		this.identification = pIdentification;
 		this.position = pPosition;
-		this.speed =  Double.toString(pSpeed);
-		this.ultrasonic =  Double.toString(pUltrasonic);
-		this.gyro =  Double.toString(pGyro);
+		double tempSpeed = ((int) (pSpeed * 100)) / 100;		
+		this.speed =  Double.toString(tempSpeed);	
+		String temp = Double.toString(pUltrasonic);
+		if(temp.equals("Infinity"))
+			this.ultrasonic = Double.toString(0.0);
+		else{
+			double tempUltra = ((int) (pUltrasonic * 100)) / 100;
+			this.ultrasonic = Double.toString(tempUltra);
+		}			
+		double tempGyro = ((int) (pGyro * 100)) / 100;
+		this.gyro =  Double.toString(tempGyro);
 	}
 	
 	public Robot(Robot pRobot){
