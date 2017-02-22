@@ -15,6 +15,8 @@ import com.google.gson.Gson;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
@@ -125,7 +127,16 @@ public final class Client {
 				} catch (Exception e) {
 					//stop robot
 					//e.printStackTrace();
-					ViewController.showErrorScreen("Client");
+					//ViewController.showErrorScreen(e.getMessage());
+					//System.out.println(e.getMessage());
+					ExceptionCommand command = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.Undefined.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.Undefined.toString(), e.getMessage(), Client.getDevice()));
+					Gson gson = new Gson();
+					try {
+						Client.sendCmd(gson.toJson(command));
+					} catch (Exception e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});

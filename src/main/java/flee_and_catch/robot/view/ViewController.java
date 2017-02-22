@@ -117,6 +117,8 @@ public final class ViewController {
 		LCD.drawString("    Try again!    ", 0, 5);
 		LCD.drawString("                  ", 0, 6);
 		LCD.drawString("              v1.1", 0, 7);
+		
+		Button.waitForAnyPress();
 	}
 	
 	public static void showStatus(String status, Position position, double speed) {

@@ -19,6 +19,8 @@ import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
+import flee_and_catch.robot.communication.command.identification.Identification;
+import flee_and_catch.robot.communication.command.identification.IdentificationAdapter;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
 
@@ -34,7 +36,6 @@ public final class Interpreter {
 
 //### STATIC VARIABLES #####################################################################################################################
 	
-	private static Gson gson = new Gson();
 	private static boolean syncThread;
 	
 //### PRIVATE STATIC METHODS ###############################################################################################################
@@ -52,6 +53,7 @@ public final class Interpreter {
 		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
@@ -83,9 +85,13 @@ public final class Interpreter {
 	 * @throws Exception
 	 */
 	private static void control(JSONObject pCommand) throws Exception {
-			
+		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();
+		
 		//Serialize the JSON object to a Control class object:
-		ControlCommand command = gson.fromJson(pCommand.toString(), ControlCommand.class);
+		ControlCommand command = localgson.fromJson(pCommand.toString(), ControlCommand.class);
 		
 		//Read out the type of the control command:
 		ControlCommandType type = ControlCommandType.valueOf(command.getType());
@@ -134,9 +140,10 @@ public final class Interpreter {
 	}
 	
 	private static void exception(JSONObject pCommand) throws Exception{
-		
+				
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
+		builder.registerTypeAdapter(Identification.class, new IdentificationAdapter());
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
