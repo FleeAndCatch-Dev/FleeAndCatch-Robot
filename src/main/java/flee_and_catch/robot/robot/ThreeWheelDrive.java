@@ -9,6 +9,7 @@ import flee_and_catch.robot.configuration.RobotConfig;
 import flee_and_catch.robot.configuration.ThreeWheelDriveConfig;
 import flee_and_catch.robot.robot.sensor.Gyro;
 import flee_and_catch.robot.robot.sensor.Ultrasonic;
+import flee_and_catch.robot.view.ViewController;
 import lejos.hardware.motor.EV3MediumRegulatedMotor;
 
 public class ThreeWheelDrive implements Robot {
@@ -49,21 +50,25 @@ public class ThreeWheelDrive implements Robot {
 	@Override
 	public void initComponents() {
 			
-		//Initial motors with standard ports:
-		this.motorRight = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_RIGHT);
-		this.motorLeft  = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_LEFT);
+		try{
+			//Initial motors with standard ports:
+			this.motorRight = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_RIGHT);
+			this.motorLeft  = new EV3MediumRegulatedMotor(ThreeWheelDriveConfig.PORT_MOTOR_LEFT);
 			
-		//Set default values for speed (degrees/sec):
-		this.motorRight.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
-		this.motorLeft.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
+			//Set default values for speed (degrees/sec):
+			this.motorRight.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
+			this.motorLeft.setSpeed(this.speed / RobotConfig.DISTANCE_DEGREE);
 			
-		//Reset the turn counter of the motors:
-		this.motorRight.resetTachoCount();
-		this.motorLeft.resetTachoCount();
-			
-		ultrasonic = new Ultrasonic(ThreeWheelDriveConfig.PORT_ULTRASONIC);
-		ultrasonic.enable();
-		gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
+			//Reset the turn counter of the motors:
+			this.motorRight.resetTachoCount();
+			this.motorLeft.resetTachoCount();
+		
+			ultrasonic = new Ultrasonic(ThreeWheelDriveConfig.PORT_ULTRASONIC);
+			gyro = new Gyro(ThreeWheelDriveConfig.PORT_GYRO);
+		}
+		catch (Exception e) {
+			ViewController.showErrorScreen("201");
+		}
 	}
 	
 	@Override

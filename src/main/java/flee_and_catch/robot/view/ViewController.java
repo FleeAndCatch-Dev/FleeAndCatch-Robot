@@ -89,6 +89,7 @@ public final class ViewController {
 		LCD.drawString("              v1.1", 0, 7);
 		
 		Button.waitForAnyPress();
+		System.exit(0);
 	}
 	
 	public static void showExit() {
@@ -208,6 +209,9 @@ public final class ViewController {
 			
 		//Keep in the loop until the enter or escape button is pressed:	
 		} while(!(pressedBtn == Button.ID_ENTER || pressedBtn == Button.ID_ESCAPE));
+		
+		if(selectedRobot.getRobot() == null)
+			showErrorScreen("200");
 		
 		return selectedRobot.getRobot();
 	}

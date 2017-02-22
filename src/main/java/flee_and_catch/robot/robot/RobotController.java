@@ -28,10 +28,7 @@ public final class RobotController {
 				try {
 					controlRobot();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-					ViewController.showErrorScreen("Steering");
-					System.exit(0);
+					ViewController.showErrorScreen("215");
 				}
 			}
 		});
@@ -75,7 +72,7 @@ public final class RobotController {
 				}
 				
 			} catch (Exception e) {
-				// TODO: handle exception
+
 			} finally {
 				//Wait:
 				Thread.sleep(ThreadConfig.STEERING_SLEEP);
@@ -83,7 +80,7 @@ public final class RobotController {
 		}
 	}
 
-	public static void changeActive(boolean pState) throws Exception{
+	public static void changeActive(boolean pState) {
 		robot.setActive(pState);
 		Client.setDevice(robot.getJSONRobot());
 	}

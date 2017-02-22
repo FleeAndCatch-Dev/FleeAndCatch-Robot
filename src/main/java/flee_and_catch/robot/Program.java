@@ -45,20 +45,11 @@ public class Program {
 		//Set the choosen robot to the controller
 		RobotController.setRobot(robot);
 		
-		try {
-			Client.setDevice(robot.getJSONRobot());
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		Client.setDevice(robot.getJSONRobot());
 		//Backend connection:
-		try {
-			//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
-			Client.connect(IdentificationType.Robot, RobotType.valueOf(robot.getIdentification().getSubtype()));
-					
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		
+		//Connect client as type robot and subtype of the robot (e.g. three-wheel-drive):
+		Client.connect(IdentificationType.Robot, RobotType.valueOf(robot.getIdentification().getSubtype()));					
 		
 		//Locate the field and generate an object of thet
 		//TODO
@@ -72,26 +63,11 @@ public class Program {
 		if(RobotController.getRobot().isActive()){
 			Gson gson = new Gson();
 			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Devie is disconnecting", Client.getDevice()));
-			try {
-				Client.sendCmd(gson.toJson(cmd));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				RobotController.changeActive(false);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			Client.sendCmd(gson.toJson(cmd));
+			RobotController.changeActive(false);
 		}
 		
-		try {
-			Client.close();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Client.close();
 	}
 
 //##########################################################################################################################################

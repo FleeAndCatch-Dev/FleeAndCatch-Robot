@@ -2,6 +2,7 @@
 
 package flee_and_catch.robot.communication;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.json.JSONObject;
@@ -43,11 +44,12 @@ public final class Interpreter {
 	 * Parse connection command.
 	 * 
 	 * @param pCommand Command as json object.
+	 * @throws IOException 
 	 * @throws Exception
 	 * 
 	 * ThunderSL94
 	 */
-	private static void connection(JSONObject pCommand) throws Exception {
+	private static void connection(JSONObject pCommand) throws IOException {
 		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
@@ -70,6 +72,9 @@ public final class Interpreter {
 			case Disconnect:
 				Client.disconnect();
 				return;
+			default:
+				ViewController.showErrorScreen("214");
+				break;
 		}
 	}
 	
@@ -78,7 +83,7 @@ public final class Interpreter {
 	 * @param pCommand
 	 * @throws Exception
 	 */
-	private static void control(JSONObject pCommand) throws Exception {
+	private static void control(JSONObject pCommand) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setPrettyPrinting();
 		Gson localgson = builder.create();
@@ -90,35 +95,38 @@ public final class Interpreter {
 		ControlCommandType type = ControlCommandType.valueOf(command.getType());
 		
 		switch(type){
-		//Set the flag that indicates that the robot is controlled by an app:
-		case Begin:
-			RobotController.intitComponents();
-			RobotController.changeActive(true);
-			syncThread = true;
-			RobotController.setAccept(true);
-			break;
-		//Set the flag that indicates that the robot is controlled by an app:
-		case End:
-			RobotController.getRobot().stop();
-			RobotController.changeActive(false);
-			break;
-		//Turn the steering of the robot on (steering commands get accepted and implemented):
-		case Start:
-			RobotController.setAccept(true);
-			break;
-		//Turn the steering of the robot off:
-		case Stop:
-			RobotController.getRobot().stop();
-			RobotController.setAccept(false);
-			break;
-		//Set a new steering command for the robot:
-		case Control:
-			RobotController.setSteering(command.getSteering());
-			if(syncThread){
-				RobotController.getSteeringThread().start();
-				syncThread = false;
-			}
-			break;
+			//Set the flag that indicates that the robot is controlled by an app:
+			case Begin:
+				RobotController.intitComponents();
+				RobotController.changeActive(true);
+				syncThread = true;
+				RobotController.setAccept(true);
+				break;
+			//Set the flag that indicates that the robot is controlled by an app:
+			case End:
+				RobotController.getRobot().stop();
+				RobotController.changeActive(false);
+				break;
+			//Turn the steering of the robot on (steering commands get accepted and implemented):
+			case Start:
+				RobotController.setAccept(true);
+				break;
+			//Turn the steering of the robot off:
+			case Stop:
+				RobotController.getRobot().stop();
+				RobotController.setAccept(false);
+				break;
+			//Set a new steering command for the robot:
+			case Control:
+				RobotController.setSteering(command.getSteering());
+				if(syncThread){
+					RobotController.getSteeringThread().start();
+					syncThread = false;
+				}
+				break;
+			default:
+				ViewController.showErrorScreen("213");
+				break;
 		}
 		
 		if(type != ControlCommandType.End){
@@ -129,7 +137,7 @@ public final class Interpreter {
 		}
 	}
 	
-	private static void exception(JSONObject pCommand) throws Exception{
+	private static void exception(JSONObject pCommand) {
 				
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
@@ -143,15 +151,12 @@ public final class Interpreter {
 		
 		switch (type) {
 			case Undefined:
-				throw new Exception(command.getException().getMessage());
+				ViewController.showErrorScreen("210");
 			case UnhandeldDisconnection:
 				RobotController.changeActive(false);
 				RobotController.getRobot().stop();
 				break;
 		}
-		
-		//Get new exception
-		//TODO
 	}
 	
 //### PUBLIC STATIC METHODS ################################################################################################################
@@ -164,8 +169,9 @@ public final class Interpreter {
 	 * @throws Exception
 	 * 
 	 * @author ThunderSL94
+	 * @throws IOException 
 	 */
-	public static void parse(String pCommand) throws Exception {
+	public static void parse(String pCommand) throws IOException {
 		
 		//Convert string to JSON object:
 		JSONObject jsonCommand = new JSONObject(pCommand);
@@ -190,9 +196,11 @@ public final class Interpreter {
 				case Synchronization:
 					return;
 			default:
+				ViewController.showErrorScreen("212");
 				break;
 			}
 		}
+		ViewController.showErrorScreen("211");
 		return;
 	}
 	

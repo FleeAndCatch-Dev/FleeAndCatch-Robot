@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import org.json.JSONException;
@@ -38,7 +39,7 @@ public final class Client {
 	 * @throws Exception
 	 *  * @author ThunderSL94
 	 */
-	public static void connect(IdentificationType pType, RobotType pSubtype) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype){
 		if(!connected){
 			identification = new ClientIdentification(0, pType.toString(), CommunicationConfig.BACKEND_ADDRESS, CommunicationConfig.BACKEND_PORT);
 			startConnection();
@@ -55,7 +56,7 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress){
 		if(!connected){
 			identification = new ClientIdentification(0, pType.toString(), pAddress, CommunicationConfig.BACKEND_PORT);
 			startConnection();
@@ -73,7 +74,7 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress, int pPort) throws Exception{
+	public static void connect(IdentificationType pType, RobotType pSubtype, String pAddress, int pPort){
 		if(!connected){
 			identification = new ClientIdentification(0, pType.toString(), pAddress, pPort);
 			startConnection();
@@ -90,7 +91,7 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	private static void startConnection() throws UnknownHostException, IOException{
+	private static void startConnection() {
 		Thread connectionThread = new Thread(new Runnable() {
 			
 			@Override
@@ -102,17 +103,29 @@ public final class Client {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						ViewController.showErrorScreen("207");
 					}
 				}
-				ViewController.noConnection();
-				System.exit(0);
+				ViewController.showErrorScreen("206");
 			}
 		});
 		connectionThread.start();
 		
-		socket = new Socket(identification.getAddress(), identification.getPort());
-		socket.setTcpNoDelay(true);
+		try {
+			socket = new Socket(identification.getAddress(), identification.getPort());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			ViewController.showErrorScreen("202");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			ViewController.showErrorScreen("203");
+		}
+		try {
+			socket.setTcpNoDelay(true);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			ViewController.showErrorScreen("204");
+		}
 		Thread listenerThread = new Thread(new Runnable() {
 			
 			@Override
@@ -120,8 +133,7 @@ public final class Client {
 				try {
 					listen();
 				} catch (Exception e) {
-					ViewController.showErrorScreen("Connection");
-					System.exit(0);
+					ViewController.showErrorScreen("205");
 				}
 			}
 		});
@@ -135,8 +147,9 @@ public final class Client {
 	 * @throws Exception
 	 * 
 	 * @author ThunderSL94
+	 * @throws IOException 
 	 */
-	private static void listen() throws Exception {
+	private static void listen() throws IOException {
 		bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		outputStream = new DataOutputStream(socket.getOutputStream());		
 		connected = true;
@@ -159,27 +172,31 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	private static String receiveCmd() throws Exception{
+	private static String receiveCmd() {
 		char[] value = new char[4];
-		int result = bufferedReader.read(value);	
-		
-		if(result >= 0) {
-			int length = 0;
-			for(int i = 0; i < value.length; i++) {
-				length += (int) (value[i] * Math.pow(128, i));
-			}
+		try{
+			int result = bufferedReader.read(value);	
 			
-			value = new char[length];
-			for( int i=0; i<value.length; i++) {
-				char[] tmp = new char[1];
-				bufferedReader.read(tmp, 0, 1);
-				value[i] = tmp[0];
+			if(result >= 0) {
+				int length = 0;
+				for(int i = 0; i < value.length; i++) {
+					length += (int) (value[i] * Math.pow(128, i));
+				}
+				
+				value = new char[length];
+				for( int i=0; i<value.length; i++) {
+					char[] tmp = new char[1];
+					bufferedReader.read(tmp, 0, 1);
+					value[i] = tmp[0];
+				}
+				
+				return new String(value);
 			}
-			
-			return new String(value);
-		}
-		else {
 			close();
+			return null;
+		}
+		catch (Exception e) {
+			ViewController.showErrorScreen("205");
 			return null;
 		}
 	}
@@ -193,7 +210,7 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void sendCmd(String pCommand) throws Exception{
+	public static void sendCmd(String pCommand){
 		if(connected){
 			checkCmd(pCommand);
 			
@@ -204,11 +221,16 @@ public final class Client {
 				rest = (int) (rest % Math.pow(128, size.length - (i + 1)));
 			}
 
-			outputStream.write(size);
-			outputStream.flush();
+			try {
+				outputStream.write(size);
+				outputStream.flush();
 			
-			outputStream.write(pCommand.getBytes());
-			outputStream.flush();
+				outputStream.write(pCommand.getBytes());
+				outputStream.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				ViewController.showErrorScreen("208");
+			}
 			return;
 		}
 	}
@@ -221,11 +243,16 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void disconnect() throws IOException{
-		bufferedReader.close();
-		outputStream.close();
-		connected = false;
-		socket.close();
+	public static void disconnect() {
+		try {
+			bufferedReader.close();
+			outputStream.close();
+			connected = false;
+			socket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			ViewController.showErrorScreen("209");
+		}
 	}
 	
 	/**
@@ -236,7 +263,7 @@ public final class Client {
 	 * 
 	 * @author ThunderSL94
 	 */
-	public static void close() throws Exception {
+	public static void close() {
 		if(connected){
 			Gson gson = new Gson();
 			ConnectionCommand command = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Disconnect.toString(), identification, device);
