@@ -102,7 +102,6 @@ public final class Client {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						ViewController.showErrorScreen("207");
 					}
 				}
@@ -114,16 +113,13 @@ public final class Client {
 		try {
 			socket = new Socket(identification.getAddress(), identification.getPort());
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			ViewController.showErrorScreen("202");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			ViewController.showErrorScreen("203");
 		}
 		try {
 			socket.setTcpNoDelay(true);
 		} catch (SocketException e) {
-			// TODO Auto-generated catch block
 			ViewController.showErrorScreen("204");
 		}
 		Thread listenerThread = new Thread(new Runnable() {
@@ -196,7 +192,7 @@ public final class Client {
 			return null;
 		}
 		catch (Exception e) {
-			ViewController.showErrorScreen("205");
+			ViewController.showErrorScreen("208");
 			return null;
 		}
 	}
@@ -229,7 +225,7 @@ public final class Client {
 				outputStream.flush();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				ViewController.showErrorScreen("208");
+				ViewController.showErrorScreen("209");
 			}
 			return;
 		}
@@ -251,7 +247,7 @@ public final class Client {
 			socket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			ViewController.showErrorScreen("209");
+			ViewController.showErrorScreen("210");
 		}
 	}
 	

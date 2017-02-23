@@ -28,7 +28,7 @@ public final class RobotController {
 				try {
 					controlRobot();
 				} catch (InterruptedException e) {
-					ViewController.showErrorScreen("215");
+					ViewController.showErrorScreen("217");
 				}
 			}
 		});

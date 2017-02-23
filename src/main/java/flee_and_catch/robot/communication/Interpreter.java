@@ -73,7 +73,7 @@ public final class Interpreter {
 				Client.disconnect();
 				return;
 			default:
-				ViewController.showErrorScreen("214");
+				ViewController.showErrorScreen("211");
 				break;
 		}
 	}
@@ -125,7 +125,7 @@ public final class Interpreter {
 				}
 				break;
 			default:
-				ViewController.showErrorScreen("213");
+				ViewController.showErrorScreen("212");
 				break;
 		}
 		
@@ -151,10 +151,13 @@ public final class Interpreter {
 		
 		switch (type) {
 			case Undefined:
-				ViewController.showErrorScreen("210");
+				ViewController.showErrorScreen("213");
 			case UnhandeldDisconnection:
 				RobotController.changeActive(false);
 				RobotController.getRobot().stop();
+				break;
+			default:
+				ViewController.showErrorScreen("214");
 				break;
 		}
 	}
@@ -196,11 +199,11 @@ public final class Interpreter {
 				case Synchronization:
 					return;
 			default:
-				ViewController.showErrorScreen("212");
+				ViewController.showErrorScreen("215");
 				break;
 			}
 		}
-		ViewController.showErrorScreen("211");
+		ViewController.showErrorScreen("216");
 		return;
 	}
 	
