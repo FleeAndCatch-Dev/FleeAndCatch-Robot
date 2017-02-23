@@ -36,16 +36,16 @@ public class Position {
 	 * @param y
 	 * @param orientation
 	 */
-	public Position(double x, double y, double orientation) {
-		this.x = x;
-		this.y = y;
-		this.setOrientation(orientation);
+	public Position(double x, double y, double orientation) {	
+		this.x = ((double) ((int) (x * 100))) / 100;
+		this.y = ((double) ((int) (y * 100))) / 100;
+		this.orientation = ((double) ((int) (orientation * 100))) / 100;
 	}
 	
 	public Position(Position position) {
-		this.x = position.getX();
-		this.y = position.getY();
-		this.orientation = position.getOrientation();
+		this.x = ((double) ((int) (position.getX() * 100))) / 100;
+		this.y = ((double) ((int) (position.getY() * 100))) / 100;
+		this.orientation = ((double) ((int) (position.getOrientation() * 100))) / 100;
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
@@ -89,7 +89,7 @@ public class Position {
 	 * @param orientation
 	 */
 	public void setOrientation(double orientation) {
-		this.orientation = orientation;
+		this.orientation = ((double) ((int) (orientation * 100))) / 100;
 	}
 	
 //### METHODS ##############################################################################################################################

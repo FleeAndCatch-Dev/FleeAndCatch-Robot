@@ -126,8 +126,8 @@ public final class ViewController {
 	public static void showStatus(String status, Position position, double speed) {
 		clearScreen();
 		
-		String x = Double.toString(((double) ((int) (position.getX() * 100))) / 100);
-		String y = Double.toString(((double) ((int) (position.getY() * 100))) / 100);
+		String x = Double.toString(((double) ((int) (position.getX()))) / 1000);
+		String y = Double.toString(((double) ((int) (position.getY()))) / 1000);
 		String o = Double.toString(((double) ((int) (position.getOrientation() * 100))) / 100);
 		String s = Double.toString(((double) ((int) (speed * 100))) / 100);
 		
@@ -135,10 +135,10 @@ public final class ViewController {
 		LCD.drawString(" F&C              ", 0, 0);
 		LCD.drawString("     Status:      ", 0, 1);
 		LCD.drawString("  " + status + "  ", 0, 2);
-		LCD.drawString(" X: " + x + "     ", 0, 3);
-		LCD.drawString(" Y: " + y + "     ", 0, 4);
+		LCD.drawString(" X: " + x + " m   ", 0, 3);
+		LCD.drawString(" Y: " + y + " m   ", 0, 4);
 		LCD.drawString(" O: " + o + "     ", 0, 5);
-		LCD.drawString(" Speed: " + s + " ", 0, 6);
+		LCD.drawString(" Speed: " + s + " cm/s ", 0, 6);
 		LCD.drawString("              v1.1", 0, 7);
 	}
 	

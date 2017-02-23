@@ -342,6 +342,8 @@ public class ThreeWheelDrive implements Robot {
 
 	@Override
 	public Position getPosition() {
+		// TODO refactor position always
+		
 		//Duplicate the saved (old) position of the robot:
 		Position curPos = new Position(this.position);
 		
@@ -372,7 +374,7 @@ public class ThreeWheelDrive implements Robot {
 				
 			double tempDistance = this.getTotalDistance();
 			
-			float realSpeed = (float) (((tempDistance - this.speedDistance) * 10) / time);
+			float realSpeed = (float) (((tempDistance - this.speedDistance) * 100) / time);
 			this.speedDistance = tempDistance;
 			this.saveSpeed = realSpeed;
 		}		
@@ -419,9 +421,9 @@ public class ThreeWheelDrive implements Robot {
 	 * 
 	 */
 	public float getUltrasonicDistance() {
-		if(!ultrasonic.isEnable())
+		/*if(!ultrasonic.isEnable())
 			return -1;			//Ultrasonic isn't enable
-		else
+		else*/
 			return ultrasonic.getDistance();
 	}
 	

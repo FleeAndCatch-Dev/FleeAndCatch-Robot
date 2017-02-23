@@ -7,7 +7,7 @@ public class Robot extends Device {
 	
 	protected RobotIdentification identification;	
 	protected Position position;
-	protected String speed;
+	protected double speed;
 	protected String ultrasonic;
 	protected String gyro;
 	
@@ -15,18 +15,17 @@ public class Robot extends Device {
 		super(false);
 		this.identification = pIdentification;
 		this.position = pPosition;
-		this.speed = Double.toString(pSpeed);
+		this.speed = pSpeed;
 		this.ultrasonic =  Double.toString(pUltrasonic);
 		this.gyro =  Double.toString(pGyro);
 	}
-
 	
 	public Robot(RobotIdentification pIdentification, boolean pActive, Position pPosition, double pSpeed, double pUltrasonic, double pGyro){
 		super(pActive);
 		this.identification = pIdentification;
-		this.position = pPosition;
-		double tempSpeed = ((int) (pSpeed * 100)) / 100;		
-		this.speed =  Double.toString(tempSpeed);	
+		this.position = pPosition;	
+		this.speed = ((double) ((int) (pSpeed * 100))) / 100;
+		
 		String temp = Double.toString(pUltrasonic);
 		if(temp.equals("Infinity"))
 			this.ultrasonic = Double.toString(0.0);
@@ -55,7 +54,7 @@ public class Robot extends Device {
 		return position;
 	}
 
-	public String getSpeed() {
+	public double getSpeed() {
 		return speed;
 	}
 
