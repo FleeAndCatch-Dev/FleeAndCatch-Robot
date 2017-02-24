@@ -108,6 +108,7 @@ public final class Client {
 				ViewController.showErrorScreen("206");
 			}
 		});
+		connectionThread.setPriority( Thread.NORM_PRIORITY + 2 );
 		connectionThread.start();
 		
 		try {

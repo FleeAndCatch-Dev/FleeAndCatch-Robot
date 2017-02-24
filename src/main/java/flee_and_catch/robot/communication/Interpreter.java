@@ -121,6 +121,7 @@ public final class Interpreter {
 				RobotController.setSteering(command.getSteering());
 				if(syncThread){
 					RobotController.getSteeringThread().start();
+					RobotController.getSynchronizeThread().start();
 					syncThread = false;
 				}
 				break;
