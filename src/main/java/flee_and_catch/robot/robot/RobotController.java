@@ -21,8 +21,7 @@ public final class RobotController {
 	private static Thread synchronizeThread;
 
 	public static void intitComponents(){
-		steeringThread = new Thread(new Runnable() {
-			
+		steeringThread = new Thread(new Runnable() {			
 			@Override
 			public void run() {
 				try {
@@ -32,9 +31,7 @@ public final class RobotController {
 				}
 			}
 		});
-		steeringThread.setPriority( Thread.NORM_PRIORITY + 1 );
-		synchronizeThread = new Thread(new Runnable() {
-			
+		synchronizeThread = new Thread(new Runnable() {			
 			@Override
 			public void run() {
 				try {
@@ -44,7 +41,6 @@ public final class RobotController {
 				}
 			}
 		});
-		synchronizeThread.setPriority( Thread.NORM_PRIORITY );
 	}
 
 	private static void controlRobot() throws InterruptedException {

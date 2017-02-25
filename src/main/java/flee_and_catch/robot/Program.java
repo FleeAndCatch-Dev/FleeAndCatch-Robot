@@ -56,7 +56,6 @@ public class Program {
 		//TODO: Get position of the robot!!!
 		//TODO: Get dimensions of the playing field!!!
 		
-		ViewController.showExit();		
 		Button.ESCAPE.waitForPressAndRelease();
 		
 		//Tide up

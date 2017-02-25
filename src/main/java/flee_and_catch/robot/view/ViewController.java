@@ -75,6 +75,21 @@ public final class ViewController {
 		
 	}
 	
+	public static void showReadyScreen(Robot pRobot) {
+		clearScreen();
+		
+		//              12345678901234567
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawString("                  ", 0, 1);
+		LCD.drawString(" " + pRobot.getIdentification().getSubtype() + " ", 0, 2);
+		LCD.drawString("                  ", 0, 3);
+		LCD.drawString(" " + pRobot.getIdentification().getId() + " ", 0, 4);
+		LCD.drawString("                  ", 0, 5);
+		LCD.drawString("                  ", 0, 6);
+		LCD.drawString("              v1.1", 0, 7);
+		
+	}
+	
 	public static void showErrorScreen(String msg) {
 		clearScreen();
 		

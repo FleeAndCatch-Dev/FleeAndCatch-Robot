@@ -67,10 +67,18 @@ public final class Interpreter {
 				Client.getClientIdentification().setId(command.getIdentification().getId());
 				((Robot)Client.getDevice()).getIdentification().setId(command.getIdentification().getId());
 				RobotController.getRobot().getIdentification().setId(command.getIdentification().getId());
+				
+				//Show ready
+				ViewController.showReadyScreen(RobotController.getRobot());
 				return;
 			//Disconnect the client:
 			case Disconnect:
 				Client.disconnect();
+				return;
+			case Init:
+				Gson gson = new Gson();
+				ConnectionCommand cmd = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Init.toString(), Client.getClientIdentification(), Client.getDevice());
+				Client.sendCmd(gson.toJson(cmd));
 				return;
 			default:
 				ViewController.showErrorScreen("211");
@@ -134,7 +142,8 @@ public final class Interpreter {
 			ViewController.showStatus(type.toString(), RobotController.getRobot().getPosition(), RobotController.getRobot().getRealSpeed());
 		}
 		else {
-			ViewController.showExit();
+			//Show ready
+			ViewController.showReadyScreen(RobotController.getRobot());
 		}
 	}
 	
