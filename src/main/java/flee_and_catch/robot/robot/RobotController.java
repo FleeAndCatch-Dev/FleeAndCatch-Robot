@@ -1,10 +1,15 @@
 package flee_and_catch.robot.robot;
 
+import com.google.gson.Gson;
 import flee_and_catch.robot.communication.Client;
+import flee_and_catch.robot.communication.command.CommandType;
+import flee_and_catch.robot.communication.command.SynchronizationCommand;
+import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.component.Direction;
 import flee_and_catch.robot.communication.command.component.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
+import flee_and_catch.robot.view.ViewController;
 
 public final class RobotController {
 
@@ -16,23 +21,24 @@ public final class RobotController {
 	private static Thread synchronizeThread;
 
 	public static void intitComponents(){
-		steeringThread = new Thread(new Runnable() {
-			
+		steeringThread = new Thread(new Runnable() {			
 			@Override
 			public void run() {
 				try {
 					controlRobot();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					ViewController.showErrorScreen("217");
 				}
 			}
 		});
-		synchronizeThread = new Thread(new Runnable() {
-			
+		synchronizeThread = new Thread(new Runnable() {			
 			@Override
 			public void run() {
-				synchronize();
+				try {
+					synchronize();
+				} catch (Exception e) {
+					ViewController.showErrorScreen("217");
+				}
 			}
 		});
 	}
@@ -44,35 +50,57 @@ public final class RobotController {
 				
 				//Should the steering should be processed and their is a steering to process:
 				if(getSteering() != null && getSteering().getSpeed() != null && getSteering().getDirection() != null && accept) {
-					
+
 					//Convert the direction and the speed to enums:
 					Direction direction = Direction.valueOf(getSteering().getDirection());
 					Speed speed = Speed.valueOf(getSteering().getSpeed());
 					
 					//Process direction:
-					getRobot().rotate(direction);
+					if(direction == Direction.Left || direction == Direction.Right)
+						getRobot().rotate(direction);
+					else
+						getRobot().forward();
 					
 					//Process speed:
-					getRobot().changeSpeed(speed);
+					if(speed == Speed.Faster)
+						getRobot().increaseSpeed();
+					else if(speed == Speed.Slower)
+						getRobot().decreaseSpeed();
 					
 					//Set Steering to processed:
 					setSteering(null);
 				}
 				
 			} catch (Exception e) {
-				// TODO: handle exception
+
 			} finally {
 				//Wait:
 				Thread.sleep(ThreadConfig.STEERING_SLEEP);
 			}
 		}
 	}
-	private static void synchronize() {
-		// TODO Auto-generated method stub
-		// TODO send update to backend
+	public static void synchronize() throws Exception {
+		while(getRobot().isActive()) {
+			//Calculate the speed
+			
+			//Calculate the current position			
+			
+			//Show position and speed, other variables
+			
+			//Create synchronization object:
+			SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), robot.getJSONRobot());
+			
+			try {
+				Gson gson = new Gson();
+				Client.sendCmd(gson.toJson(sync));
+				Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);				
+			} 
+			catch (Exception e) {	
+			}
+		}
 	}
 
-	public static void changeActive(boolean pState){
+	public static void changeActive(boolean pState) {
 		robot.setActive(pState);
 		Client.setDevice(robot.getJSONRobot());
 	}
@@ -103,14 +131,12 @@ public final class RobotController {
 	}
 	public static void setSteeringThread(Thread steeringThread) {
 		RobotController.steeringThread = steeringThread;
-	}
-
+	}	
+	
 	public static Thread getSynchronizeThread() {
 		return synchronizeThread;
 	}
 	public static void setSynchronizeThread(Thread synchronizeThread) {
 		RobotController.synchronizeThread = synchronizeThread;
 	}
-	
-	
 }

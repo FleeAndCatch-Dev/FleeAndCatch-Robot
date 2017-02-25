@@ -36,10 +36,16 @@ public class Position {
 	 * @param y
 	 * @param orientation
 	 */
-	public Position(double x, double y, double orientation) {
-		this.x = x;
-		this.y = y;
-		this.setOrientation(orientation);
+	public Position(double x, double y, double orientation) {	
+		this.x = ((double) ((int) (x * 100))) / 100;
+		this.y = ((double) ((int) (y * 100))) / 100;
+		this.orientation = ((double) ((int) (orientation * 100))) / 100;
+	}
+	
+	public Position(Position position) {
+		this.x = ((double) ((int) (position.getX() * 100))) / 100;
+		this.y = ((double) ((int) (position.getY() * 100))) / 100;
+		this.orientation = ((double) ((int) (position.getOrientation() * 100))) / 100;
 	}
 	
 //### GETTER/SETTER ########################################################################################################################
@@ -77,15 +83,13 @@ public class Position {
 	public void setY(double y) {
 		this.y = y;
 	}
-
+	
 	/* setOrientation [Method]: Method to set the orientation *//**
 	 * 
 	 * @param orientation
 	 */
-	public void setOrientation(double angle) {
-		angle = angle % 360;
-		if(angle < 0) { angle += 360; }
-		this.orientation = angle;
+	public void setOrientation(double orientation) {
+		this.orientation = ((double) ((int) (orientation * 100))) / 100;
 	}
 	
 //### METHODS ##############################################################################################################################
@@ -96,17 +100,21 @@ public class Position {
 	 * 
 	 * @param angle
 	 */
-	public void calculateNewOrientation(float angle) {
+	public double calculateNewOrientation(float angle) {
 		
-		this.orientation = (this.orientation + angle) % 360;
-		if(this.orientation < 0) { this.orientation += 360; }
+		double tempOrientation = (this.orientation + angle) % 360;
+		if(this.orientation < 0) 
+			tempOrientation += 360;
 		
+		return tempOrientation;
 	}
 	
 	/* calculateNewPosition [Method]: Method that calculates a new position based of a covered longitudinal distance*//**
 	 * 
 	 */
-	public void calculateNewPosition(float longitudinalDistance) {
+	public Position calculateNewPosition(float longitudinalDistance) {
+		
+		Position tempPosition = new Position(this);
 		
 		//Convert the orientation from degree in radian:
 		double orientationRad = this.orientation * (Math.PI / 180);
@@ -116,15 +124,10 @@ public class Position {
 		float distY = (float) Math.sin(orientationRad) * longitudinalDistance;
 		
 		//Add the moved distance to position:
-		this.x += distX;
-		this.y += distY;
-	}
-
-	/* toStringLCD [Method]: Returns the attribute values in a compact string format for the robot LCD */
-	public String toStringLCD() {
+		tempPosition.setX(this.getX() + distX);
+		tempPosition.setY(this.getY() + distY);
 		
-		return this.x + ", " + this.y + ", " + this.orientation;
-		
+		return tempPosition;
 	}
 	
 //##########################################################################################################################################	

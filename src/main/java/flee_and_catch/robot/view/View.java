@@ -7,20 +7,20 @@ public class View {
 
 	private void printFrame() {
 		
-		LCD.drawString("#F&C##########0.9#", 0, 0);
-		LCD.drawChar('#', 0, 1);
-		LCD.drawChar('#', 17, 1);
-		LCD.drawChar('#', 0, 2);
-		LCD.drawChar('#', 17, 2);
-		LCD.drawChar('#', 0, 3);
-		LCD.drawChar('#', 17, 3);
-		LCD.drawChar('#', 0, 4);
-		LCD.drawChar('#', 17, 4);
-		LCD.drawChar('#', 0, 5);
-		LCD.drawChar('#', 17, 5);
-		LCD.drawChar('#', 0, 6);
-		LCD.drawChar('#', 17, 6);
-		LCD.drawString("##################", 0, 7);
+		LCD.drawString(" F&C              ", 0, 0);
+		LCD.drawChar(' ', 0, 1);
+		LCD.drawChar(' ', 17, 1);
+		LCD.drawChar(' ', 0, 2);
+		LCD.drawChar(' ', 17, 2);
+		LCD.drawChar(' ', 0, 3);
+		LCD.drawChar(' ', 17, 3);
+		LCD.drawChar(' ', 0, 4);
+		LCD.drawChar(' ', 17, 4);
+		LCD.drawChar(' ', 0, 5);
+		LCD.drawChar(' ', 17, 5);
+		LCD.drawChar(' ', 0, 6);
+		LCD.drawChar(' ', 17, 6);
+		LCD.drawString("              v1.1", 0, 7);
 		
 	}
 	

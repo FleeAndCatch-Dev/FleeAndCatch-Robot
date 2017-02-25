@@ -2,6 +2,7 @@
 
 package flee_and_catch.robot.communication;
 
+import java.io.IOException;
 import java.util.Objects;
 
 import org.json.JSONObject;
@@ -14,9 +15,13 @@ import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
 import flee_and_catch.robot.communication.command.ControlCommand;
 import flee_and_catch.robot.communication.command.ControlCommandType;
+import flee_and_catch.robot.communication.command.ExceptionCommand;
+import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
+import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
+import flee_and_catch.robot.view.ViewController;
 
 //### IMPORTS ##############################################################################################################################
 
@@ -30,7 +35,7 @@ public final class Interpreter {
 
 //### STATIC VARIABLES #####################################################################################################################
 	
-	private static Gson gson = new Gson();
+	private static boolean syncThread;
 	
 //### PRIVATE STATIC METHODS ###############################################################################################################
 
@@ -39,14 +44,12 @@ public final class Interpreter {
 	 * Parse connection command.
 	 * 
 	 * @param pCommand Command as json object.
+	 * @throws IOException 
 	 * @throws Exception
 	 * 
 	 * ThunderSL94
 	 */
-	private static void connection(JSONObject pCommand) throws Exception {
-		
-		//Read out the type of the connection command:
-		ConnectionCommandType type = ConnectionCommandType.valueOf((String) pCommand.get("type"));
+	private static void connection(JSONObject pCommand) throws IOException {
 		
 		//Serialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
@@ -55,18 +58,31 @@ public final class Interpreter {
 		Gson localgson = builder.create();
 		ConnectionCommand command = localgson.fromJson(pCommand.toString(), ConnectionCommand.class);
 		
+		//Read out the type of the connection command:
+		ConnectionCommandType type = ConnectionCommandType.valueOf(command.getType());
+		
 		switch(type){
 			//Set the id of this client:
 			case Connect:
 				Client.getClientIdentification().setId(command.getIdentification().getId());
+				((Robot)Client.getDevice()).getIdentification().setId(command.getIdentification().getId());
+				RobotController.getRobot().getIdentification().setId(command.getIdentification().getId());
+				
+				//Show ready
+				ViewController.showReadyScreen(RobotController.getRobot());
 				return;
 			//Disconnect the client:
 			case Disconnect:
 				Client.disconnect();
 				return;
-			//Unknown connection type:
+			case Init:
+				Gson gson = new Gson();
+				ConnectionCommand cmd = new ConnectionCommand(CommandType.Connection.toString(), ConnectionCommandType.Init.toString(), Client.getClientIdentification(), Client.getDevice());
+				Client.sendCmd(gson.toJson(cmd));
+				return;
 			default:
-				throw new Exception("Argument out of range");
+				ViewController.showErrorScreen("211");
+				break;
 		}
 	}
 	
@@ -75,48 +91,64 @@ public final class Interpreter {
 	 * @param pCommand
 	 * @throws Exception
 	 */
-	private static void control(JSONObject pCommand) throws Exception {
+	private static void control(JSONObject pCommand) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();
+		
+		//Serialize the JSON object to a Control class object:
+		ControlCommand command = localgson.fromJson(pCommand.toString(), ControlCommand.class);
 		
 		//Read out the type of the control command:
-		ControlCommandType type = ControlCommandType.valueOf((String) pCommand.get("type"));
-		//Serialize the JSON object to a Control class object:
-		ControlCommand command = gson.fromJson(pCommand.toString(), ControlCommand.class);
+		ControlCommandType type = ControlCommandType.valueOf(command.getType());
 		
 		switch(type){
-		//Set the flag that indicates that the robot is controlled by an app:
-		case Begin:
-			RobotController.intitComponents();
-			RobotController.changeActive(true);
-			RobotController.getSteeringThread().start();
-			RobotController.getSynchronizeThread().start();
-			RobotController.setAccept(true);
-			return;
-		//Set the flag that indicates that the robot is controlled by an app:
-		case End:
-			RobotController.getRobot().stop();
-			RobotController.changeActive(false);
-			return;
-		//Turn the steering of the robot on (steering commands get accepted and implemented):
-		case Start:
-			RobotController.setAccept(true);
-			return;
-		//Turn the steering of the robot off:
-		case Stop:
-			RobotController.setAccept(false);
-			return;
-		//Set a new steering command for the robot:
-		case Control:
-			RobotController.setSteering(command.getSteering());
-			return;
-		default:
-			throw new Exception("Argument out of range");
+			//Set the flag that indicates that the robot is controlled by an app:
+			case Begin:
+				RobotController.intitComponents();
+				RobotController.changeActive(true);
+				syncThread = true;
+				RobotController.setAccept(true);
+				break;
+			//Set the flag that indicates that the robot is controlled by an app:
+			case End:
+				RobotController.getRobot().stop();
+				RobotController.changeActive(false);
+				break;
+			//Turn the steering of the robot on (steering commands get accepted and implemented):
+			case Start:
+				RobotController.setAccept(true);
+				break;
+			//Turn the steering of the robot off:
+			case Stop:
+				RobotController.getRobot().stop();
+				RobotController.setAccept(false);
+				break;
+			//Set a new steering command for the robot:
+			case Control:
+				RobotController.setSteering(command.getSteering());
+				if(syncThread){
+					RobotController.getSteeringThread().start();
+					RobotController.getSynchronizeThread().start();
+					syncThread = false;
+				}
+				break;
+			default:
+				ViewController.showErrorScreen("212");
+				break;
+		}
+		
+		if(type != ControlCommandType.End){
+			ViewController.showStatus(type.toString(), RobotController.getRobot().getPosition(), RobotController.getRobot().getRealSpeed());
+		}
+		else {
+			//Show ready
+			ViewController.showReadyScreen(RobotController.getRobot());
 		}
 	}
 	
-	private static void exception(JSONObject pCommand){
-		//Read out the type of the connection command:
-		/*ExceptionCommandType type = ExceptionCommandType.valueOf((String) pCommand.get("type"));
-		
+	private static void exception(JSONObject pCommand) {
+				
 		//Deserialize the JSON object to a Connection class object:
 		GsonBuilder builder = new GsonBuilder();
 		builder.registerTypeAdapter(Device.class, new DeviceAdapter());
@@ -124,18 +156,20 @@ public final class Interpreter {
 		Gson localgson = builder.create();
 		ExceptionCommand command = localgson.fromJson(pCommand.toString(), ExceptionCommand.class);
 		
+		//Read out the type of the connection command:
+		ExceptionCommandType type = ExceptionCommandType.valueOf(command.getType());
+		
 		switch (type) {
 			case Undefined:
-				break;
+				ViewController.showErrorScreen("213");
 			case UnhandeldDisconnection:
-				//Set active of robot false
+				RobotController.changeActive(false);
+				RobotController.getRobot().stop();
 				break;
 			default:
+				ViewController.showErrorScreen("214");
 				break;
-		}*/
-		
-		//Get new exception
-		//TODO
+		}
 	}
 	
 //### PUBLIC STATIC METHODS ################################################################################################################
@@ -148,8 +182,9 @@ public final class Interpreter {
 	 * @throws Exception
 	 * 
 	 * @author ThunderSL94
+	 * @throws IOException 
 	 */
-	public static void parse(String pCommand) throws Exception {
+	public static void parse(String pCommand) throws IOException {
 		
 		//Convert string to JSON object:
 		JSONObject jsonCommand = new JSONObject(pCommand);
@@ -171,11 +206,14 @@ public final class Interpreter {
 				case Exception:
 					exception(jsonCommand);
 					return;
-				//Unkown command:
-				default:
-					throw new Exception("Argument out of range");
+				case Synchronization:
+					return;
+			default:
+				ViewController.showErrorScreen("215");
+				break;
 			}
 		}
+		ViewController.showErrorScreen("216");
 		return;
 	}
 	
