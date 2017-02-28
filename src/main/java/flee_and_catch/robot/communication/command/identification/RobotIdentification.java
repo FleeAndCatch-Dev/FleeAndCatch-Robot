@@ -1,7 +1,6 @@
 package flee_and_catch.robot.communication.command.identification;
 
-import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RoleType;
+import flee_and_catch.robot.communication.command.device.robot.RoleType;
 
 public class RobotIdentification extends Identification {
 	private String subtype;

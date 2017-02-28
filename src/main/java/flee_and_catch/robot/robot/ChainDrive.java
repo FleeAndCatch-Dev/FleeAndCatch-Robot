@@ -1,6 +1,6 @@
 package flee_and_catch.robot.robot;
 
-import flee_and_catch.robot.communication.command.component.Direction;
+import flee_and_catch.robot.communication.command.device.robot.Direction;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 

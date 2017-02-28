@@ -16,11 +16,11 @@ import com.google.gson.Gson;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
-import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
+import flee_and_catch.robot.communication.command.identification.IdentificationType;
 import flee_and_catch.robot.configuration.CommunicationConfig;
+import flee_and_catch.robot.robot.RobotType;
 import flee_and_catch.robot.view.ViewController;
 
 public final class Client {
@@ -108,6 +108,7 @@ public final class Client {
 				ViewController.showErrorScreen("206");
 			}
 		});
+		connectionThread.setPriority(Thread.MAX_PRIORITY);
 		connectionThread.start();
 		
 		try {

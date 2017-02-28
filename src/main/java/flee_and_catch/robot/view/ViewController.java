@@ -1,8 +1,8 @@
 package flee_and_catch.robot.view;
 
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.robot.Robot;
+import flee_and_catch.robot.robot.RobotType;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;

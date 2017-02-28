@@ -1,9 +1,9 @@
 package flee_and_catch.robot.robot;
 
-import flee_and_catch.robot.communication.command.component.Direction;
-import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RoleType;
+import flee_and_catch.robot.communication.command.device.robot.Direction;
 import flee_and_catch.robot.communication.command.device.robot.Position;
+import flee_and_catch.robot.communication.command.device.robot.RoleType;
+import flee_and_catch.robot.communication.command.identification.IdentificationType;
 import flee_and_catch.robot.communication.command.identification.RobotIdentification;
 import flee_and_catch.robot.configuration.RobotConfig;
 import flee_and_catch.robot.configuration.ThreeWheelDriveConfig;
@@ -230,7 +230,7 @@ public class ThreeWheelDrive implements Robot {
 		float saveSpeed = getSpeed();							
 		
 		if(saveSpeed > RobotConfig.ROTATION_SPEED)
-			this.setSpeed(getSpeed() / 3);
+			this.setSpeed(getSpeed() / 5);
 		if(saveSpeed < RobotConfig.ROTATION_SPEED){
 			this.setSpeed(RobotConfig.ROTATION_SPEED);
 			this.setSpeed(RobotConfig.ROTATION_SPEED);

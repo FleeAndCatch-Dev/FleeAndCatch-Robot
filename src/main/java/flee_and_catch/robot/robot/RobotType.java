@@ -1,8 +1,6 @@
 //### Robots.java ##########################################################################################################################
 
-package flee_and_catch.robot.communication.command.component;
-import flee_and_catch.robot.robot.Robot;
-import flee_and_catch.robot.robot.ThreeWheelDrive;
+package flee_and_catch.robot.robot;
 
 //### IMPORTS ##############################################################################################################################
 
