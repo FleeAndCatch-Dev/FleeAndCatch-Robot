@@ -3,8 +3,6 @@ package flee_and_catch.robot.robot;
 import com.google.gson.Gson;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
-import flee_and_catch.robot.communication.command.ControlCommand;
-import flee_and_catch.robot.communication.command.ControlCommandType;
 import flee_and_catch.robot.communication.command.SynchronizationCommand;
 import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.device.robot.Direction;
@@ -12,7 +10,6 @@ import flee_and_catch.robot.communication.command.device.robot.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.view.ViewController;
-import lejos.hardware.Button;
 
 public final class RobotController {
 
