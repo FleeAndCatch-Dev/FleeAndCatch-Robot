@@ -230,7 +230,7 @@ public class ThreeWheelDrive implements Robot {
 		float saveSpeed = getSpeed();							
 		
 		if(saveSpeed > RobotConfig.ROTATION_SPEED)
-			this.setSpeed(getSpeed() / 5);
+			this.setSpeed(getSpeed() / 3);
 		if(saveSpeed < RobotConfig.ROTATION_SPEED){
 			this.setSpeed(RobotConfig.ROTATION_SPEED);
 			this.setSpeed(RobotConfig.ROTATION_SPEED);
@@ -311,6 +311,31 @@ public class ThreeWheelDrive implements Robot {
 				
 		//Stop motors:
 		this.stop();
+	}
+	
+	public void driveTo(Position destination) throws InterruptedException {
+		
+		double x = destination.getX() - this.getPosition().getX();
+		double y = destination.getY() - this.getPosition().getY();
+		double angle = 0.0;
+		
+		if(x >= 0.0 && y >= 0.0) {
+			angle = Math.atan((y/x));
+		}
+		else if(x < 0.0 && y >= 0.0) {
+			angle = 180.0 - Math.atan((y/x));
+		}
+		else if(x >= 0.0 && y < 0.0) {
+			angle = Math.atan((y/x));
+		}
+		else {
+			angle = -180.0 + Math.atan((y/x));
+		}
+		
+		//Rotate to destination:
+		this.rotate((float)angle);
+		//Move to destination:
+		this.forward();
 	}
 	
 	@Override
@@ -430,6 +455,7 @@ public class ThreeWheelDrive implements Robot {
 	public float getGyroAngle(){
 		return gyro.getAngle();
 	}
+	
 	public void resetGyro(){
 		gyro.reset();
 	}
