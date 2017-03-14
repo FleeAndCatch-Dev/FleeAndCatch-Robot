@@ -58,6 +58,8 @@ public interface Robot {
 	void rotate(float angle) throws InterruptedException;
 	void rotate(Direction direct, float angle) throws InterruptedException;
 	
+	public void driveTo(Position destination) throws InterruptedException;
+	
 	public abstract flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 	
 //### GETTER/SETTER ########################################################################################################################

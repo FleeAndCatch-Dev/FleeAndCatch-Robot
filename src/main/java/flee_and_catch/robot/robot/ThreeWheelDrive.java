@@ -313,6 +313,31 @@ public class ThreeWheelDrive implements Robot {
 		this.stop();
 	}
 	
+	public void driveTo(Position destination) throws InterruptedException {
+		
+		double x = destination.getX() - this.getPosition().getX();
+		double y = destination.getY() - this.getPosition().getY();
+		double angle = 0.0;
+		
+		if(x >= 0.0 && y >= 0.0) {
+			angle = Math.atan((y/x));
+		}
+		else if(x < 0.0 && y >= 0.0) {
+			angle = 180.0 - Math.atan((y/x));
+		}
+		else if(x >= 0.0 && y < 0.0) {
+			angle = Math.atan((y/x));
+		}
+		else {
+			angle = -180.0 + Math.atan((y/x));
+		}
+		
+		//Rotate to destination:
+		this.rotate((float)angle);
+		//Move to destination:
+		this.forward();
+	}
+	
 	@Override
 	public flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot() {
 		return new flee_and_catch.robot.communication.command.device.robot.Robot(this.identification, this.active, this.getPosition(), getRealSpeed(), getUltrasonicDistance(), getGyroAngle());
@@ -430,6 +455,7 @@ public class ThreeWheelDrive implements Robot {
 	public float getGyroAngle(){
 		return gyro.getAngle();
 	}
+	
 	public void resetGyro(){
 		gyro.reset();
 	}
