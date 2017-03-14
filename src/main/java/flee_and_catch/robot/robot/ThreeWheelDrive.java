@@ -313,6 +313,10 @@ public class ThreeWheelDrive implements Robot {
 		this.stop();
 	}
 	
+	public void setPosition(Position position) {
+		this.position = position;
+	}
+	
 	public void driveTo(Position destination) throws InterruptedException {
 		
 		double x = destination.getX() - this.getPosition().getX();

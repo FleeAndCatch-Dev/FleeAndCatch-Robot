@@ -17,6 +17,8 @@ import flee_and_catch.robot.communication.command.ControlCommand;
 import flee_and_catch.robot.communication.command.ControlCommandType;
 import flee_and_catch.robot.communication.command.ExceptionCommand;
 import flee_and_catch.robot.communication.command.ExceptionCommandType;
+import flee_and_catch.robot.communication.command.PositionCommand;
+import flee_and_catch.robot.communication.command.PositionCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
@@ -146,6 +148,71 @@ public final class Interpreter {
 			ViewController.showReadyScreen(RobotController.getRobot());
 		}
 	}
+	
+	
+	/* control [Method]: Processes a JSON object of the type control for steering the robot *//**
+	 * 
+	 * @param pCommand
+	 * @throws Exception
+	 */
+	private static void position(JSONObject pCommand) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.setPrettyPrinting();
+		Gson localgson = builder.create();
+		
+		//Serialize the JSON object to a Control class object:
+		PositionCommand command = localgson.fromJson(pCommand.toString(), PositionCommand.class);
+		
+		//Read out the type of the control command:
+		PositionCommandType type = PositionCommandType.valueOf(command.getType());
+		
+		switch(type){
+			//Set the flag that indicates that the robot is controlled by an app:
+			case Begin:
+				RobotController.intitComponents();
+				RobotController.changeActive(true);
+				syncThread = true;
+				RobotController.setAccept(true);
+				//Set start position for scenario:
+				RobotController.getRobot().setPosition(command.getRobot().getPosition());
+				break;
+			//Set the flag that indicates that the robot is controlled by an app:
+			case End:
+				RobotController.getRobot().stop();
+				RobotController.changeActive(false);
+				break;
+			//Turn the steering of the robot on (steering commands get accepted and implemented):
+			case Start:
+				RobotController.setAccept(true);
+				break;
+			//Turn the steering of the robot off:
+			case Stop:
+				RobotController.getRobot().stop();
+				RobotController.setAccept(false);
+				break;
+			//Set a new steering command for the robot:
+			case Control:
+				RobotController.setDestination(command.getPosition());
+				if(syncThread){
+					RobotController.getSteeringThread().start();
+					RobotController.getSynchronizeThread().start();
+					syncThread = false;
+				}
+				break;
+			default:
+				ViewController.showErrorScreen("212");
+				break;
+		}
+		
+		if(RobotController.getRobot().isActive()){
+			ViewController.showStatus(type.toString(), RobotController.getRobot().getPosition(), RobotController.getRobot().getRealSpeed());
+		}
+		else {
+			//Show ready
+			ViewController.showReadyScreen(RobotController.getRobot());
+		}
+	}
+	
 	
 	private static void exception(JSONObject pCommand) {
 				

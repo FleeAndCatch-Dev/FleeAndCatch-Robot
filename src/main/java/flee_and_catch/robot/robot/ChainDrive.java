@@ -161,4 +161,10 @@ public class ChainDrive implements Robot {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void setPosition(Position position) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -60,6 +60,8 @@ public interface Robot {
 	
 	public void driveTo(Position destination) throws InterruptedException;
 	
+	public void setPosition(Position position);
+	
 	public abstract flee_and_catch.robot.communication.command.device.robot.Robot getJSONRobot();
 	
 //### GETTER/SETTER ########################################################################################################################
