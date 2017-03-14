@@ -1,6 +1,6 @@
 package flee_and_catch.robot.view;
 
-import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.robot.RobotType;
 import lejos.hardware.lcd.LCD;
 
 public class View {

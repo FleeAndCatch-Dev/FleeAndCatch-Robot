@@ -1,4 +1,4 @@
-package flee_and_catch.robot.communication.command.component;
+package flee_and_catch.robot.communication.command.device.robot;
 
 public enum Speed {
 	

@@ -8,13 +8,13 @@ import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ExceptionCommand;
 import flee_and_catch.robot.communication.command.ExceptionCommandType;
-import flee_and_catch.robot.communication.command.component.IdentificationType;
 import flee_and_catch.robot.configuration.SoundConfig;
 import flee_and_catch.robot.robot.Robot;
 import flee_and_catch.robot.robot.RobotController;
+import flee_and_catch.robot.robot.RobotType;
 import flee_and_catch.robot.view.ViewController;
 import lejos.hardware.Button;
-import flee_and_catch.robot.communication.command.component.RobotType;
+import flee_and_catch.robot.communication.command.identification.IdentificationType;
 
 //### IMPORTS ##############################################################################################################################
 
@@ -56,14 +56,17 @@ public class Program {
 		//TODO: Get position of the robot!!!
 		//TODO: Get dimensions of the playing field!!!
 		
+		//while(RobotController.get)
 		Button.ESCAPE.waitForPressAndRelease();
 		
 		//Tide up
 		if(RobotController.getRobot().isActive()){
+			RobotController.getRobot().stop();
+			RobotController.changeActive(false);
+			
 			Gson gson = new Gson();
 			ExceptionCommand cmd = new ExceptionCommand(CommandType.Exception.toString(), ExceptionCommandType.UnhandeldDisconnection.toString(), Client.getClientIdentification(), new flee_and_catch.robot.communication.command.exception.Exception(ExceptionCommandType.UnhandeldDisconnection.toString(), "Devie is disconnecting", Client.getDevice()));
 			Client.sendCmd(gson.toJson(cmd));
-			RobotController.changeActive(false);
 		}
 		
 		Client.close();

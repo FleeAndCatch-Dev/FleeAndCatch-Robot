@@ -138,7 +138,7 @@ public final class Interpreter {
 				break;
 		}
 		
-		if(type != ControlCommandType.End){
+		if(RobotController.getRobot().isActive()){
 			ViewController.showStatus(type.toString(), RobotController.getRobot().getPosition(), RobotController.getRobot().getRealSpeed());
 		}
 		else {

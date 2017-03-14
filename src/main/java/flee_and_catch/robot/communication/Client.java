@@ -16,18 +16,19 @@ import com.google.gson.Gson;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.ConnectionCommand;
 import flee_and_catch.robot.communication.command.ConnectionCommandType;
-import flee_and_catch.robot.communication.command.component.IdentificationType;
-import flee_and_catch.robot.communication.command.component.RobotType;
 import flee_and_catch.robot.communication.command.device.Device;
+import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.communication.command.identification.ClientIdentification;
+import flee_and_catch.robot.communication.command.identification.IdentificationType;
 import flee_and_catch.robot.configuration.CommunicationConfig;
+import flee_and_catch.robot.robot.RobotType;
 import flee_and_catch.robot.view.ViewController;
 
 public final class Client {
 	
 	private static boolean connected;
 	private static ClientIdentification identification;
-	private static Device device;
+	private static Robot device;
 	private static Socket socket;
 	private static BufferedReader bufferedReader;
 	private static DataOutputStream outputStream;
@@ -108,6 +109,7 @@ public final class Client {
 				ViewController.showErrorScreen("206");
 			}
 		});
+		connectionThread.setPriority(Thread.MAX_PRIORITY);
 		connectionThread.start();
 		
 		try {
@@ -286,7 +288,7 @@ public final class Client {
 		return device;
 	}
 
-	public static void setDevice(Device pDevice) {
+	public static void setDevice(Robot pDevice) {
 		device = pDevice;
 	}
 

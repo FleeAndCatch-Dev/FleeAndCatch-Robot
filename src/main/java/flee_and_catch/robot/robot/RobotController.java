@@ -5,8 +5,8 @@ import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
 import flee_and_catch.robot.communication.command.SynchronizationCommand;
 import flee_and_catch.robot.communication.command.SynchronizationCommandType;
-import flee_and_catch.robot.communication.command.component.Direction;
-import flee_and_catch.robot.communication.command.component.Speed;
+import flee_and_catch.robot.communication.command.device.robot.Direction;
+import flee_and_catch.robot.communication.command.device.robot.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.view.ViewController;
@@ -19,6 +19,8 @@ public final class RobotController {
 
 	private static Thread steeringThread;
 	private static Thread synchronizeThread;
+	
+	private static int rotateCounter;
 
 	public static void intitComponents(){
 		steeringThread = new Thread(new Runnable() {			
@@ -41,6 +43,11 @@ public final class RobotController {
 				}
 			}
 		});
+		
+		steeringThread.setPriority(Thread.MAX_PRIORITY);
+		synchronizeThread.setPriority(Thread.NORM_PRIORITY);
+		
+		rotateCounter = 0;
 	}
 
 	private static void controlRobot() throws InterruptedException {
@@ -56,10 +63,19 @@ public final class RobotController {
 					Speed speed = Speed.valueOf(getSteering().getSpeed());
 					
 					//Process direction:
-					if(direction == Direction.Left || direction == Direction.Right)
-						getRobot().rotate(direction);
-					else
+					if(direction == Direction.Left || direction == Direction.Right){
+						if(rotateCounter <= 0){
+							getRobot().rotate(direction);
+							rotateCounter = 5;
+						}
+						else
+							rotateCounter--;						
+					}
+						
+					else{
+						rotateCounter = 0;
 						getRobot().forward();
+					}			
 					
 					//Process speed:
 					if(speed == Speed.Faster)
