@@ -11,7 +11,6 @@ import flee_and_catch.robot.communication.command.device.robot.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.view.ViewController;
-import lejos.remote.rcx.RCXAbstractPort;
 
 public final class RobotController {
 

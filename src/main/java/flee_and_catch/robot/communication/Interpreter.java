@@ -270,6 +270,9 @@ public final class Interpreter {
 				case Control:
 					control(jsonCommand);
 					return;
+				case Position:
+					position(jsonCommand);
+					return;
 				case Exception:
 					exception(jsonCommand);
 					return;
