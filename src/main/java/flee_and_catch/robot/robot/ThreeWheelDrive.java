@@ -382,11 +382,11 @@ public class ThreeWheelDrive implements Robot {
 			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;
 			//Multiply the number of rotated degrees with the millimeter that are covered per degree:
 			float distance = degrees * RobotConfig.DISTANCE_DEGREE;
-			curPos.calculateNewPosition(distance);		}
+			curPos = new Position(curPos.calculateNewPosition(distance)); }
 		else if(status == Status.RotateLeft || status == Status.RotateRight){
 			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
 			float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
-			curPos.calculateNewOrientation(angle);
+			curPos.setOrientation(curPos.calculateNewOrientation(angle));
 		}
 		
 		//Return the current position of the robot:*/

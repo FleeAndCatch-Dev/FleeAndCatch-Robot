@@ -191,7 +191,7 @@ public final class Interpreter {
 				RobotController.setAccept(false);
 				break;
 			//Set a new steering command for the robot:
-			case Control:
+			case Position:
 				RobotController.setDestination(command.getPosition());
 				if(syncThread){
 					RobotController.getSteeringThread().start();
