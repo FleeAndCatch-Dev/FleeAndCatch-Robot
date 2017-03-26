@@ -19,9 +19,12 @@ import flee_and_catch.robot.communication.command.ExceptionCommand;
 import flee_and_catch.robot.communication.command.ExceptionCommandType;
 import flee_and_catch.robot.communication.command.PositionCommand;
 import flee_and_catch.robot.communication.command.PositionCommandType;
+import flee_and_catch.robot.communication.command.SynchronizationCommand;
+import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
+import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
 
@@ -116,6 +119,15 @@ public final class Interpreter {
 			case End:
 				RobotController.getRobot().stop();
 				RobotController.changeActive(false);
+				
+				SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), RobotController.getRobot().getJSONRobot());
+				try {
+					Gson gson = new Gson();
+					Client.sendCmd(gson.toJson(sync));
+					Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);				
+				} 
+				catch (Exception e) {	
+				}
 				break;
 			//Turn the steering of the robot on (steering commands get accepted and implemented):
 			case Start:
@@ -180,6 +192,15 @@ public final class Interpreter {
 			case End:
 				RobotController.getRobot().stop();
 				RobotController.changeActive(false);
+			
+				SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), RobotController.getRobot().getJSONRobot());
+				try {
+					Gson gson = new Gson();
+					Client.sendCmd(gson.toJson(sync));
+					Thread.sleep(ThreadConfig.SYNCHRONIZATION_SLEEP);				
+				} 
+				catch (Exception e) {	
+				}
 				break;
 			//Turn the steering of the robot on (steering commands get accepted and implemented):
 			case Start:
