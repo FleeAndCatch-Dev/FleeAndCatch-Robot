@@ -75,11 +75,11 @@ public final class RobotController {
 				}
 				else if(destination != null && accept) {
 					
-					double rx = Math.abs(robot.getPosition().getX());
-					double ry = Math.abs(robot.getPosition().getY());
-					double dx = Math.abs(destination.getX());
-					double dy = Math.abs(destination.getY());
-					
+					double rx = robot.getPosition().getX();
+					double ry = robot.getPosition().getY();
+					double dx = destination.getX();
+					double dy = destination.getY();
+					robot.setSpeed(50);
 					if(rx >= dx - 1.0 && rx <= dx + 1.0 && ry >= dy - 1.0 && ry <= dy + 1.0) {
 						robot.stop();
 						destination = null;
@@ -88,7 +88,7 @@ public final class RobotController {
 				}
 				
 			} catch (Exception e) {
-
+				System.out.println(e.getMessage());
 			} finally {
 				//Wait:
 				Thread.sleep(ThreadConfig.STEERING_SLEEP);
