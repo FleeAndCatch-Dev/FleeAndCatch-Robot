@@ -23,6 +23,7 @@ import flee_and_catch.robot.communication.command.SynchronizationCommand;
 import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
+import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.robot.RobotController;
@@ -213,7 +214,11 @@ public final class Interpreter {
 				break;
 			//Set a new steering command for the robot:
 			case Position:
-				RobotController.setDestination(command.getPosition());
+				Position pos = new Position(200.0f, 0.0f, 0.0f);
+				//RobotController.setDestination(command.getPosition());
+				RobotController.setDestination(pos);
+				RobotController.getRobot().setSpeed(30.0f);
+				//RobotController.getRobot().setSpeed((float)command.getSpeed());
 				if(syncThread){
 					RobotController.getSteeringThread().start();
 					RobotController.getSynchronizeThread().start();

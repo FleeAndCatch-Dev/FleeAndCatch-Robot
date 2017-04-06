@@ -41,6 +41,7 @@ public class ThreeWheelDrive implements Robot {
 		this.totalDistance = 0;
 		this.speedDistance = 0;
 		this.status = Status.Waiting;
+		this.nextPosition = true;
 	}
 	
 //### INITIAL METHODS ######################################################################################################################
@@ -319,34 +320,29 @@ public class ThreeWheelDrive implements Robot {
 	}
 	
 	public void driveTo(Position destination) throws InterruptedException {
-		
-		if(!nextPosition){
-			nextPosition = true;
-			double x = destination.getX() - this.getPosition().getX();
-			double y = destination.getY() - this.getPosition().getY();
-			double angle = 0.0;
+				
+		double x = destination.getX() - this.getPosition().getX();
+		double y = destination.getY() - this.getPosition().getY();
+		double angle = 0.0;
 			
-			if(x >= 0.0 && y >= 0.0) {
-				angle = Math.atan((y/x));
-			}
-			else if(x < 0.0 && y >= 0.0) {
-				angle = 180.0 - Math.atan((y/x));
-			}
-			else if(x >= 0.0 && y < 0.0) {
-				angle = Math.atan((y/x));
-			}
-			else {
-				angle = -180.0 + Math.atan((y/x));
-			}
-			
-			//Rotate to destination:
-			this.rotate((float)angle);
-			//Move to destination:
-			this.forward();
-			
-			Thread.sleep(3000);
-			nextPosition = false;
+		if(x >= 0.0 && y >= 0.0) {
+			angle = Math.atan((y/x));
 		}
+		else if(x < 0.0 && y >= 0.0) {
+			angle = 180.0 - Math.atan((y/x));
+		}
+		else if(x >= 0.0 && y < 0.0) {
+			angle = Math.atan((y/x));
+		}
+		else {
+			angle = -180.0 + Math.atan((y/x));
+		}
+			
+		//Rotate to destination:
+		//this.rotate((float)angle);
+		
+		//Move to destination:
+		this.forward();
 	}
 	
 	@Override

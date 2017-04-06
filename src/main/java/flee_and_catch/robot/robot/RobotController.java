@@ -18,6 +18,7 @@ public final class RobotController {
 	private static Steering steering;
 	private static Position destination;
 	private static boolean accept;
+	private static boolean acceptNextPosition = true;
 
 	private static Thread steeringThread;
 	private static Thread synchronizeThread;
@@ -79,12 +80,17 @@ public final class RobotController {
 					double ry = robot.getPosition().getY();
 					double dx = destination.getX();
 					double dy = destination.getY();
-					robot.setSpeed(50);
-					if(rx >= dx - 1.0 && rx <= dx + 1.0 && ry >= dy - 1.0 && ry <= dy + 1.0) {
+				
+					if(rx >= dx - 10.0 && rx <= dx + 10.0 && ry >= dy - 10.0 && ry <= dy + 10.0) {
 						robot.stop();
 						destination = null;
+						acceptNextPosition = true;
 					}
-					robot.driveTo(destination);
+					else if(acceptNextPosition) {
+						robot.driveTo(destination);
+						acceptNextPosition = false;
+					}
+					
 				}
 				
 			} catch (Exception e) {
@@ -139,7 +145,9 @@ public final class RobotController {
 	}
 	
 	public static void setDestination(Position destination) {
-		RobotController.destination = destination;
+		if(RobotController.acceptNextPosition) {
+			RobotController.destination = destination;
+		}
 	}
 	
 	public static Position getDestination() {
