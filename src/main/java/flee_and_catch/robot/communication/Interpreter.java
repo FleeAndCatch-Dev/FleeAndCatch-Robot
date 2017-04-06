@@ -23,6 +23,7 @@ import flee_and_catch.robot.communication.command.SynchronizationCommand;
 import flee_and_catch.robot.communication.command.SynchronizationCommandType;
 import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
+import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.robot.RobotController;
@@ -185,6 +186,7 @@ public final class Interpreter {
 				RobotController.changeActive(true);
 				syncThread = true;
 				RobotController.setAccept(true);
+				RobotController.setAcceptNextPosition(true);
 				//Set start position for scenario:
 				RobotController.getRobot().setPosition(command.getRobot().getPosition());
 				break;
@@ -192,7 +194,7 @@ public final class Interpreter {
 			case End:
 				RobotController.getRobot().stop();
 				RobotController.changeActive(false);
-			
+				RobotController.setAcceptNextPosition(true);
 				SynchronizationCommand sync = new SynchronizationCommand(CommandType.Synchronization.toString(),SynchronizationCommandType.CurrentRobot.toString(), Client.getClientIdentification(), RobotController.getRobot().getJSONRobot());
 				try {
 					Gson gson = new Gson();
@@ -213,7 +215,11 @@ public final class Interpreter {
 				break;
 			//Set a new steering command for the robot:
 			case Position:
+				//Position pos = new Position(-700.0f, -450.0f, 0.0f);
 				RobotController.setDestination(command.getPosition());
+				//RobotController.setDestination(pos);
+				//RobotController.getRobot().setSpeed(30.0f);
+				RobotController.getRobot().setSpeed((float)command.getSpeed() * 10.0f);
 				if(syncThread){
 					RobotController.getSteeringThread().start();
 					RobotController.getSynchronizeThread().start();

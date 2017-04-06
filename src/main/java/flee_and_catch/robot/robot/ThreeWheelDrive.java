@@ -1,5 +1,6 @@
 package flee_and_catch.robot.robot;
 
+
 import flee_and_catch.robot.communication.command.device.robot.Direction;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.RoleType;
@@ -21,7 +22,6 @@ public class ThreeWheelDrive implements Robot {
 	private double speedDistance;
 	private float speed;
 	private Status status;
-	private boolean nextPosition;
 	
 	//Motor that driving the right wheel:
 	private EV3MediumRegulatedMotor motorRight;
@@ -141,12 +141,11 @@ public class ThreeWheelDrive implements Robot {
 	* @return
 	*/
 	@Override
-	public float getAngle() {
-		//Calculate the average of both rotation counters:
-		float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
-		float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
+	public float getAngle() {	
+		float angle = this.getRotatedAngle();
 		resetLongitudinalDistance();
 		
+		//return angle;
 		return angle;
 	}
 		
@@ -314,39 +313,102 @@ public class ThreeWheelDrive implements Robot {
 		this.stop();
 	}
 	
+	public void rotate2(float angle) {
+		
+		//First stop the robot moving (Depends on the moving concept):
+		if(this.isMoving()) { this.stop(); }
+		
+		//Check if rotate left or right:
+		if(angle < 0.0) {
+			this.checkStatus(Status.RotateRight);
+			//Activate motors:
+			this.motorRight.backward();
+			this.motorLeft.forward();
+		}
+		else {
+			this.checkStatus(Status.RotateLeft);
+			//Activate motors:
+			this.motorRight.forward();
+			this.motorLeft.backward();
+		}
+		
+		//Wait until the right orientation (angle) is reached:
+		while(!(this.getRotatedAngle() >= angle - 1.0 && this.getRotatedAngle() <= angle + 1.0)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {}
+		}
+	}
+	
+	private boolean checkAngle(float angle) {
+		if(angle < 0.0) {
+			if(this.getRotatedAngle() <= angle) {
+				return true;
+			}
+		}
+		else {
+			if(this.getRotatedAngle() >= angle) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public float getRotatedAngle() {
+		
+		float angle = 0.0f;
+		
+		if(status == Status.RotateLeft || status == Status.RotateRight) {
+			
+			//Calculate the average of both rotation counters:
+			float movedDegrees = (Math.abs(this.motorRight.getTachoCount()) + Math.abs(this.motorLeft.getTachoCount())) / 2;
+			float movedDistance = movedDegrees * RobotConfig.DISTANCE_DEGREE;
+			//Calculate the that tha robot moved angle:
+			angle = (float)(180.0f / Math.PI) * movedDistance / (RobotConfig.DIAMETER_WHEELS / 2.0f);
+			//If the robot moved the angle to the Left = it is a negative angle:
+			if(this.status == Status.RotateRight) {
+				angle *= -1.0;
+			}
+		}
+		return angle;
+	}
+	
 	public void setPosition(Position position) {
 		this.position = position;
 	}
 	
 	public void driveTo(Position destination) throws InterruptedException {
-		
-		if(!nextPosition){
-			nextPosition = true;
-			double x = destination.getX() - this.getPosition().getX();
-			double y = destination.getY() - this.getPosition().getY();
-			double angle = 0.0;
+				
+		double x = destination.getX() - this.getPosition().getX();
+		double y = destination.getY() - this.getPosition().getY();
+		double angle = 0.0;
 			
-			if(x >= 0.0 && y >= 0.0) {
-				angle = Math.atan((y/x));
-			}
-			else if(x < 0.0 && y >= 0.0) {
-				angle = 180.0 - Math.atan((y/x));
-			}
-			else if(x >= 0.0 && y < 0.0) {
-				angle = Math.atan((y/x));
-			}
-			else {
-				angle = -180.0 + Math.atan((y/x));
-			}
-			
-			//Rotate to destination:
-			this.rotate((float)angle);
-			//Move to destination:
-			this.forward();
-			
-			Thread.sleep(3000);
-			nextPosition = false;
+		if(x >= 0.0 && y >= 0.0) {
+			angle = (Math.atan((y/x)) * 180/Math.PI);
 		}
+		else if(x < 0.0 && y >= 0.0) {
+			angle = 180 + (Math.atan((y/x)) * 180/Math.PI);
+		}
+		else if(x >= 0.0 && y < 0.0) {
+			angle = (Math.atan((y/x)) * 180/Math.PI);
+		}
+		else {
+			angle = -180.0 + (Math.atan((y/x)) * 180/Math.PI);
+		}
+		
+		//Let robot rotate: 
+		this.rotate2((float)angle);
+		
+		//Move to destination:
+		this.forward();
 	}
 	
 	@Override
@@ -390,9 +452,18 @@ public class ThreeWheelDrive implements Robot {
 			//Multiply the number of rotated degrees with the millimeter that are covered per degree:
 			float distance = degrees * RobotConfig.DISTANCE_DEGREE;
 			curPos = new Position(curPos.calculateNewPosition(distance)); }
-		else if(status == Status.RotateLeft || status == Status.RotateRight){
-			float degrees = (this.motorRight.getTachoCount() + this.motorLeft.getTachoCount()) / 2;		
-			float angle = (float) ((degrees * RobotConfig.DISTANCE_DEGREE) * (180 / Math.PI));
+		else if(status == Status.RotateLeft || status == Status.RotateRight) {
+			
+			//Calculate the average of both rotation counters:
+			float movedDegrees = (Math.abs(this.motorRight.getTachoCount()) + Math.abs(this.motorLeft.getTachoCount())) / 2;
+			float movedDistance = movedDegrees * RobotConfig.DISTANCE_DEGREE;
+			
+			float angle = (float)(180.0f / Math.PI) * movedDistance / (RobotConfig.DIAMETER_WHEELS / 2.0f);
+			
+			if(this.status == Status.RotateRight) {
+				angle *= -1.0;
+			}
+			
 			curPos.setOrientation(curPos.calculateNewOrientation(angle));
 		}
 		

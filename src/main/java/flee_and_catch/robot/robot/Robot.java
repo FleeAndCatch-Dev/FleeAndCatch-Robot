@@ -58,6 +58,7 @@ public interface Robot {
 	void rotate(float angle) throws InterruptedException;
 	void rotate(Direction direct, float angle) throws InterruptedException;
 	
+	public Status getStatus();
 	public void driveTo(Position destination) throws InterruptedException;
 	
 	public void setPosition(Position position);

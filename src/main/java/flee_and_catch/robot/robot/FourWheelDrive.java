@@ -167,4 +167,10 @@ public class FourWheelDrive implements Robot {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Status getStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

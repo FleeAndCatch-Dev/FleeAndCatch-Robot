@@ -1,5 +1,7 @@
 package flee_and_catch.robot.robot;
 
+import javax.xml.parsers.DocumentBuilder;
+
 import com.google.gson.Gson;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
@@ -18,6 +20,7 @@ public final class RobotController {
 	private static Steering steering;
 	private static Position destination;
 	private static boolean accept;
+	private static boolean acceptNextPosition = true;
 
 	private static Thread steeringThread;
 	private static Thread synchronizeThread;
@@ -77,14 +80,44 @@ public final class RobotController {
 					
 					double rx = robot.getPosition().getX();
 					double ry = robot.getPosition().getY();
+					double ori = robot.getPosition().getOrientation();
 					double dx = destination.getX();
 					double dy = destination.getY();
-					robot.setSpeed(50);
-					if(rx >= dx - 1.0 && rx <= dx + 1.0 && ry >= dy - 1.0 && ry <= dy + 1.0) {
-						robot.stop();
-						destination = null;
+				
+					if(dx >= 0.0 && dy >= 0.0) {
+						if(rx >= dx && ry >= dy) {
+							robot.stop();
+							destination = null;
+							acceptNextPosition = true;
+						}
 					}
-					robot.driveTo(destination);
+					else if(dx >= 0.0 && dy < 0.0) {
+						if(rx >= dx && ry <= dy) {
+							robot.stop();
+							destination = null;
+							acceptNextPosition = true;
+						}
+					}
+					else if(dx < 0.0 && dy >= 0.0) {
+						if(rx <= dx && ry >= dy) {
+							robot.stop();
+							destination = null;
+							acceptNextPosition = true;
+						}
+					}
+					else {
+						if(rx <= dx && ry <= dy) {
+							robot.stop();
+							destination = null;
+							acceptNextPosition = true;
+						}
+					}
+					
+					if(acceptNextPosition && destination != null && robot.getSpeed() >= 1.0) {
+						robot.driveTo(destination);
+						acceptNextPosition = false;
+					}
+					
 				}
 				
 			} catch (Exception e) {
@@ -96,6 +129,14 @@ public final class RobotController {
 		}
 	}
 	
+	public static boolean isAcceptNextPosition() {
+		return acceptNextPosition;
+	}
+
+	public static void setAcceptNextPosition(boolean acceptNextPosition) {
+		RobotController.acceptNextPosition = acceptNextPosition;
+	}
+
 	private static void synchronize() throws Exception {
 		while(getRobot().isActive()) {
 			//Calculate the speed
@@ -139,7 +180,9 @@ public final class RobotController {
 	}
 	
 	public static void setDestination(Position destination) {
-		RobotController.destination = destination;
+		if(RobotController.acceptNextPosition) {
+			RobotController.destination = destination;
+		}
 	}
 	
 	public static Position getDestination() {

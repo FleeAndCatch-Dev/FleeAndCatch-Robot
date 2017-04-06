@@ -97,7 +97,7 @@ public class Position {
 	
 	
 	/* calculateNewOrientation [Method]: Method that calculates the new orientation based of a rotation angle *//**
-	 * 
+	 * New orientation is not set!!!
 	 * @param angle
 	 */
 	public double calculateNewOrientation(float angle) {
