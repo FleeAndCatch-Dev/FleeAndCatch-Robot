@@ -41,6 +41,7 @@ public class ThreeWheelDrive implements Robot {
 		this.totalDistance = 0;
 		this.speedDistance = 0;
 		this.status = Status.Waiting;
+		this.nextPosition = true;
 	}
 	
 //### INITIAL METHODS ######################################################################################################################
