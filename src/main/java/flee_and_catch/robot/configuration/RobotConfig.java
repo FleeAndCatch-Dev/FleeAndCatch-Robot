@@ -1,5 +1,7 @@
 package flee_and_catch.robot.configuration;
 
+import sun.text.resources.cldr.sr.FormatData_sr_Latn;
+
 public class RobotConfig {
 
 	//Distance that a wheel move by a rotation of one degree (original: 0.476389f):
@@ -19,4 +21,6 @@ public class RobotConfig {
 	public static final float ROTATION_SPEED = 30.0f;
 	
 	public static final String PORT_ULTRASONIC = "S4";
+	
+	public static final float SPEED_PULS = 40.0f;
 }

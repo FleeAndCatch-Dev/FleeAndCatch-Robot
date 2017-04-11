@@ -5,6 +5,8 @@ package flee_and_catch.robot.communication;
 import java.io.IOException;
 import java.util.Objects;
 
+import javax.management.relation.Role;
+
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
@@ -25,6 +27,8 @@ import flee_and_catch.robot.communication.command.device.Device;
 import flee_and_catch.robot.communication.command.device.DeviceAdapter;
 import flee_and_catch.robot.communication.command.device.robot.Position;
 import flee_and_catch.robot.communication.command.device.robot.Robot;
+import flee_and_catch.robot.communication.command.device.robot.RoleType;
+import flee_and_catch.robot.configuration.RobotConfig;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.robot.RobotController;
 import flee_and_catch.robot.view.ViewController;
@@ -162,7 +166,6 @@ public final class Interpreter {
 		}
 	}
 	
-	
 	/* control [Method]: Processes a JSON object of the type control for steering the robot *//**
 	 * 
 	 * @param pCommand
@@ -215,11 +218,20 @@ public final class Interpreter {
 				break;
 			//Set a new steering command for the robot:
 			case Position:
+				//For catch scenario:
+				if(command.getRobot().getIdentification().getRole() == RoleType.Catcher.toString()) {
+					RobotController.setDestination(command.getPosition());
+					RobotController.setFugitive(command.getPosition());
+					RobotController.getRobot().setSpeed((float)command.getSpeed() * 10.0f + RobotConfig.SPEED_PULS);
+				}
+				//For synchron or follow scenario:
+				else {
 				//Position pos = new Position(-700.0f, -450.0f, 0.0f);
 				RobotController.setDestination(command.getPosition());
 				//RobotController.setDestination(pos);
 				//RobotController.getRobot().setSpeed(30.0f);
 				RobotController.getRobot().setSpeed((float)command.getSpeed() * 10.0f);
+				}
 				if(syncThread){
 					RobotController.getSteeringThread().start();
 					RobotController.getSynchronizeThread().start();
@@ -239,7 +251,6 @@ public final class Interpreter {
 			ViewController.showReadyScreen(RobotController.getRobot());
 		}
 	}
-	
 	
 	private static void exception(JSONObject pCommand) {
 				

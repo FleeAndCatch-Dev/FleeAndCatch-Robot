@@ -1,7 +1,5 @@
 package flee_and_catch.robot.robot;
 
-import javax.xml.parsers.DocumentBuilder;
-
 import com.google.gson.Gson;
 import flee_and_catch.robot.communication.Client;
 import flee_and_catch.robot.communication.command.CommandType;
@@ -13,12 +11,16 @@ import flee_and_catch.robot.communication.command.device.robot.Speed;
 import flee_and_catch.robot.communication.command.device.robot.Steering;
 import flee_and_catch.robot.configuration.ThreadConfig;
 import flee_and_catch.robot.view.ViewController;
+import lejos.hardware.Sound;
 
 public final class RobotController {
 
 	private static Robot robot;
 	private static Steering steering;
-	private static Position destination;
+	private static Position destination = null;
+	private static Position fugitive = null;
+
+
 	private static boolean accept;
 	private static boolean acceptNextPosition = true;
 
@@ -84,6 +86,16 @@ public final class RobotController {
 					double dx = destination.getX();
 					double dy = destination.getY();
 				
+					
+					if(fugitive != null) {
+						double fx = fugitive.getX();
+						double fy = fugitive.getY();
+						if(rx >= fx - 100.0 && rx <= fx + 100.0 && ry >= fy - 100.0 && ry <= fy + 100.0) {
+							Sound.playTone(1500, 1000);
+							robot.stop();
+						}
+					}
+					
 					if(dx >= 0.0 && dy >= 0.0) {
 						if(rx >= dx && ry >= dy) {
 							robot.stop();
@@ -113,7 +125,11 @@ public final class RobotController {
 						}
 					}
 					
-					if(acceptNextPosition && destination != null && robot.getSpeed() >= 1.0) {
+					if(robot.getSpeed() < 0.0001f) {
+						acceptNextPosition = true;
+					}
+					
+					if(acceptNextPosition && destination != null && robot.getSpeed() >= 1.0f) {
 						robot.driveTo(destination);
 						acceptNextPosition = false;
 					}
@@ -204,5 +220,12 @@ public final class RobotController {
 	public static Thread getSynchronizeThread() {
 		return synchronizeThread;
 	}
+	
+	public static Position getFugitive() {
+		return fugitive;
+	}
 
+	public static void setFugitive(Position fugitive) {
+		RobotController.fugitive = fugitive;
+	}
 }
